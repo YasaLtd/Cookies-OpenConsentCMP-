@@ -1,0 +1,599 @@
+(function () {
+	'use strict';
+
+	var config = window.OpenConsentCMP || {};
+	var services = config.services || window.OpenConsentServices || [];
+	var cookieName = 'openconsent_cmp';
+	var themeStorageKey = 'openconsent_cmp_theme';
+	var categories = ['preferences', 'statistics', 'marketing'];
+	var themePresets = [
+		{ key: 'dark-teal', label: 'Teal', accent: '#54d2bf', background: '#111827', text: '#ffffff' },
+		{ key: 'dark-blue', label: 'Blue', accent: '#73a7ff', background: '#101828', text: '#ffffff' },
+		{ key: 'dark-gold', label: 'Gold', accent: '#f0b84f', background: '#1f2937', text: '#ffffff' },
+		{ key: 'dark-rose', label: 'Rose', accent: '#fb7185', background: '#18111f', text: '#ffffff' }
+	];
+	var translations = {
+		en: {
+			title: 'Your privacy choices',
+			message: 'We use cookies and similar technologies to keep this site reliable, measure usage, and improve marketing. Choose what you want to allow.',
+			partyDisclosure: 'Google and other listed service providers may collect, receive, or use personal data when their services are enabled. Review the cookie declaration and privacy policy for details.',
+			accept: 'Accept all',
+			reject: 'Necessary only',
+			save: 'Save choices',
+			customize: 'Customize',
+			revoke: 'Privacy choices',
+			privacyPolicy: 'Privacy policy',
+			categories: {
+				necessary: 'Necessary',
+				preferences: 'Preferences',
+				statistics: 'Statistics',
+				marketing: 'Marketing'
+			},
+			descriptions: {
+				necessary: 'Necessary cookies keep the site secure and working. They are always active.',
+				preferences: 'Preferences cookies remember choices such as language, region, and interface settings.',
+				statistics: 'Statistics cookies help us understand how visitors use the site.',
+				marketing: 'Marketing cookies support advertising, measurement, and embedded media.'
+			}
+		},
+		fi: {
+			title: 'Tietosuoja-asetukset',
+			message: 'Käytämme evästeitä ja vastaavia tekniikoita sivuston toimivuuteen, käytön mittaamiseen ja markkinoinnin parantamiseen. Valitse, mitä haluat sallia.',
+			partyDisclosure: 'Google ja muut listatut palveluntarjoajat voivat kerätä, vastaanottaa tai käyttää henkilötietoja, kun niiden palvelut otetaan käyttöön. Lisätiedot ovat evästeilmoituksessa ja tietosuojakäytännössä.',
+			accept: 'Hyväksy kaikki',
+			reject: 'Vain välttämättömät',
+			save: 'Tallenna valinnat',
+			customize: 'Mukauta',
+			revoke: 'Tietosuoja-asetukset',
+			privacyPolicy: 'Tietosuojakäytäntö',
+			categories: {
+				necessary: 'Välttämättömät',
+				preferences: 'Asetukset',
+				statistics: 'Tilastot',
+				marketing: 'Markkinointi'
+			},
+			descriptions: {
+				necessary: 'Välttämättömät evästeet pitävät sivuston turvallisena ja toimivana. Ne ovat aina käytössä.',
+				preferences: 'Asetusevästeet muistavat valintoja, kuten kielen, alueen ja käyttöliittymän asetukset.',
+				statistics: 'Tilastoevästeet auttavat ymmärtämään, miten kävijät käyttävät sivustoa.',
+				marketing: 'Markkinointievästeet tukevat mainontaa, mittaamista ja upotettua mediaa.'
+			}
+		},
+		de: {
+			title: 'Ihre Datenschutzauswahl',
+			accept: 'Alle akzeptieren',
+			reject: 'Nur notwendige',
+			save: 'Auswahl speichern',
+			customize: 'Anpassen',
+			revoke: 'Datenschutzauswahl',
+			privacyPolicy: 'Datenschutzerklärung',
+			categories: { necessary: 'Notwendig', preferences: 'Präferenzen', statistics: 'Statistiken', marketing: 'Marketing' }
+		},
+		es: {
+			title: 'Tus opciones de privacidad',
+			accept: 'Aceptar todo',
+			reject: 'Solo necesarias',
+			save: 'Guardar opciones',
+			customize: 'Personalizar',
+			revoke: 'Opciones de privacidad',
+			privacyPolicy: 'Política de privacidad',
+			categories: { necessary: 'Necesarias', preferences: 'Preferencias', statistics: 'Estadísticas', marketing: 'Marketing' }
+		},
+		fr: {
+			title: 'Vos choix de confidentialité',
+			accept: 'Tout accepter',
+			reject: 'Nécessaires uniquement',
+			save: 'Enregistrer les choix',
+			customize: 'Personnaliser',
+			revoke: 'Choix de confidentialité',
+			privacyPolicy: 'Politique de confidentialité',
+			categories: { necessary: 'Nécessaires', preferences: 'Préférences', statistics: 'Statistiques', marketing: 'Marketing' }
+		},
+		it: {
+			title: 'Le tue scelte sulla privacy',
+			accept: 'Accetta tutto',
+			reject: 'Solo necessari',
+			save: 'Salva scelte',
+			customize: 'Personalizza',
+			revoke: 'Scelte privacy',
+			privacyPolicy: 'Informativa privacy',
+			categories: { necessary: 'Necessari', preferences: 'Preferenze', statistics: 'Statistiche', marketing: 'Marketing' }
+		},
+		nl: {
+			title: 'Uw privacykeuzes',
+			accept: 'Alles accepteren',
+			reject: 'Alleen noodzakelijk',
+			save: 'Keuzes opslaan',
+			customize: 'Aanpassen',
+			revoke: 'Privacykeuzes',
+			privacyPolicy: 'Privacybeleid',
+			categories: { necessary: 'Noodzakelijk', preferences: 'Voorkeuren', statistics: 'Statistieken', marketing: 'Marketing' }
+		},
+		sv: {
+			title: 'Dina integritetsval',
+			accept: 'Acceptera alla',
+			reject: 'Endast nödvändiga',
+			save: 'Spara val',
+			customize: 'Anpassa',
+			revoke: 'Integritetsval',
+			privacyPolicy: 'Integritetspolicy',
+			categories: { necessary: 'Nödvändiga', preferences: 'Inställningar', statistics: 'Statistik', marketing: 'Marknadsföring' }
+		}
+	};
+	var originalCreateElement = document.createElement.bind(document);
+	var originalAppendChild = Element.prototype.appendChild;
+	var originalInsertBefore = Element.prototype.insertBefore;
+	var originalSetAttribute = Element.prototype.setAttribute;
+
+	function readConsent() {
+		var match = document.cookie.match(new RegExp('(?:^|; )' + cookieName + '=([^;]*)'));
+		if (!match) {
+			return null;
+		}
+
+		try {
+			return JSON.parse(decodeURIComponent(match[1]));
+		} catch (error) {
+			return null;
+		}
+	}
+
+	function languageCode() {
+		var languages = [];
+		if (config.autoDetectLanguage && navigator.languages) {
+			languages = languages.concat(Array.prototype.slice.call(navigator.languages));
+		}
+		if (config.autoDetectLanguage && navigator.language) {
+			languages.push(navigator.language);
+		}
+		if (config.detectedLanguage) {
+			languages.push(config.detectedLanguage);
+		}
+		if (config.siteLocale) {
+			languages.push(config.siteLocale);
+		}
+
+		for (var i = 0; i < languages.length; i += 1) {
+			var code = String(languages[i] || '').toLowerCase().split('-')[0];
+			if (translations[code]) {
+				return code;
+			}
+		}
+
+		return 'en';
+	}
+
+	function translatedUi() {
+		var ui = config.ui || {};
+		var defaults = config.defaultUi || {};
+		var lang = languageCode();
+		var dictionary = translations[lang] || translations.en;
+		var english = translations.en;
+		var resolved = {};
+
+		['title', 'message', 'partyDisclosure', 'accept', 'reject', 'save', 'customize', 'revoke'].forEach(function (key) {
+			var value = ui[key] || '';
+			var defaultValue = defaults[key] || english[key] || '';
+			resolved[key] = value && value !== defaultValue ? value : (dictionary[key] || english[key] || value);
+		});
+
+		resolved.privacyPolicy = dictionary.privacyPolicy || english.privacyPolicy;
+		resolved.position = ui.position;
+		resolved.accent = ui.accent;
+		resolved.background = ui.background;
+		resolved.text = ui.text;
+		resolved.theme = ui.theme;
+		resolved.lang = lang;
+		resolved.descriptions = {};
+		resolved.categoryLabels = {};
+
+		['necessary'].concat(categories).forEach(function (category) {
+			var configured = ui.descriptions && ui.descriptions[category] ? ui.descriptions[category] : '';
+			var fallback = defaults.descriptions && defaults.descriptions[category] ? defaults.descriptions[category] : '';
+			resolved.descriptions[category] = configured && configured !== fallback ? configured : ((dictionary.descriptions && dictionary.descriptions[category]) || english.descriptions[category] || configured);
+			resolved.categoryLabels[category] = (dictionary.categories && dictionary.categories[category]) || english.categories[category] || category;
+		});
+
+		return resolved;
+	}
+
+	function readStoredTheme() {
+		try {
+			return window.localStorage ? window.localStorage.getItem(themeStorageKey) : '';
+		} catch (error) {
+			return '';
+		}
+	}
+
+	function writeStoredTheme(themeKey) {
+		try {
+			if (window.localStorage) {
+				window.localStorage.setItem(themeStorageKey, themeKey);
+			}
+		} catch (error) {}
+	}
+
+	function themeByKey(themeKey) {
+		for (var i = 0; i < themePresets.length; i += 1) {
+			if (themePresets[i].key === themeKey) {
+				return themePresets[i];
+			}
+		}
+		return themePresets[0];
+	}
+
+	function applyTheme(root, theme, ui) {
+		var selected = theme || themeByKey(readStoredTheme() || ui.theme || 'dark-teal');
+		root.dataset.openconsentTheme = selected.key;
+		root.style.setProperty('--openconsent-accent', selected.accent || ui.accent || '#54d2bf');
+		root.style.setProperty('--openconsent-background', selected.background || ui.background || '#111827');
+		root.style.setProperty('--openconsent-text', selected.text || ui.text || '#ffffff');
+		return selected;
+	}
+
+	function writeConsent(consent) {
+		var expires = new Date();
+		expires.setFullYear(expires.getFullYear() + 1);
+		document.cookie = cookieName + '=' + encodeURIComponent(JSON.stringify(consent)) + '; expires=' + expires.toUTCString() + '; path=/; SameSite=Lax';
+	}
+
+	function hasConsent(category) {
+		var consent = readConsent();
+		return category === 'necessary' || Boolean(consent && consent[category]);
+	}
+
+	function categoryForUrl(url) {
+		if (!url) {
+			return null;
+		}
+
+		if (config.googleConsentMode && config.googleConsentBehavior === 'advanced' && isGoogleConsentAwareUrl(url)) {
+			return null;
+		}
+
+		for (var i = 0; i < services.length; i += 1) {
+			if (url.toLowerCase().indexOf(String(services[i].pattern).toLowerCase()) !== -1) {
+				return services[i].category;
+			}
+		}
+
+		return null;
+	}
+
+	function isGoogleConsentAwareUrl(url) {
+		var anchor = document.createElement('a');
+		anchor.href = url;
+		var host = String(anchor.hostname || '').toLowerCase();
+		return host.indexOf('googletagmanager.com') !== -1 ||
+			host.indexOf('google-analytics.com') !== -1 ||
+			host.indexOf('googleadservices.com') !== -1 ||
+			host.indexOf('doubleclick.net') !== -1;
+	}
+
+	function blockScript(node, category, src) {
+		node.type = 'text/plain';
+		node.setAttribute('data-openconsent-category', category);
+		if (src) {
+			node.setAttribute('data-openconsent-src', src);
+			node.removeAttribute('src');
+		}
+		node.setAttribute('data-openconsent-blocked', '1');
+		window.OpenConsentQueue = window.OpenConsentQueue || [];
+		window.OpenConsentQueue.push(node);
+	}
+
+	function shouldBlockScript(node) {
+		var src = node.getAttribute && (node.getAttribute('src') || node.getAttribute('data-openconsent-src'));
+		var category = node.getAttribute && node.getAttribute('data-openconsent-category');
+		category = category || categoryForUrl(src);
+
+		if (!category || hasConsent(category)) {
+			return null;
+		}
+
+		return { category: category, src: src };
+	}
+
+	function installAutoBlocker() {
+		if (config.blockingMode !== 'auto') {
+			return;
+		}
+
+		document.createElement = function (tagName) {
+			var element = originalCreateElement(tagName);
+
+			if (String(tagName).toLowerCase() === 'script') {
+				var pendingSrc = '';
+				Object.defineProperty(element, 'src', {
+					get: function () {
+						return pendingSrc || element.getAttribute('src') || '';
+					},
+					set: function (value) {
+						pendingSrc = value;
+						var category = categoryForUrl(value);
+						if (category && !hasConsent(category)) {
+							element.setAttribute('data-openconsent-src', value);
+							element.setAttribute('data-openconsent-category', category);
+							element.type = 'text/plain';
+						} else {
+							originalSetAttribute.call(element, 'src', value);
+						}
+					}
+				});
+			}
+
+			return element;
+		};
+
+		Element.prototype.appendChild = function (node) {
+			var decision = node && node.tagName === 'SCRIPT' ? shouldBlockScript(node) : null;
+			if (decision) {
+				blockScript(node, decision.category, decision.src);
+			}
+			return originalAppendChild.call(this, node);
+		};
+
+		Element.prototype.insertBefore = function (node, reference) {
+			var decision = node && node.tagName === 'SCRIPT' ? shouldBlockScript(node) : null;
+			if (decision) {
+				blockScript(node, decision.category, decision.src);
+			}
+			return originalInsertBefore.call(this, node, reference);
+		};
+	}
+
+	function updateGoogleConsent(consent) {
+		if (!config.googleConsentMode || typeof window.gtag !== 'function') {
+			return;
+		}
+
+		window.gtag('consent', 'update', {
+			ad_personalization: consent.marketing ? 'granted' : 'denied',
+			ad_storage: consent.marketing ? 'granted' : 'denied',
+			ad_user_data: consent.marketing ? 'granted' : 'denied',
+			analytics_storage: consent.statistics ? 'granted' : 'denied',
+			functionality_storage: consent.preferences ? 'granted' : 'denied',
+			personalization_storage: consent.preferences ? 'granted' : 'denied',
+			security_storage: 'granted'
+		});
+	}
+
+	function unblockScripts() {
+		var blocked = Array.prototype.slice.call(document.querySelectorAll('script[type="text/plain"][data-openconsent-category]'));
+
+		blocked.forEach(function (script) {
+			var category = script.getAttribute('data-openconsent-category');
+			if (!hasConsent(category)) {
+				return;
+			}
+
+			var fresh = document.createElement('script');
+			Array.prototype.slice.call(script.attributes).forEach(function (attr) {
+				if (attr.name.indexOf('data-openconsent') === 0 || attr.name === 'type') {
+					return;
+				}
+				fresh.setAttribute(attr.name, attr.value);
+			});
+
+			if (script.getAttribute('data-openconsent-src')) {
+				fresh.src = script.getAttribute('data-openconsent-src');
+			} else {
+				fresh.text = script.text || script.textContent || script.innerHTML;
+			}
+
+			script.parentNode.replaceChild(fresh, script);
+		});
+	}
+
+	function logConsent(consent) {
+		if (!window.fetch || !config.ajaxUrl) {
+			return;
+		}
+
+		var payload = new window.FormData();
+		payload.append('action', 'openconsent_log_consent');
+		payload.append('nonce', config.nonce || '');
+		payload.append('consent', JSON.stringify(consent));
+
+		window.fetch(config.ajaxUrl, {
+			method: 'POST',
+			credentials: 'same-origin',
+			body: payload
+		}).catch(function () {});
+	}
+
+	function saveConsent(values) {
+		var consent = {
+			id: (readConsent() && readConsent().id) || String(Date.now()) + Math.random().toString(16).slice(2),
+			necessary: true,
+			preferences: Boolean(values.preferences),
+			statistics: Boolean(values.statistics),
+			marketing: Boolean(values.marketing),
+			updated: new Date().toISOString()
+		};
+
+		writeConsent(consent);
+		updateGoogleConsent(consent);
+		unblockScripts();
+		logConsent(consent);
+		renderFloatingControl();
+		window.dispatchEvent(new CustomEvent('openconsent:updated', { detail: consent }));
+		return consent;
+	}
+
+	function makeButton(label, className, onClick) {
+		var button = document.createElement('button');
+		button.type = 'button';
+		button.className = className;
+		button.textContent = label;
+		button.addEventListener('click', onClick);
+		return button;
+	}
+
+	function renderBanner(options) {
+		options = options || {};
+		if ((readConsent() && !options.force) || !config.ui) {
+			var existing = readConsent();
+			if (existing) {
+				updateGoogleConsent(existing);
+				unblockScripts();
+				renderFloatingControl();
+			}
+			return;
+		}
+
+		var ui = translatedUi();
+		var currentConsent = readConsent();
+		var existingBanner = document.querySelector('.openconsent');
+		if (existingBanner) {
+			existingBanner.remove();
+		}
+		var root = document.createElement('div');
+		root.className = 'openconsent openconsent--' + (ui.position || 'center');
+		root.setAttribute('lang', ui.lang || 'en');
+		root.setAttribute('translate', 'yes');
+		root.setAttribute('role', 'dialog');
+		root.setAttribute('aria-modal', 'true');
+		root.setAttribute('aria-labelledby', 'openconsent-title');
+		var selectedTheme = applyTheme(root, null, ui);
+
+		var panel = document.createElement('div');
+		panel.className = 'openconsent__panel';
+
+		var title = document.createElement('h2');
+		title.id = 'openconsent-title';
+		title.textContent = ui.title || 'Privacy choices';
+
+		var message = document.createElement('p');
+		message.className = 'openconsent__message';
+		message.textContent = ui.message || '';
+
+		var partyDisclosure = document.createElement('p');
+		partyDisclosure.className = 'openconsent__disclosure';
+		partyDisclosure.textContent = ui.partyDisclosure || '';
+
+		var categoriesWrap = document.createElement('div');
+		categoriesWrap.className = 'openconsent__categories';
+		categoriesWrap.hidden = false;
+
+		var inputs = {};
+		['necessary'].concat(categories).forEach(function (category) {
+			var label = document.createElement('label');
+			label.className = 'openconsent__category';
+			var input = document.createElement('input');
+			input.type = 'checkbox';
+			input.checked = category === 'necessary' || Boolean(currentConsent && currentConsent[category]);
+			input.disabled = category === 'necessary';
+			inputs[category] = input;
+
+			var copy = document.createElement('span');
+			var strong = document.createElement('strong');
+			strong.textContent = ui.categoryLabels[category] || category;
+			var small = document.createElement('small');
+			small.textContent = (ui.descriptions && ui.descriptions[category]) || '';
+			copy.appendChild(strong);
+			copy.appendChild(small);
+			label.appendChild(input);
+			label.appendChild(copy);
+			categoriesWrap.appendChild(label);
+		});
+
+		var actions = document.createElement('div');
+		actions.className = 'openconsent__actions';
+
+		var reject = makeButton(ui.reject || 'Necessary only', 'openconsent__button openconsent__button--ghost', function () {
+			saveConsent({});
+			root.remove();
+		});
+		var customize = makeButton(ui.customize || 'Customize', 'openconsent__button openconsent__button--ghost', function () {
+			var nextIndex = 0;
+			for (var i = 0; i < themePresets.length; i += 1) {
+				if (themePresets[i].key === selectedTheme.key) {
+					nextIndex = (i + 1) % themePresets.length;
+					break;
+				}
+			}
+			selectedTheme = applyTheme(root, themePresets[nextIndex], ui);
+			writeStoredTheme(selectedTheme.key);
+			customize.textContent = (ui.customize || 'Customize') + ': ' + selectedTheme.label;
+		});
+		customize.textContent = (ui.customize || 'Customize') + ': ' + selectedTheme.label;
+		customize.setAttribute('aria-label', 'Change consent dialog theme color');
+		customize.title = 'Change theme color';
+		var save = makeButton(ui.save || 'Save choices', 'openconsent__button openconsent__button--secondary', function () {
+			saveConsent({
+				preferences: inputs.preferences.checked,
+				statistics: inputs.statistics.checked,
+				marketing: inputs.marketing.checked
+			});
+			root.remove();
+		});
+		var accept = makeButton(ui.accept || 'Accept all', 'openconsent__button openconsent__button--primary', function () {
+			saveConsent({ preferences: true, statistics: true, marketing: true });
+			root.remove();
+		});
+
+		actions.appendChild(reject);
+		actions.appendChild(customize);
+		actions.appendChild(save);
+		actions.appendChild(accept);
+
+		panel.appendChild(title);
+		panel.appendChild(message);
+		if (ui.partyDisclosure) {
+			panel.appendChild(partyDisclosure);
+		}
+
+		if (ui.privacyUrl) {
+			var privacy = document.createElement('a');
+			privacy.className = 'openconsent__privacy';
+			privacy.href = ui.privacyUrl;
+			privacy.textContent = ui.privacyPolicy || 'Privacy policy';
+			panel.appendChild(privacy);
+		}
+
+		panel.appendChild(categoriesWrap);
+		panel.appendChild(actions);
+		root.appendChild(panel);
+		document.body.appendChild(root);
+	}
+
+	function renderFloatingControl() {
+		if (document.querySelector('.openconsent-reopen') || !config.ui) {
+			return;
+		}
+
+		var ui = translatedUi();
+		var button = document.createElement('button');
+		button.type = 'button';
+		button.className = 'openconsent-reopen';
+		button.setAttribute('lang', ui.lang || 'en');
+		button.setAttribute('translate', 'yes');
+		button.textContent = ui.revoke || 'Privacy choices';
+		button.addEventListener('click', function () {
+			var existing = document.querySelector('.openconsent');
+			if (existing) {
+				existing.remove();
+			}
+			button.remove();
+			renderBanner({ force: true, showCategories: true });
+		});
+		document.body.appendChild(button);
+	}
+
+	window.OpenConsent = {
+		getConsent: readConsent,
+		setConsent: saveConsent,
+		showBanner: renderBanner,
+		showPreferences: function () {
+			renderBanner({ force: true, showCategories: true });
+		},
+		revoke: function () {
+			document.cookie = cookieName + '=; Max-Age=0; path=/; SameSite=Lax';
+			renderBanner({ force: true, showCategories: true });
+		}
+	};
+
+	installAutoBlocker();
+	document.addEventListener('DOMContentLoaded', renderBanner);
+}());

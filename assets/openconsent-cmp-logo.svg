@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">OpenConsent CMP logo</title>
+  <desc id="desc">A consent shield with a checkmark and cookie dot, used for the OpenConsent CMP website, plugin, and favicon.</desc>
+  <defs>
+    <linearGradient id="bg" x1="86" y1="52" x2="426" y2="460" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#203867"/>
+      <stop offset="1" stop-color="#111827"/>
+    </linearGradient>
+    <linearGradient id="shield" x1="158" y1="90" x2="354" y2="396" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#54d2bf"/>
+      <stop offset="1" stop-color="#16877c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="url(#bg)"/>
+  <path d="M256 76 376 128v90c0 82-47 145-120 170-73-25-120-88-120-170v-90l120-52Z" fill="url(#shield)"/>
+  <path d="m204 248 39 39 78-91" fill="none" stroke="#fffdf8" stroke-width="38" stroke-linecap="round" stroke-linejoin="round"/>
+  <circle cx="366" cy="368" r="62" fill="#d99a30"/>
+  <path d="M347 315a62 62 0 0 0 74 75 62 62 0 1 1-74-75Z" fill="#f2bd54"/>
+  <circle cx="342" cy="352" r="10" fill="#182a4d"/>
+  <circle cx="374" cy="378" r="10" fill="#182a4d"/>
+  <circle cx="390" cy="342" r="8" fill="#182a4d"/>
+</svg>
