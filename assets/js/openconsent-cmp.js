@@ -13,22 +13,13 @@
 		{ key: 'dark-rose', label: 'Rose', accent: '#fb7185', background: '#18111f', text: '#ffffff' }
 	];
 	var googleSignalInfo = {
-		preferences: [
-			{ key: 'functionality_storage', label: 'functionality_storage', purpose: 'Functional storage for site features.' },
-			{ key: 'personalization_storage', label: 'personalization_storage', purpose: 'Personalization storage for saved preferences.' }
-		],
-		statistics: [
-			{ key: 'analytics_storage', label: 'analytics_storage', purpose: 'Analytics cookies and measurement.' }
-		],
-		marketing: [
-			{ key: 'ad_storage', label: 'ad_storage', purpose: 'Advertising cookies and ad measurement.' },
-			{ key: 'ad_user_data', label: 'ad_user_data', purpose: 'User data sent to Google for advertising.' },
-			{ key: 'ad_personalization', label: 'ad_personalization', purpose: 'Personalized ads and remarketing.' }
-		],
-		necessary: [
-			{ key: 'security_storage', label: 'security_storage', purpose: 'Security storage is always granted.' }
-		],
-		unclassified: []
+		ad_storage: 'Advertising cookies and ad measurement.',
+		ad_user_data: 'User data sent to Google for advertising.',
+		ad_personalization: 'Personalized ads and remarketing.',
+		analytics_storage: 'Analytics cookies and measurement.',
+		functionality_storage: 'Functional storage for site features.',
+		personalization_storage: 'Personalization storage for saved preferences.',
+		security_storage: 'Security storage is always granted.'
 	};
 	var translations = {
 		en: {
@@ -343,6 +334,18 @@
 		return null;
 	}
 
+	function serviceForUrl(url) {
+		if (!url) {
+			return null;
+		}
+		for (var i = 0; i < services.length; i += 1) {
+			if (url.toLowerCase().indexOf(String(services[i].pattern).toLowerCase()) !== -1) {
+				return services[i];
+			}
+		}
+		return null;
+	}
+
 	function isGoogleConsentAwareUrl(url) {
 		var anchor = document.createElement('a');
 		anchor.href = url;
@@ -354,8 +357,12 @@
 	}
 
 	function blockScript(node, category, src) {
+		var service = serviceForUrl(src);
 		node.type = 'text/plain';
 		node.setAttribute('data-openconsent-category', category);
+		if (service && service.name) {
+			node.setAttribute('data-openconsent-service', service.name);
+		}
 		if (src) {
 			node.setAttribute('data-openconsent-src', src);
 			node.removeAttribute('src');
@@ -433,30 +440,25 @@
 		window.gtag('consent', 'update', buildGoogleConsent(consent));
 	}
 
-	function googleSignalEnabled(signal) {
-		return !config.googleSignals || config.googleSignals[signal] !== false;
+	function googleSignalCategory(signal) {
+		var defaultMap = {
+			ad_storage: 'marketing',
+			ad_user_data: 'marketing',
+			ad_personalization: 'marketing',
+			analytics_storage: 'statistics',
+			functionality_storage: 'preferences',
+			personalization_storage: 'preferences'
+		};
+		var map = config.googleSignalMap || defaultMap;
+		return map[signal] || defaultMap[signal] || 'denied';
 	}
 
 	function buildGoogleConsent(consent) {
 		var state = { security_storage: 'granted' };
-		if (googleSignalEnabled('ad_personalization')) {
-			state.ad_personalization = consent.marketing ? 'granted' : 'denied';
-		}
-		if (googleSignalEnabled('ad_storage')) {
-			state.ad_storage = consent.marketing ? 'granted' : 'denied';
-		}
-		if (googleSignalEnabled('ad_user_data')) {
-			state.ad_user_data = consent.marketing ? 'granted' : 'denied';
-		}
-		if (googleSignalEnabled('analytics_storage')) {
-			state.analytics_storage = consent.statistics ? 'granted' : 'denied';
-		}
-		if (googleSignalEnabled('functionality_storage')) {
-			state.functionality_storage = consent.preferences ? 'granted' : 'denied';
-		}
-		if (googleSignalEnabled('personalization_storage')) {
-			state.personalization_storage = consent.preferences ? 'granted' : 'denied';
-		}
+		['ad_personalization', 'ad_storage', 'ad_user_data', 'analytics_storage', 'functionality_storage', 'personalization_storage'].forEach(function (signal) {
+			var category = googleSignalCategory(signal);
+			state[signal] = category !== 'denied' && Boolean(consent && consent[category]) ? 'granted' : 'denied';
+		});
 		return state;
 	}
 
@@ -464,6 +466,29 @@
 		return services.filter(function (service) {
 			return service.category === category;
 		});
+	}
+
+	function signalsForCategory(category) {
+		var signals = [];
+		Object.keys(googleSignalInfo).forEach(function (signal) {
+			if (signal === 'security_storage' && category === 'necessary') {
+				signals.push(signal);
+			} else if (googleSignalCategory(signal) === category) {
+				signals.push(signal);
+			}
+		});
+		return signals;
+	}
+
+	function blockedScriptsForCategory(category) {
+		return Array.prototype.slice.call(document.querySelectorAll('script[type="text/plain"][data-openconsent-category="' + category + '"]'));
+	}
+
+	function readableScriptName(script) {
+		return script.getAttribute('data-openconsent-service') ||
+			script.getAttribute('data-openconsent-src') ||
+			script.getAttribute('src') ||
+			(script.textContent ? 'Inline script' : 'Configured script');
 	}
 
 	function unblockScripts() {
@@ -618,23 +643,34 @@
 			var summary = document.createElement('summary');
 			summary.textContent = 'What this controls';
 			var detailList = document.createElement('ul');
-			var categoryServices = servicesForCategory(category);
 			var serviceItem = document.createElement('li');
-			serviceItem.textContent = categoryServices.length
-				? 'Configured services: ' + categoryServices.map(function (service) { return service.name || service.pattern; }).join(', ') + '.'
-				: 'No configured services in this category yet.';
+			var runtimeItem = document.createElement('li');
+			var signalItem = document.createElement('li');
+
+			function updateCategoryDetails() {
+				var categoryServices = servicesForCategory(category);
+				var blockedScripts = blockedScriptsForCategory(category);
+				var granted = input.checked || category === 'necessary';
+				serviceItem.textContent = categoryServices.length
+					? 'URL rules: ' + categoryServices.map(function (service) { return service.name || service.pattern; }).join(', ') + '.'
+					: 'URL rules: no services configured in this category.';
+				runtimeItem.textContent = blockedScripts.length
+					? 'Runtime scripts: ' + blockedScripts.map(readableScriptName).slice(0, 4).join(', ') + (blockedScripts.length > 4 ? ', +' + (blockedScripts.length - 4) + ' more.' : '.')
+					: 'Runtime scripts: none blocked on this page right now.';
+				signalItem.textContent = signalsForCategory(category).length
+					? 'Google signals controlled here: ' + signalsForCategory(category).join(', ') + '.'
+					: 'Google signals controlled here: none.';
+				statusItem.textContent = granted ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
+			}
+
 			detailList.appendChild(serviceItem);
-			(googleSignalInfo[category] || []).forEach(function (signal) {
-				var item = document.createElement('li');
-				item.textContent = signal.label + ': ' + (googleSignalEnabled(signal.key) ? signal.purpose : 'Disabled by the site owner.');
-				detailList.appendChild(item);
-			});
+			detailList.appendChild(runtimeItem);
+			detailList.appendChild(signalItem);
 			var statusItem = document.createElement('li');
-			statusItem.textContent = input.checked ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
 			detailList.appendChild(statusItem);
-			input.addEventListener('change', function () {
-				statusItem.textContent = input.checked ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
-			});
+			input.addEventListener('change', updateCategoryDetails);
+			details.addEventListener('toggle', updateCategoryDetails);
+			updateCategoryDetails();
 			details.appendChild(summary);
 			details.appendChild(detailList);
 			copy.appendChild(strong);

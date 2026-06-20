@@ -99,12 +99,12 @@ final class OpenConsent_CMP_Admin {
 			'text_color'          => sanitize_hex_color( $input['text_color'] ?? '' ) ?: '#ffffff',
 			'google_consent_mode' => empty( $input['google_consent_mode'] ) ? 0 : 1,
 			'google_consent_behavior' => isset( $input['google_consent_behavior'] ) && 'basic' === $input['google_consent_behavior'] ? 'basic' : 'advanced',
-			'google_signal_ad_storage' => empty( $input['google_signal_ad_storage'] ) ? 0 : 1,
-			'google_signal_ad_user_data' => empty( $input['google_signal_ad_user_data'] ) ? 0 : 1,
-			'google_signal_ad_personalization' => empty( $input['google_signal_ad_personalization'] ) ? 0 : 1,
-			'google_signal_analytics_storage' => empty( $input['google_signal_analytics_storage'] ) ? 0 : 1,
-			'google_signal_functionality_storage' => empty( $input['google_signal_functionality_storage'] ) ? 0 : 1,
-			'google_signal_personalization_storage' => empty( $input['google_signal_personalization_storage'] ) ? 0 : 1,
+			'google_signal_map_ad_storage' => $this->sanitize_signal_map( $input['google_signal_map_ad_storage'] ?? 'marketing' ),
+			'google_signal_map_ad_user_data' => $this->sanitize_signal_map( $input['google_signal_map_ad_user_data'] ?? 'marketing' ),
+			'google_signal_map_ad_personalization' => $this->sanitize_signal_map( $input['google_signal_map_ad_personalization'] ?? 'marketing' ),
+			'google_signal_map_analytics_storage' => $this->sanitize_signal_map( $input['google_signal_map_analytics_storage'] ?? 'statistics' ),
+			'google_signal_map_functionality_storage' => $this->sanitize_signal_map( $input['google_signal_map_functionality_storage'] ?? 'preferences' ),
+			'google_signal_map_personalization_storage' => $this->sanitize_signal_map( $input['google_signal_map_personalization_storage'] ?? 'preferences' ),
 			'url_passthrough'     => empty( $input['url_passthrough'] ) ? 0 : 1,
 			'ads_data_redaction'  => empty( $input['ads_data_redaction'] ) ? 0 : 1,
 			'log_retention_days'  => max( 1, absint( $input['log_retention_days'] ?? 365 ) ),
@@ -331,14 +331,14 @@ final class OpenConsent_CMP_Admin {
 							<p class="description"><?php esc_html_e( 'AdSense and other Google publisher ad tags are kept in the marketing category by default. Personalized publisher ads for EEA, UK, and Switzerland traffic require a certified TCF CMP.', 'openconsent-cmp' ); ?></p>
 							<fieldset>
 								<legend class="screen-reader-text"><?php esc_html_e( 'Google consent signals', 'openconsent-cmp' ); ?></legend>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_storage]" value="1" <?php checked( $options['google_signal_ad_storage'], 1 ); ?>> <code>ad_storage</code> <?php esc_html_e( 'Marketing storage for ads cookies.', 'openconsent-cmp' ); ?></label><br>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_user_data]" value="1" <?php checked( $options['google_signal_ad_user_data'], 1 ); ?>> <code>ad_user_data</code> <?php esc_html_e( 'Send user data to Google for ads.', 'openconsent-cmp' ); ?></label><br>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_personalization]" value="1" <?php checked( $options['google_signal_ad_personalization'], 1 ); ?>> <code>ad_personalization</code> <?php esc_html_e( 'Personalized ads and remarketing.', 'openconsent-cmp' ); ?></label><br>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_analytics_storage]" value="1" <?php checked( $options['google_signal_analytics_storage'], 1 ); ?>> <code>analytics_storage</code> <?php esc_html_e( 'Analytics cookies and measurement.', 'openconsent-cmp' ); ?></label><br>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_functionality_storage]" value="1" <?php checked( $options['google_signal_functionality_storage'], 1 ); ?>> <code>functionality_storage</code> <?php esc_html_e( 'Functional storage linked to preference choices.', 'openconsent-cmp' ); ?></label><br>
-								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_personalization_storage]" value="1" <?php checked( $options['google_signal_personalization_storage'], 1 ); ?>> <code>personalization_storage</code> <?php esc_html_e( 'Personalization storage linked to preference choices.', 'openconsent-cmp' ); ?></label>
+								<?php $this->render_signal_mapping_select( 'ad_storage', 'google_signal_map_ad_storage', __( 'Advertising cookies and ad measurement.', 'openconsent-cmp' ), $options ); ?>
+								<?php $this->render_signal_mapping_select( 'ad_user_data', 'google_signal_map_ad_user_data', __( 'User data sent to Google for advertising.', 'openconsent-cmp' ), $options ); ?>
+								<?php $this->render_signal_mapping_select( 'ad_personalization', 'google_signal_map_ad_personalization', __( 'Personalized ads and remarketing.', 'openconsent-cmp' ), $options ); ?>
+								<?php $this->render_signal_mapping_select( 'analytics_storage', 'google_signal_map_analytics_storage', __( 'Analytics cookies and measurement.', 'openconsent-cmp' ), $options ); ?>
+								<?php $this->render_signal_mapping_select( 'functionality_storage', 'google_signal_map_functionality_storage', __( 'Functional storage for site features.', 'openconsent-cmp' ), $options ); ?>
+								<?php $this->render_signal_mapping_select( 'personalization_storage', 'google_signal_map_personalization_storage', __( 'Personalization storage for saved preferences.', 'openconsent-cmp' ), $options ); ?>
 							</fieldset>
-							<p class="description"><?php esc_html_e( 'OpenConsent always sends security_storage as granted. Disabled signals are kept denied instead of being granted by a category choice.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Each signal is granted only when its mapped category is granted. Choose Always denied to keep a signal denied regardless of visitor choices. OpenConsent always sends security_storage as granted.', 'openconsent-cmp' ); ?></p>
 							<p class="description"><a href="https://developers.google.com/tag-platform/security/guides/consent" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Consent Mode setup guide', 'openconsent-cmp' ); ?></a> | <a href="https://www.google.com/about/company/user-consent-policy/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google EU user consent policy', 'openconsent-cmp' ); ?></a></p>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[ads_data_redaction]" value="1" <?php checked( $options['ads_data_redaction'], 1 ); ?>> <?php esc_html_e( 'Enable ads data redaction', 'openconsent-cmp' ); ?></label><br>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[url_passthrough]" value="1" <?php checked( $options['url_passthrough'], 1 ); ?>> <?php esc_html_e( 'Enable URL passthrough', 'openconsent-cmp' ); ?></label>
@@ -439,6 +439,46 @@ final class OpenConsent_CMP_Admin {
 		}
 
 		return $wpdb->get_results( "SELECT created_at, consent_id, consent_json FROM {$table} ORDER BY id DESC LIMIT 20" );
+	}
+
+	/**
+	 * Sanitize Google consent signal mapping.
+	 *
+	 * @param string $value Raw value.
+	 * @return string
+	 */
+	private function sanitize_signal_map( $value ) {
+		return in_array( $value, array( 'preferences', 'statistics', 'marketing', 'unclassified', 'denied' ), true ) ? $value : 'denied';
+	}
+
+	/**
+	 * Render a Google consent signal category mapping control.
+	 *
+	 * @param string $signal      Google signal name.
+	 * @param string $option_key  Option key.
+	 * @param string $description Help text.
+	 * @param array  $options     Plugin options.
+	 * @return void
+	 */
+	private function render_signal_mapping_select( $signal, $option_key, $description, $options ) {
+		$choices = array(
+			'marketing'    => __( 'Marketing grants this signal', 'openconsent-cmp' ),
+			'statistics'   => __( 'Statistics grants this signal', 'openconsent-cmp' ),
+			'preferences'  => __( 'Preferences grants this signal', 'openconsent-cmp' ),
+			'unclassified' => __( 'Unclassified grants this signal', 'openconsent-cmp' ),
+			'denied'       => __( 'Always denied', 'openconsent-cmp' ),
+		);
+		?>
+		<label style="display:block;margin:6px 0;">
+			<code><?php echo esc_html( $signal ); ?></code>
+			<select name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[<?php echo esc_attr( $option_key ); ?>]">
+				<?php foreach ( $choices as $value => $label ) : ?>
+					<option value="<?php echo esc_attr( $value ); ?>" <?php selected( $options[ $option_key ], $value ); ?>><?php echo esc_html( $label ); ?></option>
+				<?php endforeach; ?>
+			</select>
+			<span class="description"><?php echo esc_html( $description ); ?></span>
+		</label>
+		<?php
 	}
 
 	/**
