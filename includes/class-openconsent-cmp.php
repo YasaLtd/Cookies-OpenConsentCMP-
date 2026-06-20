@@ -71,6 +71,7 @@ final class OpenConsent_CMP {
 		add_action( 'wp_ajax_nopriv_openconsent_log_consent', array( $this, 'ajax_log_consent' ) );
 		add_action( 'openconsent_cmp_cleanup_logs', array( $this, 'cleanup_logs' ) );
 		add_action( 'admin_init', array( $this, 'add_privacy_policy_content' ) );
+		add_filter( 'plugin_action_links_' . plugin_basename( OPENCONSENT_CMP_FILE ), array( $this, 'plugin_action_links' ) );
 		add_shortcode( 'openconsent_declaration', array( $this, 'cookie_declaration_shortcode' ) );
 	}
 
@@ -108,6 +109,8 @@ final class OpenConsent_CMP {
 		if ( ! wp_next_scheduled( 'openconsent_cmp_cleanup_logs' ) ) {
 			wp_schedule_event( time() + DAY_IN_SECONDS, 'daily', 'openconsent_cmp_cleanup_logs' );
 		}
+
+		set_transient( 'openconsent_cmp_activation_notice', 1, defined( 'MINUTE_IN_SECONDS' ) ? MINUTE_IN_SECONDS : 60 );
 	}
 
 	/**
@@ -203,6 +206,18 @@ final class OpenConsent_CMP {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Add plugin row actions.
+	 *
+	 * @param array $links Existing action links.
+	 * @return array
+	 */
+	public function plugin_action_links( $links ) {
+		$settings = '<a href="' . esc_url( admin_url( 'options-general.php?page=openconsent-cmp' ) ) . '">' . esc_html__( 'Settings', 'openconsent-cmp' ) . '</a>';
+		array_unshift( $links, $settings );
+		return $links;
 	}
 
 	/**

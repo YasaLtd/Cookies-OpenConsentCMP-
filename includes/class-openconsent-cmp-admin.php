@@ -30,6 +30,7 @@ final class OpenConsent_CMP_Admin {
 
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
+		add_action( 'admin_notices', array( $this, 'activation_notice' ) );
 		add_action( 'admin_post_openconsent_run_scan', array( $this, 'run_scan' ) );
 		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
 	}
@@ -64,6 +65,28 @@ final class OpenConsent_CMP_Admin {
 				'default'           => OpenConsent_CMP::defaults(),
 			)
 		);
+	}
+
+	/**
+	 * Show first-run setup notice after activation.
+	 *
+	 * @return void
+	 */
+	public function activation_notice() {
+		if ( ! current_user_can( 'manage_options' ) || ! get_transient( 'openconsent_cmp_activation_notice' ) ) {
+			return;
+		}
+
+		delete_transient( 'openconsent_cmp_activation_notice' );
+		?>
+		<div class="notice notice-success is-dismissible">
+			<p>
+				<strong><?php esc_html_e( 'OpenConsent CMP is active.', 'openconsent-cmp' ); ?></strong>
+				<?php esc_html_e( 'Review the consent banner, service registry, and Google Consent Mode settings before relying on it in production.', 'openconsent-cmp' ); ?>
+				<a href="<?php echo esc_url( admin_url( 'options-general.php?page=openconsent-cmp' ) ); ?>"><?php esc_html_e( 'Open settings', 'openconsent-cmp' ); ?></a>
+			</p>
+		</div>
+		<?php
 	}
 
 	/**
