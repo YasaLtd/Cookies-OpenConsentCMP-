@@ -65,6 +65,19 @@
 	margin-bottom: 12px;
 }
 
+.openconsent__links {
+	display: flex;
+	flex-wrap: wrap;
+	font-size: 12px;
+	gap: 6px;
+	line-height: 1.35;
+	margin: -4px 0 12px;
+}
+
+.openconsent__links a {
+	color: var(--openconsent-accent);
+}
+
 .openconsent__region {
 	background: rgba(84, 210, 191, 0.12);
 	border: 1px solid rgba(84, 210, 191, 0.28);
@@ -107,6 +120,31 @@
 	font-size: 13px;
 	line-height: 1.4;
 	opacity: 0.78;
+}
+
+.openconsent__details {
+	margin-top: 7px;
+}
+
+.openconsent__details summary {
+	color: var(--openconsent-accent);
+	cursor: pointer;
+	font-size: 12px;
+	font-weight: 650;
+	line-height: 1.35;
+}
+
+.openconsent__details ul {
+	display: grid;
+	gap: 4px;
+	margin: 7px 0 0 18px;
+	padding: 0;
+}
+
+.openconsent__details li {
+	font-size: 12px;
+	line-height: 1.35;
+	opacity: 0.84;
 }
 
 .openconsent__summary {

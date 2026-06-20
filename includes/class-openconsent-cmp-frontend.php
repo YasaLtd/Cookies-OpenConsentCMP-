@@ -77,6 +77,14 @@ final class OpenConsent_CMP_Frontend {
 				'blockingMode'      => $options['blocking_mode'],
 				'googleConsentMode' => ! empty( $options['google_consent_mode'] ),
 				'googleConsentBehavior' => $options['google_consent_behavior'],
+				'googleSignals'      => array(
+					'ad_storage'              => ! empty( $options['google_signal_ad_storage'] ),
+					'ad_user_data'            => ! empty( $options['google_signal_ad_user_data'] ),
+					'ad_personalization'      => ! empty( $options['google_signal_ad_personalization'] ),
+					'analytics_storage'       => ! empty( $options['google_signal_analytics_storage'] ),
+					'functionality_storage'   => ! empty( $options['google_signal_functionality_storage'] ),
+					'personalization_storage' => ! empty( $options['google_signal_personalization_storage'] ),
+				),
 				'urlPassthrough'    => ! empty( $options['url_passthrough'] ),
 				'adsDataRedaction'  => ! empty( $options['ads_data_redaction'] ),
 				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ) && 'auto' === $banner_language,
@@ -151,12 +159,12 @@ final class OpenConsent_CMP_Frontend {
 			window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
 			<?php if ( ! empty( $options['google_consent_mode'] ) ) : ?>
 			window.gtag('consent', 'default', {
-				ad_personalization: 'denied',
-				ad_storage: 'denied',
-				ad_user_data: 'denied',
-				analytics_storage: 'denied',
-				functionality_storage: 'denied',
-				personalization_storage: 'denied',
+				<?php if ( ! empty( $options['google_signal_ad_personalization'] ) ) : ?>ad_personalization: 'denied',<?php endif; ?>
+				<?php if ( ! empty( $options['google_signal_ad_storage'] ) ) : ?>ad_storage: 'denied',<?php endif; ?>
+				<?php if ( ! empty( $options['google_signal_ad_user_data'] ) ) : ?>ad_user_data: 'denied',<?php endif; ?>
+				<?php if ( ! empty( $options['google_signal_analytics_storage'] ) ) : ?>analytics_storage: 'denied',<?php endif; ?>
+				<?php if ( ! empty( $options['google_signal_functionality_storage'] ) ) : ?>functionality_storage: 'denied',<?php endif; ?>
+				<?php if ( ! empty( $options['google_signal_personalization_storage'] ) ) : ?>personalization_storage: 'denied',<?php endif; ?>
 				security_storage: 'granted',
 				wait_for_update: 500
 			});
@@ -167,12 +175,12 @@ final class OpenConsent_CMP_Frontend {
 				if (match) {
 					var consent = JSON.parse(decodeURIComponent(match[1]));
 					window.gtag('consent', 'update', {
-						ad_personalization: consent.marketing ? 'granted' : 'denied',
-						ad_storage: consent.marketing ? 'granted' : 'denied',
-						ad_user_data: consent.marketing ? 'granted' : 'denied',
-						analytics_storage: consent.statistics ? 'granted' : 'denied',
-						functionality_storage: consent.preferences ? 'granted' : 'denied',
-						personalization_storage: consent.preferences ? 'granted' : 'denied',
+						<?php if ( ! empty( $options['google_signal_ad_personalization'] ) ) : ?>ad_personalization: consent.marketing ? 'granted' : 'denied',<?php endif; ?>
+						<?php if ( ! empty( $options['google_signal_ad_storage'] ) ) : ?>ad_storage: consent.marketing ? 'granted' : 'denied',<?php endif; ?>
+						<?php if ( ! empty( $options['google_signal_ad_user_data'] ) ) : ?>ad_user_data: consent.marketing ? 'granted' : 'denied',<?php endif; ?>
+						<?php if ( ! empty( $options['google_signal_analytics_storage'] ) ) : ?>analytics_storage: consent.statistics ? 'granted' : 'denied',<?php endif; ?>
+						<?php if ( ! empty( $options['google_signal_functionality_storage'] ) ) : ?>functionality_storage: consent.preferences ? 'granted' : 'denied',<?php endif; ?>
+						<?php if ( ! empty( $options['google_signal_personalization_storage'] ) ) : ?>personalization_storage: consent.preferences ? 'granted' : 'denied',<?php endif; ?>
 						security_storage: 'granted'
 					});
 				}

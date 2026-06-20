@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.6
+Stable tag: 1.0.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -31,6 +31,7 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 * Browser-translation-friendly banner DOM with visible text and language attributes.
 * Automatic URL-pattern script blocking and manual blocking markup.
 * Google Consent Mode v2 Basic and Advanced behavior.
+* Per-signal Google Consent Mode controls for ad storage, ad user data, ad personalization, analytics storage, functionality storage, and personalization storage.
 * Local anonymized consent log table with retention cleanup.
 * Cookie declaration shortcode: [openconsent_declaration].
 * Homepage scan for Set-Cookie headers and external static resource hosts.
@@ -75,6 +76,11 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.7 =
+* Adds per-signal Google Consent Mode controls in the admin screen.
+* Adds expandable visitor banner details showing blocked services and affected Google consent signals.
+* Adds direct Google Consent Mode and user consent policy links in admin and frontend details.
 
 = 1.0.6 =
 * Adds region behavior controls for strict opt-in, browser-hint auto mode, and notice mode.

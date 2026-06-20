@@ -12,6 +12,24 @@
 		{ key: 'dark-gold', label: 'Gold', accent: '#f0b84f', background: '#1f2937', text: '#ffffff' },
 		{ key: 'dark-rose', label: 'Rose', accent: '#fb7185', background: '#18111f', text: '#ffffff' }
 	];
+	var googleSignalInfo = {
+		preferences: [
+			{ key: 'functionality_storage', label: 'functionality_storage', purpose: 'Functional storage for site features.' },
+			{ key: 'personalization_storage', label: 'personalization_storage', purpose: 'Personalization storage for saved preferences.' }
+		],
+		statistics: [
+			{ key: 'analytics_storage', label: 'analytics_storage', purpose: 'Analytics cookies and measurement.' }
+		],
+		marketing: [
+			{ key: 'ad_storage', label: 'ad_storage', purpose: 'Advertising cookies and ad measurement.' },
+			{ key: 'ad_user_data', label: 'ad_user_data', purpose: 'User data sent to Google for advertising.' },
+			{ key: 'ad_personalization', label: 'ad_personalization', purpose: 'Personalized ads and remarketing.' }
+		],
+		necessary: [
+			{ key: 'security_storage', label: 'security_storage', purpose: 'Security storage is always granted.' }
+		],
+		unclassified: []
+	};
 	var translations = {
 		en: {
 			title: 'Your privacy choices',
@@ -23,6 +41,8 @@
 			customize: 'Customize',
 			revoke: 'Privacy choices',
 			privacyPolicy: 'Privacy policy',
+			googleGuide: 'Google Consent Mode guide',
+			consentPolicy: 'Google user consent policy',
 			regionStrict: 'Strict opt-in applies for your region.',
 			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
 			categories: {
@@ -239,6 +259,8 @@
 		});
 
 		resolved.privacyPolicy = dictionary.privacyPolicy || english.privacyPolicy;
+		resolved.googleGuide = dictionary.googleGuide || english.googleGuide;
+		resolved.consentPolicy = dictionary.consentPolicy || english.consentPolicy;
 		resolved.position = ui.position;
 		resolved.accent = ui.accent;
 		resolved.background = ui.background;
@@ -408,14 +430,39 @@
 			return;
 		}
 
-		window.gtag('consent', 'update', {
-			ad_personalization: consent.marketing ? 'granted' : 'denied',
-			ad_storage: consent.marketing ? 'granted' : 'denied',
-			ad_user_data: consent.marketing ? 'granted' : 'denied',
-			analytics_storage: consent.statistics ? 'granted' : 'denied',
-			functionality_storage: consent.preferences ? 'granted' : 'denied',
-			personalization_storage: consent.preferences ? 'granted' : 'denied',
-			security_storage: 'granted'
+		window.gtag('consent', 'update', buildGoogleConsent(consent));
+	}
+
+	function googleSignalEnabled(signal) {
+		return !config.googleSignals || config.googleSignals[signal] !== false;
+	}
+
+	function buildGoogleConsent(consent) {
+		var state = { security_storage: 'granted' };
+		if (googleSignalEnabled('ad_personalization')) {
+			state.ad_personalization = consent.marketing ? 'granted' : 'denied';
+		}
+		if (googleSignalEnabled('ad_storage')) {
+			state.ad_storage = consent.marketing ? 'granted' : 'denied';
+		}
+		if (googleSignalEnabled('ad_user_data')) {
+			state.ad_user_data = consent.marketing ? 'granted' : 'denied';
+		}
+		if (googleSignalEnabled('analytics_storage')) {
+			state.analytics_storage = consent.statistics ? 'granted' : 'denied';
+		}
+		if (googleSignalEnabled('functionality_storage')) {
+			state.functionality_storage = consent.preferences ? 'granted' : 'denied';
+		}
+		if (googleSignalEnabled('personalization_storage')) {
+			state.personalization_storage = consent.preferences ? 'granted' : 'denied';
+		}
+		return state;
+	}
+
+	function servicesForCategory(category) {
+		return services.filter(function (service) {
+			return service.category === category;
 		});
 	}
 
@@ -566,8 +613,33 @@
 			var small = document.createElement('small');
 			small.id = descriptionId;
 			small.textContent = (ui.descriptions && ui.descriptions[category]) || '';
+			var details = document.createElement('details');
+			details.className = 'openconsent__details';
+			var summary = document.createElement('summary');
+			summary.textContent = 'What this controls';
+			var detailList = document.createElement('ul');
+			var categoryServices = servicesForCategory(category);
+			var serviceItem = document.createElement('li');
+			serviceItem.textContent = categoryServices.length
+				? 'Configured services: ' + categoryServices.map(function (service) { return service.name || service.pattern; }).join(', ') + '.'
+				: 'No configured services in this category yet.';
+			detailList.appendChild(serviceItem);
+			(googleSignalInfo[category] || []).forEach(function (signal) {
+				var item = document.createElement('li');
+				item.textContent = signal.label + ': ' + (googleSignalEnabled(signal.key) ? signal.purpose : 'Disabled by the site owner.');
+				detailList.appendChild(item);
+			});
+			var statusItem = document.createElement('li');
+			statusItem.textContent = input.checked ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
+			detailList.appendChild(statusItem);
+			input.addEventListener('change', function () {
+				statusItem.textContent = input.checked ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
+			});
+			details.appendChild(summary);
+			details.appendChild(detailList);
 			copy.appendChild(strong);
 			copy.appendChild(small);
+			copy.appendChild(details);
 			label.appendChild(input);
 			label.appendChild(copy);
 			categoriesWrap.appendChild(label);
@@ -652,6 +724,11 @@
 			privacy.textContent = ui.privacyPolicy || 'Privacy policy';
 			panel.appendChild(privacy);
 		}
+
+		var links = document.createElement('p');
+		links.className = 'openconsent__links';
+		links.innerHTML = '<a href="https://developers.google.com/tag-platform/security/guides/consent" target="_blank" rel="noopener noreferrer">' + (ui.googleGuide || 'Google Consent Mode guide') + '</a> <span>/</span> <a href="https://www.google.com/about/company/user-consent-policy/" target="_blank" rel="noopener noreferrer">' + (ui.consentPolicy || 'Google user consent policy') + '</a>';
+		panel.appendChild(links);
 
 		panel.appendChild(categoriesWrap);
 		panel.appendChild(choicesSummary);

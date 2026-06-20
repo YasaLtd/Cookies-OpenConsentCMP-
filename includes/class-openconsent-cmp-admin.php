@@ -99,6 +99,12 @@ final class OpenConsent_CMP_Admin {
 			'text_color'          => sanitize_hex_color( $input['text_color'] ?? '' ) ?: '#ffffff',
 			'google_consent_mode' => empty( $input['google_consent_mode'] ) ? 0 : 1,
 			'google_consent_behavior' => isset( $input['google_consent_behavior'] ) && 'basic' === $input['google_consent_behavior'] ? 'basic' : 'advanced',
+			'google_signal_ad_storage' => empty( $input['google_signal_ad_storage'] ) ? 0 : 1,
+			'google_signal_ad_user_data' => empty( $input['google_signal_ad_user_data'] ) ? 0 : 1,
+			'google_signal_ad_personalization' => empty( $input['google_signal_ad_personalization'] ) ? 0 : 1,
+			'google_signal_analytics_storage' => empty( $input['google_signal_analytics_storage'] ) ? 0 : 1,
+			'google_signal_functionality_storage' => empty( $input['google_signal_functionality_storage'] ) ? 0 : 1,
+			'google_signal_personalization_storage' => empty( $input['google_signal_personalization_storage'] ) ? 0 : 1,
 			'url_passthrough'     => empty( $input['url_passthrough'] ) ? 0 : 1,
 			'ads_data_redaction'  => empty( $input['ads_data_redaction'] ) ? 0 : 1,
 			'log_retention_days'  => max( 1, absint( $input['log_retention_days'] ?? 365 ) ),
@@ -323,6 +329,17 @@ final class OpenConsent_CMP_Admin {
 							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_consent_behavior]" value="advanced" <?php checked( $options['google_consent_behavior'], 'advanced' ); ?>> <?php esc_html_e( 'Advanced: allow Google consent-aware tags to load with denied defaults', 'openconsent-cmp' ); ?></label><br>
 							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_consent_behavior]" value="basic" <?php checked( $options['google_consent_behavior'], 'basic' ); ?>> <?php esc_html_e( 'Basic: block Google tags until consent is granted', 'openconsent-cmp' ); ?></label><br>
 							<p class="description"><?php esc_html_e( 'AdSense and other Google publisher ad tags are kept in the marketing category by default. Personalized publisher ads for EEA, UK, and Switzerland traffic require a certified TCF CMP.', 'openconsent-cmp' ); ?></p>
+							<fieldset>
+								<legend class="screen-reader-text"><?php esc_html_e( 'Google consent signals', 'openconsent-cmp' ); ?></legend>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_storage]" value="1" <?php checked( $options['google_signal_ad_storage'], 1 ); ?>> <code>ad_storage</code> <?php esc_html_e( 'Marketing storage for ads cookies.', 'openconsent-cmp' ); ?></label><br>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_user_data]" value="1" <?php checked( $options['google_signal_ad_user_data'], 1 ); ?>> <code>ad_user_data</code> <?php esc_html_e( 'Send user data to Google for ads.', 'openconsent-cmp' ); ?></label><br>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_ad_personalization]" value="1" <?php checked( $options['google_signal_ad_personalization'], 1 ); ?>> <code>ad_personalization</code> <?php esc_html_e( 'Personalized ads and remarketing.', 'openconsent-cmp' ); ?></label><br>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_analytics_storage]" value="1" <?php checked( $options['google_signal_analytics_storage'], 1 ); ?>> <code>analytics_storage</code> <?php esc_html_e( 'Analytics cookies and measurement.', 'openconsent-cmp' ); ?></label><br>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_functionality_storage]" value="1" <?php checked( $options['google_signal_functionality_storage'], 1 ); ?>> <code>functionality_storage</code> <?php esc_html_e( 'Functional storage linked to preference choices.', 'openconsent-cmp' ); ?></label><br>
+								<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[google_signal_personalization_storage]" value="1" <?php checked( $options['google_signal_personalization_storage'], 1 ); ?>> <code>personalization_storage</code> <?php esc_html_e( 'Personalization storage linked to preference choices.', 'openconsent-cmp' ); ?></label>
+							</fieldset>
+							<p class="description"><?php esc_html_e( 'OpenConsent always sends security_storage as granted. Disabled signals are kept denied instead of being granted by a category choice.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><a href="https://developers.google.com/tag-platform/security/guides/consent" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Consent Mode setup guide', 'openconsent-cmp' ); ?></a> | <a href="https://www.google.com/about/company/user-consent-policy/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google EU user consent policy', 'openconsent-cmp' ); ?></a></p>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[ads_data_redaction]" value="1" <?php checked( $options['ads_data_redaction'], 1 ); ?>> <?php esc_html_e( 'Enable ads data redaction', 'openconsent-cmp' ); ?></label><br>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[url_passthrough]" value="1" <?php checked( $options['url_passthrough'], 1 ); ?>> <?php esc_html_e( 'Enable URL passthrough', 'openconsent-cmp' ); ?></label>
 						</td>
