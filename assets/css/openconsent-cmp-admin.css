@@ -1,0 +1,81 @@
+.openconsent-admin-grid {
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(4, minmax(0, 1fr));
+	margin: 18px 0;
+}
+
+.openconsent-admin-card,
+.openconsent-settings-card {
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	box-sizing: border-box;
+	padding: 16px;
+}
+
+.openconsent-admin-card strong {
+	display: block;
+	font-size: 24px;
+	line-height: 1.1;
+}
+
+.openconsent-admin-card span {
+	color: #646970;
+	display: block;
+	margin-top: 6px;
+}
+
+.openconsent-settings-card {
+	margin: 16px 0;
+}
+
+.openconsent-settings-card h2 {
+	margin-top: 0;
+}
+
+.openconsent-help-list {
+	list-style: disc;
+	margin-left: 18px;
+}
+
+.openconsent-button-grid {
+	display: grid;
+	gap: 10px;
+	grid-template-columns: repeat(5, minmax(130px, 1fr));
+}
+
+.openconsent-button-grid label,
+.openconsent-signal-map {
+	display: grid;
+	gap: 5px;
+}
+
+.openconsent-signal-map {
+	align-items: start;
+	grid-template-columns: 180px minmax(220px, 300px) 1fr;
+	margin: 10px 0;
+	max-width: 920px;
+}
+
+.openconsent-signal-map code {
+	align-self: center;
+}
+
+@media (max-width: 1100px) {
+	.openconsent-admin-grid,
+	.openconsent-button-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+
+	.openconsent-signal-map {
+		grid-template-columns: 1fr;
+	}
+}
+
+@media (max-width: 782px) {
+	.openconsent-admin-grid,
+	.openconsent-button-grid {
+		grid-template-columns: 1fr;
+	}
+}

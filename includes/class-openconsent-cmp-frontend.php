@@ -31,6 +31,7 @@ final class OpenConsent_CMP_Frontend {
 		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue' ) );
 		add_action( 'wp_head', array( $this, 'print_early_consent_script' ), 0 );
 		add_filter( 'script_loader_tag', array( $this, 'filter_script_tag' ), 10, 3 );
+		add_filter( 'the_content', array( $this, 'filter_content_embeds' ), 20 );
 	}
 
 	/**
@@ -216,23 +217,74 @@ final class OpenConsent_CMP_Frontend {
 			return $tag;
 		}
 
-		if ( ! empty( $options['google_consent_mode'] ) && 'advanced' === $options['google_consent_behavior'] && $this->is_google_consent_aware_url( $src ) ) {
+		$service = $this->match_handle( $handle );
+
+		if ( ! $service && ! empty( $options['google_consent_mode'] ) && 'advanced' === $options['google_consent_behavior'] && $this->is_google_consent_aware_url( $src ) ) {
 			return $tag;
 		}
 
-		$category = $this->match_category( $src );
-		if ( ! $category ) {
+		if ( ! $service ) {
+			$service = $this->match_service( $src );
+		}
+
+		if ( ! $service ) {
 			return $tag;
 		}
 
 		$attrs = sprintf(
-			'type="text/plain" data-openconsent-category="%s" data-openconsent-src="%s" data-openconsent-handle="%s"',
-			esc_attr( $category ),
+			'type="text/plain" data-openconsent-category="%s" data-openconsent-src="%s" data-openconsent-handle="%s" data-openconsent-service="%s"',
+			esc_attr( $service['category'] ),
 			esc_url( $src ),
-			esc_attr( $handle )
+			esc_attr( $handle ),
+			esc_attr( $service['name'] )
 		);
 
 		return preg_replace( '/<script\b[^>]*src=(["\']).*?\1[^>]*><\/script>/i', '<script ' . $attrs . '></script>', $tag ) ?: $tag;
+	}
+
+	/**
+	 * Replace matching iframe sources until the visitor grants the mapped category.
+	 *
+	 * @param string $content Post content.
+	 * @return string
+	 */
+	public function filter_content_embeds( $content ) {
+		$options = $this->plugin->options();
+		if ( empty( $options['enabled'] ) || empty( $options['block_iframes'] ) || 'auto' !== $options['blocking_mode'] || false === stripos( $content, '<iframe' ) ) {
+			return $content;
+		}
+
+		return preg_replace_callback(
+			'/<iframe\b[^>]*>/i',
+			function ( $matches ) {
+				$tag = $matches[0];
+				if ( false !== stripos( $tag, 'data-openconsent-category=' ) ) {
+					return $tag;
+				}
+
+				if ( ! preg_match( '/\ssrc=(["\'])(.*?)\1/i', $tag, $src_match ) ) {
+					return $tag;
+				}
+
+				$src     = html_entity_decode( $src_match[2], ENT_QUOTES, get_bloginfo( 'charset' ) );
+				$service = $this->match_service( $src );
+				if ( ! $service || $this->visitor_has_consent( $service['category'] ) ) {
+					return $tag;
+				}
+
+				$clean = preg_replace( '/\s(?:src|srcdoc|data-openconsent-[a-z-]+)=(["\']).*?\1/i', '', $tag );
+				$attrs = sprintf(
+					' src="about:blank" srcdoc="%s" data-openconsent-category="%s" data-openconsent-src="%s" data-openconsent-service="%s" data-openconsent-blocked="1"',
+					esc_attr__( 'This embed is blocked until you allow its cookie category.', 'openconsent-cmp' ),
+					esc_attr( $service['category'] ),
+					esc_url( $src ),
+					esc_attr( $service['name'] )
+				);
+
+				return preg_replace( '/\s*>$/', $attrs . '>', $clean ) ?: $tag;
+			},
+			$content
+		);
 	}
 
 	/**
@@ -242,13 +294,65 @@ final class OpenConsent_CMP_Frontend {
 	 * @return string|false
 	 */
 	private function match_category( $src ) {
-		foreach ( $this->plugin->services() as $service ) {
-			if ( false !== stripos( $src, $service['pattern'] ) ) {
-				return $service['category'];
+		$service = $this->match_service( $src );
+		return $service ? $service['category'] : false;
+	}
+
+	/**
+	 * Match a registered WordPress script handle to a consent service.
+	 *
+	 * @param string $handle Script handle.
+	 * @return array|false
+	 */
+	private function match_handle( $handle ) {
+		$handle = sanitize_key( $handle );
+		if ( '' === $handle ) {
+			return false;
+		}
+
+		foreach ( $this->plugin->script_handles() as $service ) {
+			if ( $handle === $service['handle'] ) {
+				return $service;
 			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Match a URL to a configured service.
+	 *
+	 * @param string $src Resource URL.
+	 * @return array|false
+	 */
+	private function match_service( $src ) {
+		foreach ( $this->plugin->services() as $service ) {
+			if ( false !== stripos( $src, $service['pattern'] ) ) {
+				return $service;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Check whether the current request already carries consent for a category.
+	 *
+	 * @param string $category Consent category.
+	 * @return bool
+	 */
+	private function visitor_has_consent( $category ) {
+		if ( 'necessary' === $category ) {
+			return true;
+		}
+
+		if ( empty( $_COOKIE['openconsent_cmp'] ) ) {
+			return false;
+		}
+
+		$raw     = sanitize_text_field( wp_unslash( $_COOKIE['openconsent_cmp'] ) );
+		$consent = json_decode( rawurldecode( $raw ), true );
+		return is_array( $consent ) && ! empty( $consent[ $category ] );
 	}
 
 	/**

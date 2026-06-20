@@ -14,7 +14,7 @@ Logo asset: `assets/openconsent-cmp-logo.svg`.
 
 ## Repository Description
 
-Open source WordPress consent management plugin by YASA LTD with categories, prior script blocking, local consent logs, cookie declarations, browser-language detection, and Google Consent Mode v2 support.
+Open source WordPress consent management plugin by YASA LTD with consent categories, script and embed blocking, local consent logs, cookie declarations, browser-language detection, region behavior controls, and Google Consent Mode v2 support.
 
 ## Suggested GitHub Topics
 
@@ -22,8 +22,8 @@ Open source WordPress consent management plugin by YASA LTD with categories, pri
 
 ## What it does
 
-- Shows a configurable consent dialog with necessary, preferences, statistics, and marketing categories.
-- Blocks configured WordPress scripts and dynamically inserted scripts until the matching category is granted.
+- Shows a configurable consent dialog with necessary, preferences, statistics, marketing, and unclassified categories.
+- Blocks configured WordPress script handles, URL-matched scripts, dynamically inserted scripts, and matching iframe embeds until the visitor grants the mapped category.
 - Emits Google Consent Mode v2 default denied signals and updates them after consent.
 - Supports Google Consent Mode Basic or Advanced behavior. Advanced mode lets consent-aware Google tags load with denied defaults so they can adjust behavior before consent.
 - Stores anonymized consent audit records in a local WordPress table.
@@ -32,7 +32,7 @@ Open source WordPress consent management plugin by YASA LTD with categories, pri
 - Keeps banner copy as regular visible DOM text with `translate="yes"` and `lang` attributes so browser translation tools can translate it.
 - Provides a `[openconsent_declaration]` shortcode for a cookie declaration page.
 - Includes a local homepage scanner that reports `Set-Cookie` headers and external static resource hosts.
-- Lets site owners maintain an open service registry using `pattern|category|name` lines.
+- Lets site owners maintain an open service registry using `pattern|category|name` lines and optional script-handle rules using `handle|category|name` lines.
 
 ## Google publisher ads and TCF
 
@@ -48,7 +48,7 @@ Hosted CMPs often provide cloud crawling, managed cookie repositories, geolocati
 
 ## Installation
 
-1. Copy the `openconsent-cmp` directory into `wp-content/plugins/`.
+1. Upload the release ZIP through **Plugins > Add New > Upload Plugin**, or copy the plugin files into `wp-content/plugins/openconsent-cmp/`.
 2. Activate **OpenConsent CMP** in WordPress.
 3. Open **Settings > OpenConsent CMP**.
 4. Review the service registry and add any third-party scripts used by the site.
@@ -71,6 +71,14 @@ Inline snippets also work:
   console.log('Runs after marketing consent.');
 </script>
 ```
+
+Registered WordPress script handles can also be mapped in **Settings > OpenConsent CMP**:
+
+```text
+contact-form-analytics|statistics|Contact form analytics
+```
+
+Iframe embeds whose URLs match the service registry are replaced with a consent placeholder until the mapped category is granted.
 
 ## Public JavaScript API
 

@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.10
+Stable tag: 1.0.11
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -29,7 +29,7 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 * Browser-language detection, WordPress-locale mode, or fixed banner language for built-in frontend labels.
 * Region behavior controls for strict opt-in, browser-hint auto mode, or notice mode.
 * Browser-translation-friendly banner DOM with visible text and language attributes.
-* Automatic URL-pattern script blocking and manual blocking markup.
+* Automatic URL-pattern script blocking, WordPress script handle blocking, iframe embed blocking, and manual blocking markup.
 * Google Consent Mode v2 Basic and Advanced behavior.
 * Per-signal Google Consent Mode mapping for ad storage, ad user data, ad personalization, analytics storage, functionality storage, and personalization storage.
 * Local anonymized consent log table with retention cleanup.
@@ -76,6 +76,12 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.11 =
+* Adds WordPress script handle rules for local or plugin-registered scripts that cannot be identified by URL pattern alone.
+* Adds consent-aware iframe embed blocking for matching services in post content.
+* Restores matching blocked embeds when consent is granted and reports blocked scripts and embeds in the visitor dialog details.
+* Moves admin styling into a dedicated enqueued admin stylesheet.
 
 = 1.0.10 =
 * Adds a native Settings link on the WordPress Plugins screen.

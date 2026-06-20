@@ -372,12 +372,36 @@
 		window.OpenConsentQueue.push(node);
 	}
 
+	function blockFrame(node, category, src) {
+		var service = serviceForUrl(src);
+		node.setAttribute('src', 'about:blank');
+		node.setAttribute('srcdoc', 'This embed is blocked until you allow its cookie category.');
+		node.setAttribute('data-openconsent-category', category);
+		node.setAttribute('data-openconsent-src', src);
+		node.setAttribute('data-openconsent-blocked', '1');
+		if (service && service.name) {
+			node.setAttribute('data-openconsent-service', service.name);
+		}
+	}
+
 	function shouldBlockScript(node) {
 		var src = node.getAttribute && (node.getAttribute('src') || node.getAttribute('data-openconsent-src'));
 		var category = node.getAttribute && node.getAttribute('data-openconsent-category');
 		category = category || categoryForUrl(src);
 
 		if (!category || hasConsent(category)) {
+			return null;
+		}
+
+		return { category: category, src: src };
+	}
+
+	function shouldBlockFrame(node) {
+		var src = node.getAttribute && (node.getAttribute('src') || node.getAttribute('data-openconsent-src'));
+		var category = node.getAttribute && node.getAttribute('data-openconsent-category');
+		category = category || categoryForUrl(src);
+
+		if (!src || !category || hasConsent(category)) {
 			return null;
 		}
 
@@ -419,6 +443,11 @@
 			var decision = node && node.tagName === 'SCRIPT' ? shouldBlockScript(node) : null;
 			if (decision) {
 				blockScript(node, decision.category, decision.src);
+			} else if (node && node.tagName === 'IFRAME') {
+				decision = shouldBlockFrame(node);
+				if (decision) {
+					blockFrame(node, decision.category, decision.src);
+				}
 			}
 			return originalAppendChild.call(this, node);
 		};
@@ -427,6 +456,11 @@
 			var decision = node && node.tagName === 'SCRIPT' ? shouldBlockScript(node) : null;
 			if (decision) {
 				blockScript(node, decision.category, decision.src);
+			} else if (node && node.tagName === 'IFRAME') {
+				decision = shouldBlockFrame(node);
+				if (decision) {
+					blockFrame(node, decision.category, decision.src);
+				}
 			}
 			return originalInsertBefore.call(this, node, reference);
 		};
@@ -480,15 +514,18 @@
 		return signals;
 	}
 
-	function blockedScriptsForCategory(category) {
-		return Array.prototype.slice.call(document.querySelectorAll('script[type="text/plain"][data-openconsent-category="' + category + '"]'));
+	function blockedItemsForCategory(category) {
+		var scripts = Array.prototype.slice.call(document.querySelectorAll('script[type="text/plain"][data-openconsent-category="' + category + '"]'));
+		var frames = Array.prototype.slice.call(document.querySelectorAll('iframe[data-openconsent-category="' + category + '"][data-openconsent-src]'));
+		return scripts.concat(frames);
 	}
 
-	function readableScriptName(script) {
-		return script.getAttribute('data-openconsent-service') ||
-			script.getAttribute('data-openconsent-src') ||
-			script.getAttribute('src') ||
-			(script.textContent ? 'Inline script' : 'Configured script');
+	function readableBlockedItem(node) {
+		var fallback = node.tagName === 'IFRAME' ? 'Blocked embed' : 'Configured script';
+		return node.getAttribute('data-openconsent-service') ||
+			node.getAttribute('data-openconsent-src') ||
+			node.getAttribute('src') ||
+			(node.textContent ? 'Inline script' : fallback);
 	}
 
 	function unblockScripts() {
@@ -515,6 +552,22 @@
 			}
 
 			script.parentNode.replaceChild(fresh, script);
+		});
+	}
+
+	function unblockFrames() {
+		var blocked = Array.prototype.slice.call(document.querySelectorAll('iframe[data-openconsent-category][data-openconsent-src]'));
+
+		blocked.forEach(function (frame) {
+			var category = frame.getAttribute('data-openconsent-category');
+			var src = frame.getAttribute('data-openconsent-src');
+			if (!src || !hasConsent(category)) {
+				return;
+			}
+
+			frame.setAttribute('src', src);
+			frame.removeAttribute('srcdoc');
+			frame.removeAttribute('data-openconsent-blocked');
 		});
 	}
 
@@ -551,6 +604,7 @@
 		writeConsent(consent);
 		updateGoogleConsent(consent);
 		unblockScripts();
+		unblockFrames();
 		logConsent(consent);
 		renderFloatingControl();
 		window.dispatchEvent(new CustomEvent('openconsent:updated', { detail: consent }));
@@ -573,6 +627,7 @@
 			if (existing) {
 				updateGoogleConsent(existing);
 				unblockScripts();
+				unblockFrames();
 				renderFloatingControl();
 			}
 			return;
@@ -649,14 +704,14 @@
 
 			function updateCategoryDetails() {
 				var categoryServices = servicesForCategory(category);
-				var blockedScripts = blockedScriptsForCategory(category);
+				var blockedItems = blockedItemsForCategory(category);
 				var granted = input.checked || category === 'necessary';
 				serviceItem.textContent = categoryServices.length
 					? 'URL rules: ' + categoryServices.map(function (service) { return service.name || service.pattern; }).join(', ') + '.'
 					: 'URL rules: no services configured in this category.';
-				runtimeItem.textContent = blockedScripts.length
-					? 'Runtime scripts: ' + blockedScripts.map(readableScriptName).slice(0, 4).join(', ') + (blockedScripts.length > 4 ? ', +' + (blockedScripts.length - 4) + ' more.' : '.')
-					: 'Runtime scripts: none blocked on this page right now.';
+				runtimeItem.textContent = blockedItems.length
+					? 'Blocked on this page: ' + blockedItems.map(readableBlockedItem).slice(0, 4).join(', ') + (blockedItems.length > 4 ? ', +' + (blockedItems.length - 4) + ' more.' : '.')
+					: 'Blocked on this page: no matching scripts or embeds right now.';
 				signalItem.textContent = signalsForCategory(category).length
 					? 'Google signals controlled here: ' + signalsForCategory(category).join(', ') + '.'
 					: 'Google signals controlled here: none.';

@@ -131,6 +131,7 @@ final class OpenConsent_CMP {
 		return array(
 			'enabled'               => 1,
 			'blocking_mode'         => 'auto',
+			'block_iframes'         => 1,
 			'banner_title'          => 'Your privacy choices',
 			'banner_message'        => 'We use cookies and similar technologies to keep this site reliable, measure usage, and improve marketing. Choose what you want to allow.',
 			'party_disclosure'      => 'Google and other listed service providers may collect, receive, or use personal data when their services are enabled. Review the cookie declaration and privacy policy for details.',
@@ -161,6 +162,7 @@ final class OpenConsent_CMP {
 			'ads_data_redaction'    => 1,
 			'log_retention_days'    => 365,
 			'services'              => "google-analytics.com|statistics|Google Analytics\nwww.googletagmanager.com|statistics|Google Tag Manager\nconnect.facebook.net|marketing|Meta Pixel\ndoubleclick.net|marketing|Google Ads\npagead2.googlesyndication.com|marketing|Google AdSense\ngooglesyndication.com|marketing|Google publisher ads\nyoutube.com|marketing|YouTube embeds\nvimeo.com|marketing|Vimeo embeds",
+			'script_handles'        => '',
 			'category_preferences'  => 'Preferences cookies remember choices such as language, region, and interface settings.',
 			'category_statistics'   => 'Statistics cookies help us understand how visitors use the site.',
 			'category_marketing'    => 'Marketing cookies support advertising, measurement, and embedded media.',
@@ -200,6 +202,33 @@ final class OpenConsent_CMP {
 			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
 			$items[]  = array(
 				'pattern'  => $parts[0],
+				'category' => $category,
+				'name'     => isset( $parts[2] ) && '' !== $parts[2] ? $parts[2] : $parts[0],
+			);
+		}
+
+		return $items;
+	}
+
+	/**
+	 * Return configured WordPress script handles as structured rows.
+	 *
+	 * @return array
+	 */
+	public function script_handles() {
+		$options = $this->options();
+		$rows    = preg_split( '/\r\n|\r|\n/', (string) $options['script_handles'] );
+		$items   = array();
+
+		foreach ( $rows as $row ) {
+			$parts = array_map( 'trim', explode( '|', $row ) );
+			if ( count( $parts ) < 2 || '' === $parts[0] ) {
+				continue;
+			}
+
+			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
+			$items[]  = array(
+				'handle'   => sanitize_key( $parts[0] ),
 				'category' => $category,
 				'name'     => isset( $parts[2] ) && '' !== $parts[2] ? $parts[2] : $parts[0],
 			);

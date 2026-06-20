@@ -31,6 +31,7 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_notices', array( $this, 'activation_notice' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_post_openconsent_run_scan', array( $this, 'run_scan' ) );
 		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
 	}
@@ -64,6 +65,25 @@ final class OpenConsent_CMP_Admin {
 				'sanitize_callback' => array( $this, 'sanitize_options' ),
 				'default'           => OpenConsent_CMP::defaults(),
 			)
+		);
+	}
+
+	/**
+	 * Enqueue admin assets only on this settings page.
+	 *
+	 * @param string $hook_suffix Current admin page hook.
+	 * @return void
+	 */
+	public function enqueue_admin_assets( $hook_suffix ) {
+		if ( 'settings_page_openconsent-cmp' !== $hook_suffix ) {
+			return;
+		}
+
+		wp_enqueue_style(
+			'openconsent-cmp-admin',
+			OPENCONSENT_CMP_URL . 'assets/css/openconsent-cmp-admin.css',
+			array(),
+			OPENCONSENT_CMP_VERSION
 		);
 	}
 
@@ -102,6 +122,7 @@ final class OpenConsent_CMP_Admin {
 		$options = array(
 			'enabled'             => empty( $input['enabled'] ) ? 0 : 1,
 			'blocking_mode'       => isset( $input['blocking_mode'] ) && 'manual' === $input['blocking_mode'] ? 'manual' : 'auto',
+			'block_iframes'       => empty( $input['block_iframes'] ) ? 0 : 1,
 			'banner_title'        => sanitize_text_field( $input['banner_title'] ?? '' ),
 			'banner_message'      => sanitize_textarea_field( $input['banner_message'] ?? '' ),
 			'party_disclosure'    => sanitize_textarea_field( $input['party_disclosure'] ?? '' ),
@@ -132,6 +153,7 @@ final class OpenConsent_CMP_Admin {
 			'ads_data_redaction'  => empty( $input['ads_data_redaction'] ) ? 0 : 1,
 			'log_retention_days'  => max( 1, absint( $input['log_retention_days'] ?? 365 ) ),
 			'services'            => $this->sanitize_services( $input['services'] ?? '' ),
+			'script_handles'      => $this->sanitize_script_handles( $input['script_handles'] ?? '' ),
 		);
 
 		$options['scan_report']           = $current['scan_report'];
@@ -208,9 +230,6 @@ final class OpenConsent_CMP_Admin {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'OpenConsent CMP', 'openconsent-cmp' ); ?></h1>
 			<p><?php esc_html_e( 'A self-hosted consent manager for WordPress: present clear choices, categorize services, block optional scripts, publish a declaration, record consent choices, and send Google Consent Mode signals.', 'openconsent-cmp' ); ?></p>
-			<style>
-				.openconsent-admin-grid{display:grid;gap:14px;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0 22px}.openconsent-admin-card{background:#fff;border:1px solid #dcdcde;border-left:4px solid #2271b1;border-radius:4px;padding:14px}.openconsent-admin-card strong{display:block;font-size:22px;line-height:1.2}.openconsent-admin-card span{color:#646970;display:block;margin-top:4px}.openconsent-settings-card{background:#fff;border:1px solid #dcdcde;border-radius:4px;margin:18px 0;padding:1px 18px 18px}.openconsent-button-grid{display:grid;gap:10px;grid-template-columns:repeat(5,minmax(120px,1fr));max-width:980px}.openconsent-button-grid label{font-weight:600}.openconsent-button-grid input{margin-top:4px;width:100%}.openconsent-help-list{margin:8px 0 0 18px}.openconsent-help-list code{background:#f6f7f7}@media(max-width:1100px){.openconsent-admin-grid,.openconsent-button-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.openconsent-admin-grid,.openconsent-button-grid{grid-template-columns:1fr}}
-			</style>
 			<div class="notice notice-warning">
 				<p><strong><?php esc_html_e( 'Publisher ads note:', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Google requires a Google-certified CMP integrated with the IAB TCF when serving personalized AdSense, Ad Manager, or AdMob ads to users in the EEA, UK, or Switzerland. OpenConsent CMP is self-hosted and is not a Google-certified TCF CMP. Use it for publisher ads only after reviewing your ad mode, regions, and legal requirements.', 'openconsent-cmp' ); ?></p>
 			</div>
@@ -343,6 +362,7 @@ final class OpenConsent_CMP_Admin {
 						<td>
 							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[blocking_mode]" value="auto" <?php checked( $options['blocking_mode'], 'auto' ); ?>> <?php esc_html_e( 'Automatic client-side blocking by URL pattern', 'openconsent-cmp' ); ?></label><br>
 							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[blocking_mode]" value="manual" <?php checked( $options['blocking_mode'], 'manual' ); ?>> <?php esc_html_e( 'Manual markup only', 'openconsent-cmp' ); ?></label>
+							<p><label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[block_iframes]" value="1" <?php checked( $options['block_iframes'], 1 ); ?>> <?php esc_html_e( 'Block matching iframe embeds in post content until consent', 'openconsent-cmp' ); ?></label></p>
 						</td>
 					</tr>
 					<tr>
@@ -373,6 +393,14 @@ final class OpenConsent_CMP_Admin {
 							<textarea id="openconsent-services" class="large-text code" rows="9" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[services]"><?php echo esc_textarea( $options['services'] ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing, unclassified.', 'openconsent-cmp' ); ?></p>
 							<p class="description"><?php esc_html_e( 'Examples:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool</code> <code>unknown.example.com|unclassified|Review needed</code></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><label for="openconsent-script-handles"><?php esc_html_e( 'WordPress script handles', 'openconsent-cmp' ); ?></label></th>
+						<td>
+							<textarea id="openconsent-script-handles" class="large-text code" rows="5" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[script_handles]"><?php echo esc_textarea( $options['script_handles'] ); ?></textarea>
+							<p class="description"><?php esc_html_e( 'Optional. One registered script per line: WordPress handle | category | display name. This is useful when a plugin registers a script from a local URL or a URL pattern is not enough.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Example:', 'openconsent-cmp' ); ?> <code>contact-form-analytics|statistics|Contact form analytics</code></p>
 						</td>
 					</tr>
 				</table>
@@ -465,6 +493,33 @@ final class OpenConsent_CMP_Admin {
 	}
 
 	/**
+	 * Sanitize WordPress script handle registry.
+	 *
+	 * @param string $handles Raw handle lines.
+	 * @return string
+	 */
+	private function sanitize_script_handles( $handles ) {
+		$lines = preg_split( '/\r\n|\r|\n/', (string) $handles );
+		$clean = array();
+
+		foreach ( $lines as $line ) {
+			$parts = array_map( 'trim', explode( '|', sanitize_text_field( $line ) ) );
+			if ( count( $parts ) < 2 || '' === $parts[0] ) {
+				continue;
+			}
+
+			$handle   = sanitize_key( $parts[0] );
+			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
+			$name     = isset( $parts[2] ) ? $parts[2] : $handle;
+			if ( '' !== $handle ) {
+				$clean[] = "{$handle}|{$category}|{$name}";
+			}
+		}
+
+		return implode( "\n", $clean );
+	}
+
+	/**
 	 * Sanitize Google consent signal mapping.
 	 *
 	 * @param string $value Raw value.
@@ -492,7 +547,7 @@ final class OpenConsent_CMP_Admin {
 			'denied'       => __( 'Always denied', 'openconsent-cmp' ),
 		);
 		?>
-		<label style="display:block;margin:6px 0;">
+		<label class="openconsent-signal-map">
 			<code><?php echo esc_html( $signal ); ?></code>
 			<select name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[<?php echo esc_attr( $option_key ); ?>]">
 				<?php foreach ( $choices as $value => $label ) : ?>

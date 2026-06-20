@@ -213,6 +213,14 @@
 	z-index: 2147483646;
 }
 
+iframe[data-openconsent-blocked="1"] {
+	background: #111827;
+	border: 1px solid rgba(84, 210, 191, 0.35);
+	box-sizing: border-box;
+	color: #fff;
+	min-height: 120px;
+}
+
 .openconsent-declaration table {
 	border-collapse: collapse;
 	width: 100%;
