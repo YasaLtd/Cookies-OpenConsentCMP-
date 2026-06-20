@@ -8,7 +8,7 @@ OpenConsent CMP is a GPL WordPress plugin for self-hosted consent management. It
 
 Public website: https://cookies.yasa.fi/
 
-GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp
+GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 
 Logo asset: `assets/openconsent-cmp-logo.svg`.
 

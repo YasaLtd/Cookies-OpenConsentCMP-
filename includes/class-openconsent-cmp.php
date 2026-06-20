@@ -131,7 +131,7 @@ final class OpenConsent_CMP {
 			'banner_title'          => 'Your privacy choices',
 			'banner_message'        => 'We use cookies and similar technologies to keep this site reliable, measure usage, and improve marketing. Choose what you want to allow.',
 			'party_disclosure'      => 'Google and other listed service providers may collect, receive, or use personal data when their services are enabled. Review the cookie declaration and privacy policy for details.',
-			'privacy_url'           => get_privacy_policy_url(),
+			'privacy_url'           => function_exists( 'get_privacy_policy_url' ) ? get_privacy_policy_url() : '',
 			'button_accept'         => 'Accept all',
 			'button_reject'         => 'Necessary only',
 			'button_save'           => 'Save choices',

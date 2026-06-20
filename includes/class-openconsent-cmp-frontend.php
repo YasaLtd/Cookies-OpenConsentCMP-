@@ -71,7 +71,7 @@ final class OpenConsent_CMP_Frontend {
 				'urlPassthrough'    => ! empty( $options['url_passthrough'] ),
 				'adsDataRedaction'  => ! empty( $options['ads_data_redaction'] ),
 				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ),
-				'detectedLanguage'   => str_replace( '_', '-', determine_locale() ),
+				'detectedLanguage'   => function_exists( 'determine_locale' ) ? str_replace( '_', '-', determine_locale() ) : str_replace( '_', '-', get_locale() ),
 				'siteLocale'        => str_replace( '_', '-', get_locale() ),
 				'services'          => $this->plugin->services(),
 				'ui'                => array(
