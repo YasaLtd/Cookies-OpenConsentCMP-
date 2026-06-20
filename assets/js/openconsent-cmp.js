@@ -5,7 +5,7 @@
 	var services = config.services || window.OpenConsentServices || [];
 	var cookieName = 'openconsent_cmp';
 	var themeStorageKey = 'openconsent_cmp_theme';
-	var categories = ['preferences', 'statistics', 'marketing'];
+	var categories = ['preferences', 'statistics', 'marketing', 'unclassified'];
 	var themePresets = [
 		{ key: 'dark-teal', label: 'Teal', accent: '#54d2bf', background: '#111827', text: '#ffffff' },
 		{ key: 'dark-blue', label: 'Blue', accent: '#73a7ff', background: '#101828', text: '#ffffff' },
@@ -23,17 +23,21 @@
 			customize: 'Customize',
 			revoke: 'Privacy choices',
 			privacyPolicy: 'Privacy policy',
+			regionStrict: 'Strict opt-in applies for your region.',
+			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
 			categories: {
 				necessary: 'Necessary',
 				preferences: 'Preferences',
 				statistics: 'Statistics',
-				marketing: 'Marketing'
+				marketing: 'Marketing',
+				unclassified: 'Unclassified'
 			},
 			descriptions: {
 				necessary: 'Necessary cookies keep the site secure and working. They are always active.',
 				preferences: 'Preferences cookies remember choices such as language, region, and interface settings.',
 				statistics: 'Statistics cookies help us understand how visitors use the site.',
-				marketing: 'Marketing cookies support advertising, measurement, and embedded media.'
+				marketing: 'Marketing cookies support advertising, measurement, and embedded media.',
+				unclassified: 'Unclassified services are blocked until the site owner reviews them.'
 			}
 		},
 		fi: {
@@ -138,20 +142,25 @@
 		}
 	}
 
-	function languageCode() {
-		var languages = [];
-		if (config.autoDetectLanguage && navigator.languages) {
-			languages = languages.concat(Array.prototype.slice.call(navigator.languages));
+	function visitorSignals() {
+		var signals = [];
+		if (navigator.languages) {
+			signals = signals.concat(Array.prototype.slice.call(navigator.languages));
 		}
-		if (config.autoDetectLanguage && navigator.language) {
-			languages.push(navigator.language);
+		if (navigator.language) {
+			signals.push(navigator.language);
 		}
 		if (config.detectedLanguage) {
-			languages.push(config.detectedLanguage);
+			signals.push(config.detectedLanguage);
 		}
 		if (config.siteLocale) {
-			languages.push(config.siteLocale);
+			signals.push(config.siteLocale);
 		}
+		return signals;
+	}
+
+	function languageCode() {
+		var languages = config.autoDetectLanguage ? visitorSignals() : [config.detectedLanguage, config.siteLocale];
 
 		for (var i = 0; i < languages.length; i += 1) {
 			var code = String(languages[i] || '').toLowerCase().split('-')[0];
@@ -163,6 +172,58 @@
 		return 'en';
 	}
 
+	function detectRegion() {
+		var defaultRegion = String(config.defaultRegion || 'eea').toLowerCase();
+		var strictRegions = ['at', 'be', 'bg', 'hr', 'cy', 'cz', 'dk', 'ee', 'fi', 'fr', 'de', 'gr', 'hu', 'is', 'ie', 'it', 'lv', 'li', 'lt', 'lu', 'mt', 'nl', 'no', 'pl', 'pt', 'ro', 'sk', 'si', 'es', 'se', 'gb', 'uk', 'ch'];
+		var signals = visitorSignals();
+		var timezone = '';
+
+		try {
+			timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+		} catch (error) {}
+
+		for (var i = 0; i < signals.length; i += 1) {
+			var parts = String(signals[i] || '').toLowerCase().replace('_', '-').split('-');
+			var region = parts.length > 1 ? parts[parts.length - 1] : '';
+			if (strictRegions.indexOf(region) !== -1) {
+				return 'eea';
+			}
+			if (region === 'us') {
+				return 'us';
+			}
+		}
+
+		if (timezone.indexOf('Europe/') === 0) {
+			return 'eea';
+		}
+
+		return ['eea', 'us', 'other'].indexOf(defaultRegion) !== -1 ? defaultRegion : 'eea';
+	}
+
+	function strictConsentApplies() {
+		var mode = String(config.regionMode || 'strict').toLowerCase();
+		if (mode === 'notice') {
+			return false;
+		}
+		if (mode === 'auto') {
+			return detectRegion() === 'eea';
+		}
+		return true;
+	}
+
+	function defaultCategoryValue(category, currentConsent, strictMode) {
+		if (category === 'necessary') {
+			return true;
+		}
+		if (currentConsent && Object.prototype.hasOwnProperty.call(currentConsent, category)) {
+			return Boolean(currentConsent[category]);
+		}
+		if (category === 'unclassified') {
+			return false;
+		}
+		return !strictMode && String(config.consentModel || 'opt_in').toLowerCase() === 'opt_out';
+	}
+
 	function translatedUi() {
 		var ui = config.ui || {};
 		var defaults = config.defaultUi || {};
@@ -171,7 +232,7 @@
 		var english = translations.en;
 		var resolved = {};
 
-		['title', 'message', 'partyDisclosure', 'accept', 'reject', 'save', 'customize', 'revoke'].forEach(function (key) {
+		['title', 'message', 'partyDisclosure', 'accept', 'reject', 'save', 'customize', 'revoke', 'regionStrict', 'regionNotice'].forEach(function (key) {
 			var value = ui[key] || '';
 			var defaultValue = defaults[key] || english[key] || '';
 			resolved[key] = value && value !== defaultValue ? value : (dictionary[key] || english[key] || value);
@@ -409,6 +470,9 @@
 			preferences: Boolean(values.preferences),
 			statistics: Boolean(values.statistics),
 			marketing: Boolean(values.marketing),
+			unclassified: Boolean(values.unclassified),
+			region: detectRegion(),
+			regionMode: String(config.regionMode || 'strict').toLowerCase(),
 			updated: new Date().toISOString()
 		};
 
@@ -444,6 +508,7 @@
 
 		var ui = translatedUi();
 		var currentConsent = readConsent();
+		var strictMode = strictConsentApplies();
 		var existingBanner = document.querySelector('.openconsent');
 		if (existingBanner) {
 			existingBanner.remove();
@@ -472,6 +537,12 @@
 		partyDisclosure.className = 'openconsent__disclosure';
 		partyDisclosure.textContent = ui.partyDisclosure || '';
 
+		var regionNotice = document.createElement('p');
+		regionNotice.className = 'openconsent__region';
+		regionNotice.textContent = strictMode
+			? (ui.regionStrict || 'Strict opt-in applies for your region.')
+			: (ui.regionNotice || 'Notice mode applies for your region. You can opt out of optional categories.');
+
 		var categoriesWrap = document.createElement('div');
 		categoriesWrap.className = 'openconsent__categories';
 		categoriesWrap.hidden = false;
@@ -483,7 +554,7 @@
 			var input = document.createElement('input');
 			var descriptionId = 'openconsent-desc-' + category;
 			input.type = 'checkbox';
-			input.checked = category === 'necessary' || Boolean(currentConsent && currentConsent[category]);
+			input.checked = defaultCategoryValue(category, currentConsent, strictMode);
 			input.disabled = category === 'necessary';
 			input.name = 'openconsent-' + category;
 			input.setAttribute('aria-describedby', descriptionId);
@@ -552,12 +623,13 @@
 			saveConsent({
 				preferences: inputs.preferences.checked,
 				statistics: inputs.statistics.checked,
-				marketing: inputs.marketing.checked
+				marketing: inputs.marketing.checked,
+				unclassified: inputs.unclassified.checked
 			});
 			root.remove();
 		});
 		var accept = makeButton(ui.accept || 'Accept all', 'openconsent__button openconsent__button--primary', function () {
-			saveConsent({ preferences: true, statistics: true, marketing: true });
+			saveConsent({ preferences: true, statistics: true, marketing: true, unclassified: true });
 			root.remove();
 		});
 
@@ -571,6 +643,7 @@
 		if (ui.partyDisclosure) {
 			panel.appendChild(partyDisclosure);
 		}
+		panel.appendChild(regionNotice);
 
 		if (ui.privacyUrl) {
 			var privacy = document.createElement('a');

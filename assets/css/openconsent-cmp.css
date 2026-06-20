@@ -65,6 +65,16 @@
 	margin-bottom: 12px;
 }
 
+.openconsent__region {
+	background: rgba(84, 210, 191, 0.12);
+	border: 1px solid rgba(84, 210, 191, 0.28);
+	border-radius: 6px;
+	font-size: 13px;
+	line-height: 1.4;
+	margin: 0 0 12px;
+	padding: 9px 10px;
+}
+
 .openconsent__categories {
 	border-top: 1px solid rgba(255, 255, 255, 0.14);
 	display: grid;

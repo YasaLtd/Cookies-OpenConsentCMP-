@@ -89,6 +89,10 @@ final class OpenConsent_CMP_Admin {
 			'button_customize'    => sanitize_text_field( $input['button_customize'] ?? '' ),
 			'button_revoke'       => sanitize_text_field( $input['button_revoke'] ?? '' ),
 			'auto_detect_language' => empty( $input['auto_detect_language'] ) ? 0 : 1,
+			'banner_language'     => in_array( $input['banner_language'] ?? '', array( 'auto', 'site', 'en', 'fi', 'de', 'es', 'fr', 'it', 'nl', 'sv' ), true ) ? $input['banner_language'] : 'auto',
+			'region_mode'         => in_array( $input['region_mode'] ?? '', array( 'strict', 'auto', 'notice' ), true ) ? $input['region_mode'] : 'strict',
+			'default_region'      => in_array( $input['default_region'] ?? '', array( 'eea', 'us', 'other' ), true ) ? $input['default_region'] : 'eea',
+			'consent_model'       => in_array( $input['consent_model'] ?? '', array( 'opt_in', 'opt_out' ), true ) ? $input['consent_model'] : 'opt_in',
 			'position'            => isset( $input['position'] ) && 'bottom' === $input['position'] ? 'bottom' : 'center',
 			'accent_color'        => sanitize_hex_color( $input['accent_color'] ?? '' ) ?: '#54d2bf',
 			'background_color'    => sanitize_hex_color( $input['background_color'] ?? '' ) ?: '#111827',
@@ -104,7 +108,7 @@ final class OpenConsent_CMP_Admin {
 		$options['scan_report']           = $current['scan_report'];
 		$options['scan_report_generated'] = $current['scan_report_generated'];
 
-		foreach ( array( 'category_preferences', 'category_statistics', 'category_marketing' ) as $key ) {
+		foreach ( array( 'category_preferences', 'category_statistics', 'category_marketing', 'category_unclassified' ) as $key ) {
 			$options[ $key ] = sanitize_textarea_field( $input[ $key ] ?? '' );
 		}
 
@@ -127,7 +131,7 @@ final class OpenConsent_CMP_Admin {
 				continue;
 			}
 
-			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing' ), true ) ? $parts[1] : 'marketing';
+			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
 			$name     = isset( $parts[2] ) ? $parts[2] : $parts[0];
 			$clean[]  = "{$parts[0]}|{$category}|{$name}";
 		}
@@ -247,8 +251,44 @@ final class OpenConsent_CMP_Admin {
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Language', 'openconsent-cmp' ); ?></th>
 						<td>
-							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[auto_detect_language]" value="1" <?php checked( $options['auto_detect_language'], 1 ); ?>> <?php esc_html_e( 'Detect the visitor browser language for built-in banner labels', 'openconsent-cmp' ); ?></label>
+							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[auto_detect_language]" value="1" <?php checked( $options['auto_detect_language'], 1 ); ?>> <?php esc_html_e( 'Allow browser-language detection when language mode is Auto', 'openconsent-cmp' ); ?></label><br>
+							<select name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[banner_language]">
+								<option value="auto" <?php selected( $options['banner_language'], 'auto' ); ?>><?php esc_html_e( 'Auto: visitor browser language', 'openconsent-cmp' ); ?></option>
+								<option value="site" <?php selected( $options['banner_language'], 'site' ); ?>><?php esc_html_e( 'WordPress site language', 'openconsent-cmp' ); ?></option>
+								<option value="en" <?php selected( $options['banner_language'], 'en' ); ?>>English</option>
+								<option value="fi" <?php selected( $options['banner_language'], 'fi' ); ?>>Suomi</option>
+								<option value="de" <?php selected( $options['banner_language'], 'de' ); ?>>Deutsch</option>
+								<option value="es" <?php selected( $options['banner_language'], 'es' ); ?>>Espa&ntilde;ol</option>
+								<option value="fr" <?php selected( $options['banner_language'], 'fr' ); ?>>Fran&ccedil;ais</option>
+								<option value="it" <?php selected( $options['banner_language'], 'it' ); ?>>Italiano</option>
+								<option value="nl" <?php selected( $options['banner_language'], 'nl' ); ?>>Nederlands</option>
+								<option value="sv" <?php selected( $options['banner_language'], 'sv' ); ?>>Svenska</option>
+							</select>
 							<p class="description"><?php esc_html_e( 'Custom text stays editable and is rendered as normal page text, so browser translation tools can translate it.', 'openconsent-cmp' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Region behavior', 'openconsent-cmp' ); ?></th>
+						<td>
+							<select name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[region_mode]">
+								<option value="strict" <?php selected( $options['region_mode'], 'strict' ); ?>><?php esc_html_e( 'Strict opt-in for all visitors', 'openconsent-cmp' ); ?></option>
+								<option value="auto" <?php selected( $options['region_mode'], 'auto' ); ?>><?php esc_html_e( 'Auto-detect region, strict for EEA/UK/CH', 'openconsent-cmp' ); ?></option>
+								<option value="notice" <?php selected( $options['region_mode'], 'notice' ); ?>><?php esc_html_e( 'Notice-only mode for non-regulated traffic', 'openconsent-cmp' ); ?></option>
+							</select>
+							<select name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[default_region]">
+								<option value="eea" <?php selected( $options['default_region'], 'eea' ); ?>><?php esc_html_e( 'Default: EEA / UK / Switzerland', 'openconsent-cmp' ); ?></option>
+								<option value="us" <?php selected( $options['default_region'], 'us' ); ?>><?php esc_html_e( 'Default: United States', 'openconsent-cmp' ); ?></option>
+								<option value="other" <?php selected( $options['default_region'], 'other' ); ?>><?php esc_html_e( 'Default: Other region', 'openconsent-cmp' ); ?></option>
+							</select>
+							<p class="description"><?php esc_html_e( 'Auto-detection uses browser language and time zone hints. It is not legal geolocation and should be reviewed for your audience.', 'openconsent-cmp' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Consent model', 'openconsent-cmp' ); ?></th>
+						<td>
+							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[consent_model]" value="opt_in" <?php checked( $options['consent_model'], 'opt_in' ); ?>> <?php esc_html_e( 'Opt-in: block optional categories until consent', 'openconsent-cmp' ); ?></label><br>
+							<label><input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[consent_model]" value="opt_out" <?php checked( $options['consent_model'], 'opt_out' ); ?>> <?php esc_html_e( 'Opt-out: preselect optional categories for non-strict regions', 'openconsent-cmp' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Strict regions always start with optional categories denied. Choose opt-out only after legal review.', 'openconsent-cmp' ); ?></p>
 						</td>
 					</tr>
 					<tr>
@@ -291,8 +331,8 @@ final class OpenConsent_CMP_Admin {
 						<th scope="row"><label for="openconsent-services"><?php esc_html_e( 'Service registry', 'openconsent-cmp' ); ?></label></th>
 						<td>
 							<textarea id="openconsent-services" class="large-text code" rows="9" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[services]"><?php echo esc_textarea( $options['services'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing.', 'openconsent-cmp' ); ?></p>
-							<p class="description"><?php esc_html_e( 'Example:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool</code></p>
+							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing, unclassified.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Examples:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool</code> <code>unknown.example.com|unclassified|Review needed</code></p>
 						</td>
 					</tr>
 				</table>
@@ -301,7 +341,7 @@ final class OpenConsent_CMP_Admin {
 				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Category descriptions', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
-					<?php foreach ( array( 'preferences', 'statistics', 'marketing' ) as $category ) : ?>
+					<?php foreach ( array( 'preferences', 'statistics', 'marketing', 'unclassified' ) as $category ) : ?>
 						<tr>
 							<th scope="row"><label for="openconsent-<?php echo esc_attr( $category ); ?>"><?php echo esc_html( ucfirst( $category ) ); ?></label></th>
 							<td><textarea id="openconsent-<?php echo esc_attr( $category ); ?>" class="large-text" rows="2" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[category_<?php echo esc_attr( $category ); ?>]"><?php echo esc_textarea( $options[ 'category_' . $category ] ); ?></textarea></td>

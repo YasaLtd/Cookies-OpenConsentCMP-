@@ -138,6 +138,10 @@ final class OpenConsent_CMP {
 			'button_customize'      => 'Customize',
 			'button_revoke'         => 'Privacy choices',
 			'auto_detect_language'  => 1,
+			'banner_language'       => 'auto',
+			'region_mode'           => 'strict',
+			'default_region'        => 'eea',
+			'consent_model'         => 'opt_in',
 			'position'              => 'center',
 			'accent_color'          => '#54d2bf',
 			'background_color'      => '#111827',
@@ -151,6 +155,7 @@ final class OpenConsent_CMP {
 			'category_preferences'  => 'Preferences cookies remember choices such as language, region, and interface settings.',
 			'category_statistics'   => 'Statistics cookies help us understand how visitors use the site.',
 			'category_marketing'    => 'Marketing cookies support advertising, measurement, and embedded media.',
+			'category_unclassified' => 'Unclassified services are blocked until they are reviewed and assigned to a clear category.',
 			'scan_report'           => array(),
 			'scan_report_generated' => '',
 		);
@@ -183,7 +188,7 @@ final class OpenConsent_CMP {
 				continue;
 			}
 
-			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing' ), true ) ? $parts[1] : 'marketing';
+			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
 			$items[]  = array(
 				'pattern'  => $parts[0],
 				'category' => $category,
@@ -214,6 +219,9 @@ final class OpenConsent_CMP {
 			'preferences' => ! empty( $decoded['preferences'] ),
 			'statistics'  => ! empty( $decoded['statistics'] ),
 			'marketing'   => ! empty( $decoded['marketing'] ),
+			'unclassified' => ! empty( $decoded['unclassified'] ),
+			'region'      => isset( $decoded['region'] ) ? sanitize_key( $decoded['region'] ) : '',
+			'region_mode' => isset( $decoded['regionMode'] ) ? sanitize_key( $decoded['regionMode'] ) : '',
 			'version'     => OPENCONSENT_CMP_VERSION,
 		);
 

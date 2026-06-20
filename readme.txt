@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -24,9 +24,10 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 
 = Features =
 
-* Necessary, preferences, statistics, and marketing categories.
+* Necessary, preferences, statistics, marketing, and unclassified categories.
 * Configurable dialog text, disclosure text, colors, and buttons.
-* Browser-language detection for built-in frontend labels.
+* Browser-language detection, WordPress-locale mode, or fixed banner language for built-in frontend labels.
+* Region behavior controls for strict opt-in, browser-hint auto mode, or notice mode.
 * Browser-translation-friendly banner DOM with visible text and language attributes.
 * Automatic URL-pattern script blocking and manual blocking markup.
 * Google Consent Mode v2 Basic and Advanced behavior.
@@ -74,6 +75,12 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.6 =
+* Adds region behavior controls for strict opt-in, browser-hint auto mode, and notice mode.
+* Adds a selectable banner language mode alongside browser-language detection.
+* Adds an Unclassified category for services that need review before final categorization.
+* Mirrors the new controls in the live demo controller.
 
 = 1.0.5 =
 * Improves the admin settings screen with status cards, setup guidance, clearer grouped controls, and CSV export for consent logs.

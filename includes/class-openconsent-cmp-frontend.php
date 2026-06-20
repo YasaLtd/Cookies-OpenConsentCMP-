@@ -44,6 +44,15 @@ final class OpenConsent_CMP_Frontend {
 			return;
 		}
 
+		$site_locale      = str_replace( '_', '-', get_locale() );
+		$detected_locale  = function_exists( 'determine_locale' ) ? str_replace( '_', '-', determine_locale() ) : $site_locale;
+		$banner_language = $options['banner_language'];
+		if ( 'site' === $banner_language ) {
+			$detected_locale = $site_locale;
+		} elseif ( ! in_array( $banner_language, array( 'auto', 'site' ), true ) ) {
+			$detected_locale = $banner_language;
+		}
+
 		wp_enqueue_style(
 			'openconsent-cmp',
 			OPENCONSENT_CMP_URL . 'assets/css/openconsent-cmp.css',
@@ -70,9 +79,13 @@ final class OpenConsent_CMP_Frontend {
 				'googleConsentBehavior' => $options['google_consent_behavior'],
 				'urlPassthrough'    => ! empty( $options['url_passthrough'] ),
 				'adsDataRedaction'  => ! empty( $options['ads_data_redaction'] ),
-				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ),
-				'detectedLanguage'   => function_exists( 'determine_locale' ) ? str_replace( '_', '-', determine_locale() ) : str_replace( '_', '-', get_locale() ),
-				'siteLocale'        => str_replace( '_', '-', get_locale() ),
+				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ) && 'auto' === $banner_language,
+				'detectedLanguage'   => $detected_locale,
+				'siteLocale'        => $site_locale,
+				'languageMode'      => $banner_language,
+				'regionMode'        => $options['region_mode'],
+				'defaultRegion'     => $options['default_region'],
+				'consentModel'      => $options['consent_model'],
 				'services'          => $this->plugin->services(),
 				'ui'                => array(
 					'title'        => $options['banner_title'],
@@ -93,6 +106,7 @@ final class OpenConsent_CMP_Frontend {
 						'preferences' => $options['category_preferences'],
 						'statistics'  => $options['category_statistics'],
 						'marketing'   => $options['category_marketing'],
+						'unclassified' => $options['category_unclassified'],
 					),
 				),
 				'defaultUi'          => array(
@@ -109,6 +123,7 @@ final class OpenConsent_CMP_Frontend {
 						'preferences' => OpenConsent_CMP::defaults()['category_preferences'],
 						'statistics'  => OpenConsent_CMP::defaults()['category_statistics'],
 						'marketing'   => OpenConsent_CMP::defaults()['category_marketing'],
+						'unclassified' => OpenConsent_CMP::defaults()['category_unclassified'],
 					),
 				),
 			)
