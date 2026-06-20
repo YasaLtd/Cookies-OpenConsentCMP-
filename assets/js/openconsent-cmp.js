@@ -481,15 +481,19 @@
 			var label = document.createElement('label');
 			label.className = 'openconsent__category';
 			var input = document.createElement('input');
+			var descriptionId = 'openconsent-desc-' + category;
 			input.type = 'checkbox';
 			input.checked = category === 'necessary' || Boolean(currentConsent && currentConsent[category]);
 			input.disabled = category === 'necessary';
+			input.name = 'openconsent-' + category;
+			input.setAttribute('aria-describedby', descriptionId);
 			inputs[category] = input;
 
 			var copy = document.createElement('span');
 			var strong = document.createElement('strong');
 			strong.textContent = ui.categoryLabels[category] || category;
 			var small = document.createElement('small');
+			small.id = descriptionId;
 			small.textContent = (ui.descriptions && ui.descriptions[category]) || '';
 			copy.appendChild(strong);
 			copy.appendChild(small);
@@ -497,6 +501,30 @@
 			label.appendChild(copy);
 			categoriesWrap.appendChild(label);
 		});
+
+		var choicesSummary = document.createElement('p');
+		choicesSummary.className = 'openconsent__summary';
+		choicesSummary.setAttribute('aria-live', 'polite');
+
+		function selectedOptionalLabels() {
+			return categories.filter(function (category) {
+				return inputs[category] && inputs[category].checked;
+			}).map(function (category) {
+				return ui.categoryLabels[category] || category;
+			});
+		}
+
+		function updateChoicesSummary() {
+			var selected = selectedOptionalLabels();
+			choicesSummary.textContent = selected.length
+				? 'Selected optional categories: ' + selected.join(', ') + '.'
+				: 'Only necessary cookies are selected.';
+		}
+
+		categories.forEach(function (category) {
+			inputs[category].addEventListener('change', updateChoicesSummary);
+		});
+		updateChoicesSummary();
 
 		var actions = document.createElement('div');
 		actions.className = 'openconsent__actions';
@@ -553,6 +581,7 @@
 		}
 
 		panel.appendChild(categoriesWrap);
+		panel.appendChild(choicesSummary);
 		panel.appendChild(actions);
 		root.appendChild(panel);
 		document.body.appendChild(root);

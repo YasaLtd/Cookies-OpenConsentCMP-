@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -74,6 +74,10 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.5 =
+* Improves the admin settings screen with status cards, setup guidance, clearer grouped controls, and CSV export for consent logs.
+* Improves the visitor consent dialog with a live summary of selected optional categories and clearer accessible category descriptions.
 
 = 1.0.4 =
 * Hardens activation defaults and locale detection.

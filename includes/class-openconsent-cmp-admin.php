@@ -31,6 +31,7 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_menu', array( $this, 'admin_menu' ) );
 		add_action( 'admin_init', array( $this, 'register_settings' ) );
 		add_action( 'admin_post_openconsent_run_scan', array( $this, 'run_scan' ) );
+		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
 	}
 
 	/**
@@ -169,10 +170,14 @@ final class OpenConsent_CMP_Admin {
 
 		$options = $this->plugin->options();
 		$logs    = $this->recent_logs();
+		$services = $this->plugin->services();
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'OpenConsent CMP', 'openconsent-cmp' ); ?></h1>
 			<p><?php esc_html_e( 'A self-hosted consent manager for WordPress: present clear choices, categorize services, block optional scripts, publish a declaration, record consent choices, and send Google Consent Mode signals.', 'openconsent-cmp' ); ?></p>
+			<style>
+				.openconsent-admin-grid{display:grid;gap:14px;grid-template-columns:repeat(4,minmax(0,1fr));margin:18px 0 22px}.openconsent-admin-card{background:#fff;border:1px solid #dcdcde;border-left:4px solid #2271b1;border-radius:4px;padding:14px}.openconsent-admin-card strong{display:block;font-size:22px;line-height:1.2}.openconsent-admin-card span{color:#646970;display:block;margin-top:4px}.openconsent-settings-card{background:#fff;border:1px solid #dcdcde;border-radius:4px;margin:18px 0;padding:1px 18px 18px}.openconsent-button-grid{display:grid;gap:10px;grid-template-columns:repeat(5,minmax(120px,1fr));max-width:980px}.openconsent-button-grid label{font-weight:600}.openconsent-button-grid input{margin-top:4px;width:100%}.openconsent-help-list{margin:8px 0 0 18px}.openconsent-help-list code{background:#f6f7f7}@media(max-width:1100px){.openconsent-admin-grid,.openconsent-button-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:700px){.openconsent-admin-grid,.openconsent-button-grid{grid-template-columns:1fr}}
+			</style>
 			<div class="notice notice-warning">
 				<p><strong><?php esc_html_e( 'Publisher ads note:', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Google requires a Google-certified CMP integrated with the IAB TCF when serving personalized AdSense, Ad Manager, or AdMob ads to users in the EEA, UK, or Switzerland. OpenConsent CMP is self-hosted and is not a Google-certified TCF CMP. Use it for publisher ads only after reviewing your ad mode, regions, and legal requirements.', 'openconsent-cmp' ); ?></p>
 			</div>
@@ -181,9 +186,27 @@ final class OpenConsent_CMP_Admin {
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Homepage scan completed.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
 
+			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
+				<div class="openconsent-admin-card"><strong><?php echo ! empty( $options['enabled'] ) ? esc_html__( 'On', 'openconsent-cmp' ) : esc_html__( 'Off', 'openconsent-cmp' ); ?></strong><span><?php esc_html_e( 'Frontend banner', 'openconsent-cmp' ); ?></span></div>
+				<div class="openconsent-admin-card"><strong><?php echo esc_html( count( $services ) ); ?></strong><span><?php esc_html_e( 'Configured services', 'openconsent-cmp' ); ?></span></div>
+				<div class="openconsent-admin-card"><strong><?php echo esc_html( count( $logs ) ); ?></strong><span><?php esc_html_e( 'Recent consent records', 'openconsent-cmp' ); ?></span></div>
+				<div class="openconsent-admin-card"><strong><?php echo ! empty( $options['auto_detect_language'] ) ? esc_html__( 'Auto', 'openconsent-cmp' ) : esc_html__( 'Site', 'openconsent-cmp' ); ?></strong><span><?php esc_html_e( 'Language mode', 'openconsent-cmp' ); ?></span></div>
+			</div>
+
+			<div class="openconsent-settings-card">
+				<h2><?php esc_html_e( 'Setup checklist', 'openconsent-cmp' ); ?></h2>
+				<ul class="openconsent-help-list">
+					<li><?php esc_html_e( 'Add every analytics, advertising, embed, and preference service to the service registry.', 'openconsent-cmp' ); ?></li>
+					<li><?php esc_html_e( 'Place the shortcode on your cookie policy page:', 'openconsent-cmp' ); ?> <code>[openconsent_declaration]</code></li>
+					<li><?php esc_html_e( 'Link your privacy policy and describe parties that may receive personal data.', 'openconsent-cmp' ); ?></li>
+					<li><?php esc_html_e( 'Test the banner in an incognito window before relying on it in production.', 'openconsent-cmp' ); ?></li>
+				</ul>
+			</div>
+
 			<form method="post" action="options.php">
 				<?php settings_fields( 'openconsent_cmp' ); ?>
 
+				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Banner', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
@@ -192,7 +215,7 @@ final class OpenConsent_CMP_Admin {
 					</tr>
 					<tr>
 						<th scope="row"><label for="openconsent-title"><?php esc_html_e( 'Title', 'openconsent-cmp' ); ?></label></th>
-						<td><input id="openconsent-title" class="regular-text" type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[banner_title]" value="<?php echo esc_attr( $options['banner_title'] ); ?>"></td>
+						<td><input id="openconsent-title" class="regular-text" type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[banner_title]" value="<?php echo esc_attr( $options['banner_title'] ); ?>" placeholder="<?php esc_attr_e( 'Your privacy choices', 'openconsent-cmp' ); ?>"></td>
 					</tr>
 					<tr>
 						<th scope="row"><label for="openconsent-message"><?php esc_html_e( 'Message', 'openconsent-cmp' ); ?></label></th>
@@ -212,11 +235,13 @@ final class OpenConsent_CMP_Admin {
 					<tr>
 						<th scope="row"><?php esc_html_e( 'Button labels', 'openconsent-cmp' ); ?></th>
 						<td>
-							<input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_accept]" value="<?php echo esc_attr( $options['button_accept'] ); ?>">
-							<input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_reject]" value="<?php echo esc_attr( $options['button_reject'] ); ?>">
-							<input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_save]" value="<?php echo esc_attr( $options['button_save'] ); ?>">
-							<input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_customize]" value="<?php echo esc_attr( $options['button_customize'] ); ?>">
-							<input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_revoke]" value="<?php echo esc_attr( $options['button_revoke'] ); ?>">
+							<div class="openconsent-button-grid">
+								<label><?php esc_html_e( 'Accept all', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_accept]" value="<?php echo esc_attr( $options['button_accept'] ); ?>"></label>
+								<label><?php esc_html_e( 'Necessary only', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_reject]" value="<?php echo esc_attr( $options['button_reject'] ); ?>"></label>
+								<label><?php esc_html_e( 'Save choices', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_save]" value="<?php echo esc_attr( $options['button_save'] ); ?>"></label>
+								<label><?php esc_html_e( 'Theme selector', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_customize]" value="<?php echo esc_attr( $options['button_customize'] ); ?>"></label>
+								<label><?php esc_html_e( 'Reopen control', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_revoke]" value="<?php echo esc_attr( $options['button_revoke'] ); ?>"></label>
+							</div>
 						</td>
 					</tr>
 					<tr>
@@ -239,7 +264,9 @@ final class OpenConsent_CMP_Admin {
 						</td>
 					</tr>
 				</table>
+				</div>
 
+				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Blocking and signals', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
@@ -265,10 +292,13 @@ final class OpenConsent_CMP_Admin {
 						<td>
 							<textarea id="openconsent-services" class="large-text code" rows="9" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[services]"><?php echo esc_textarea( $options['services'] ); ?></textarea>
 							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Example:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool</code></p>
 						</td>
 					</tr>
 				</table>
+				</div>
 
+				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Category descriptions', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<?php foreach ( array( 'preferences', 'statistics', 'marketing' ) as $category ) : ?>
@@ -278,7 +308,9 @@ final class OpenConsent_CMP_Admin {
 						</tr>
 					<?php endforeach; ?>
 				</table>
+				</div>
 
+				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Audit log', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<tr>
@@ -286,6 +318,7 @@ final class OpenConsent_CMP_Admin {
 						<td><input id="openconsent-retention" type="number" min="1" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[log_retention_days]" value="<?php echo esc_attr( $options['log_retention_days'] ); ?>"> <?php esc_html_e( 'days', 'openconsent-cmp' ); ?></td>
 					</tr>
 				</table>
+				</div>
 
 				<?php submit_button(); ?>
 			</form>
@@ -308,6 +341,11 @@ final class OpenConsent_CMP_Admin {
 			<?php endif; ?>
 
 			<h2><?php esc_html_e( 'Recent consent logs', 'openconsent-cmp' ); ?></h2>
+			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin: 0 0 12px;">
+				<input type="hidden" name="action" value="openconsent_export_logs">
+				<?php wp_nonce_field( 'openconsent_export_logs' ); ?>
+				<?php submit_button( __( 'Export consent logs CSV', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+			</form>
 			<table class="widefat striped">
 				<thead><tr><th><?php esc_html_e( 'Time', 'openconsent-cmp' ); ?></th><th><?php esc_html_e( 'Consent ID', 'openconsent-cmp' ); ?></th><th><?php esc_html_e( 'Consent', 'openconsent-cmp' ); ?></th></tr></thead>
 				<tbody>
@@ -344,5 +382,40 @@ final class OpenConsent_CMP_Admin {
 		}
 
 		return $wpdb->get_results( "SELECT created_at, consent_id, consent_json FROM {$table} ORDER BY id DESC LIMIT 20" );
+	}
+
+	/**
+	 * Export consent logs as CSV for site owner records.
+	 *
+	 * @return void
+	 */
+	public function export_logs() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export consent logs.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_export_logs' );
+
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
+		}
+
+		$rows = $wpdb->get_results( "SELECT created_at, consent_id, consent_json, consent_hash, ip_hash, user_agent_hash FROM {$table} ORDER BY id DESC", ARRAY_A );
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="openconsent-cmp-logs-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		header( 'X-Content-Type-Options: nosniff' );
+
+		$output = fopen( 'php://output', 'w' );
+		fputcsv( $output, array( 'created_at', 'consent_id', 'consent_json', 'consent_hash', 'ip_hash', 'user_agent_hash' ) );
+		foreach ( $rows as $row ) {
+			fputcsv( $output, $row );
+		}
+		fclose( $output );
+		exit;
 	}
 }

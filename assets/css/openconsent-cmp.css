@@ -99,6 +99,16 @@
 	opacity: 0.78;
 }
 
+.openconsent__summary {
+	background: rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.14);
+	border-radius: 6px;
+	font-size: 13px;
+	line-height: 1.4;
+	margin: 12px 0 0;
+	padding: 9px 10px;
+}
+
 .openconsent__actions {
 	display: flex;
 	flex-wrap: wrap;
