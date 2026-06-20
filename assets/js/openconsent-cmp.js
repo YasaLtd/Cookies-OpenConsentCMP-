@@ -810,5 +810,9 @@
 	};
 
 	installAutoBlocker();
-	document.addEventListener('DOMContentLoaded', renderBanner);
+	if (document.readyState === 'loading') {
+		document.addEventListener('DOMContentLoaded', renderBanner);
+	} else {
+		renderBanner();
+	}
 }());

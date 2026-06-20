@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.8
+Stable tag: 1.0.9
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -76,6 +76,10 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.9 =
+* Fixes frontend startup on WordPress sites where optimization plugins load the consent script after DOMContentLoaded.
+* Publishes the install package with plugin files at the ZIP root as requested for direct WordPress upload testing.
 
 = 1.0.8 =
 * Replaces redundant Google signal checkboxes with real signal-to-category mappings.
