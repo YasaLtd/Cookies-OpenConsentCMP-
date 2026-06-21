@@ -35,6 +35,7 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_post_openconsent_run_scan', array( $this, 'run_scan' ) );
 		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
 		add_action( 'admin_post_openconsent_export_logs_json', array( $this, 'export_logs_json' ) );
+		add_action( 'admin_post_openconsent_prune_logs', array( $this, 'prune_logs' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widget' ) );
 	}
 
@@ -225,11 +226,18 @@ final class OpenConsent_CMP_Admin {
 			return;
 		}
 
-		$options = $this->plugin->options();
-		$logs    = $this->recent_logs();
-		$total_logs = $this->total_logs();
-		$log_stats  = $this->log_stats();
-		$services = $this->plugin->services();
+		$options       = $this->plugin->options();
+		$record_filters = $this->record_filters();
+		$total_logs    = $this->total_logs();
+		$filtered_logs = $this->filtered_logs_count( $record_filters );
+		$log_stats     = $this->log_stats();
+		$services      = $this->plugin->services();
+		$page_count    = max( 1, (int) ceil( $filtered_logs / $record_filters['per_page'] ) );
+		$current_page  = min( $record_filters['page'], $page_count );
+		$record_filters['page'] = $current_page;
+		$logs          = $this->recent_logs( $record_filters );
+		$csv_url       = $this->record_export_url( 'openconsent_export_logs', $record_filters );
+		$json_url      = $this->record_export_url( 'openconsent_export_logs_json', $record_filters );
 		?>
 		<div class="wrap">
 			<h1><?php esc_html_e( 'OpenConsent CMP', 'openconsent-cmp' ); ?></h1>
@@ -240,6 +248,9 @@ final class OpenConsent_CMP_Admin {
 
 			<?php if ( isset( $_GET['openconsent_scanned'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Homepage scan completed.', 'openconsent-cmp' ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['openconsent_pruned'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( __( 'Removed %s expired consent records.', 'openconsent-cmp' ), number_format_i18n( absint( $_GET['openconsent_pruned'] ) ) ) ); ?></p></div>
 			<?php endif; ?>
 
 			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
@@ -436,10 +447,17 @@ final class OpenConsent_CMP_Admin {
 							<strong><?php echo esc_html( number_format_i18n( $total_logs ) ); ?></strong>
 							<?php esc_html_e( 'records currently stored.', 'openconsent-cmp' ); ?>
 							<div class="openconsent-export-actions">
-								<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download CSV', 'openconsent-cmp' ); ?></a>
-								<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs_json' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download JSON', 'openconsent-cmp' ); ?></a>
+								<a class="button button-secondary" href="<?php echo esc_url( $csv_url ); ?>"><?php esc_html_e( 'Download CSV', 'openconsent-cmp' ); ?></a>
+								<a class="button button-secondary" href="<?php echo esc_url( $json_url ); ?>"><?php esc_html_e( 'Download JSON', 'openconsent-cmp' ); ?></a>
 							</div>
 							<p class="description"><?php esc_html_e( 'Exports include consent ID, timestamp, selected categories, action, region, language, page URL, consent hash, IP hash, and user-agent hash.', 'openconsent-cmp' ); ?></p>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Cleanup', 'openconsent-cmp' ); ?></th>
+						<td>
+							<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_prune_logs' ), 'openconsent_prune_logs' ) ); ?>"><?php esc_html_e( 'Prune expired records now', 'openconsent-cmp' ); ?></a>
+							<p class="description"><?php esc_html_e( 'Deletes records older than the retention period above. Current filters do not affect cleanup.', 'openconsent-cmp' ); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -473,9 +491,53 @@ final class OpenConsent_CMP_Admin {
 				<span><strong><?php echo esc_html( number_format_i18n( $log_stats['save_choices'] ) ); ?></strong> <?php esc_html_e( 'custom choices', 'openconsent-cmp' ); ?></span>
 			</div>
 			<p>
-				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download all records as CSV', 'openconsent-cmp' ); ?></a>
-				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs_json' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download all records as JSON', 'openconsent-cmp' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( $csv_url ); ?>"><?php esc_html_e( 'Download current view as CSV', 'openconsent-cmp' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( $json_url ); ?>"><?php esc_html_e( 'Download current view as JSON', 'openconsent-cmp' ); ?></a>
 			</p>
+			<form class="openconsent-record-filters" method="get" action="<?php echo esc_url( admin_url( 'options-general.php' ) ); ?>">
+				<input type="hidden" name="page" value="openconsent-cmp">
+				<label>
+					<span><?php esc_html_e( 'Action', 'openconsent-cmp' ); ?></span>
+					<select name="openconsent_action">
+						<option value=""><?php esc_html_e( 'All actions', 'openconsent-cmp' ); ?></option>
+						<option value="accept_all" <?php selected( $record_filters['action'], 'accept_all' ); ?>><?php esc_html_e( 'Accept all', 'openconsent-cmp' ); ?></option>
+						<option value="necessary_only" <?php selected( $record_filters['action'], 'necessary_only' ); ?>><?php esc_html_e( 'Necessary only', 'openconsent-cmp' ); ?></option>
+						<option value="save_choices" <?php selected( $record_filters['action'], 'save_choices' ); ?>><?php esc_html_e( 'Saved choices', 'openconsent-cmp' ); ?></option>
+					</select>
+				</label>
+				<label>
+					<span><?php esc_html_e( 'Granted category', 'openconsent-cmp' ); ?></span>
+					<select name="openconsent_category">
+						<option value=""><?php esc_html_e( 'Any category', 'openconsent-cmp' ); ?></option>
+						<option value="preferences" <?php selected( $record_filters['category'], 'preferences' ); ?>><?php esc_html_e( 'Preferences', 'openconsent-cmp' ); ?></option>
+						<option value="statistics" <?php selected( $record_filters['category'], 'statistics' ); ?>><?php esc_html_e( 'Statistics', 'openconsent-cmp' ); ?></option>
+						<option value="marketing" <?php selected( $record_filters['category'], 'marketing' ); ?>><?php esc_html_e( 'Marketing', 'openconsent-cmp' ); ?></option>
+						<option value="unclassified" <?php selected( $record_filters['category'], 'unclassified' ); ?>><?php esc_html_e( 'Unclassified', 'openconsent-cmp' ); ?></option>
+					</select>
+				</label>
+				<label>
+					<span><?php esc_html_e( 'From', 'openconsent-cmp' ); ?></span>
+					<input type="date" name="openconsent_from" value="<?php echo esc_attr( $record_filters['from'] ); ?>">
+				</label>
+				<label>
+					<span><?php esc_html_e( 'To', 'openconsent-cmp' ); ?></span>
+					<input type="date" name="openconsent_to" value="<?php echo esc_attr( $record_filters['to'] ); ?>">
+				</label>
+				<label>
+					<span><?php esc_html_e( 'Search', 'openconsent-cmp' ); ?></span>
+					<input type="search" name="openconsent_search" value="<?php echo esc_attr( $record_filters['search'] ); ?>" placeholder="<?php esc_attr_e( 'Consent ID or URL', 'openconsent-cmp' ); ?>">
+				</label>
+				<label>
+					<span><?php esc_html_e( 'Per page', 'openconsent-cmp' ); ?></span>
+					<select name="openconsent_per_page">
+						<?php foreach ( array( 25, 50, 100 ) as $per_page ) : ?>
+							<option value="<?php echo esc_attr( $per_page ); ?>" <?php selected( $record_filters['per_page'], $per_page ); ?>><?php echo esc_html( $per_page ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</label>
+				<?php submit_button( __( 'Filter records', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+				<a class="button button-link" href="<?php echo esc_url( admin_url( 'options-general.php?page=openconsent-cmp' ) ); ?>"><?php esc_html_e( 'Reset', 'openconsent-cmp' ); ?></a>
+			</form>
 			<table class="widefat striped">
 				<thead>
 					<tr>
@@ -487,11 +549,12 @@ final class OpenConsent_CMP_Admin {
 						<th><?php esc_html_e( 'Language', 'openconsent-cmp' ); ?></th>
 						<th><?php esc_html_e( 'Page', 'openconsent-cmp' ); ?></th>
 						<th><?php esc_html_e( 'Hash', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Details', 'openconsent-cmp' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
 					<?php if ( empty( $logs ) ) : ?>
-						<tr><td colspan="8"><?php esc_html_e( 'No consent records yet.', 'openconsent-cmp' ); ?></td></tr>
+						<tr><td colspan="9"><?php esc_html_e( 'No consent records match the current filters.', 'openconsent-cmp' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $logs as $log ) : ?>
 							<tr>
@@ -503,12 +566,22 @@ final class OpenConsent_CMP_Admin {
 								<td><?php echo esc_html( $log->language ); ?></td>
 								<td><?php echo $log->page_url ? '<a href="' . esc_url( $log->page_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( wp_parse_url( $log->page_url, PHP_URL_PATH ) ?: $log->page_url ) . '</a>' : '&mdash;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
 								<td><code><?php echo esc_html( substr( $log->consent_hash, 0, 12 ) ); ?></code></td>
+								<td><?php $this->render_record_details( $log ); ?></td>
 							</tr>
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
 			</table>
-			<p class="description"><?php esc_html_e( 'Showing the 50 newest consent records. Download the full dataset using CSV or JSON export.', 'openconsent-cmp' ); ?></p>
+			<div class="openconsent-pagination">
+				<span><?php echo esc_html( sprintf( __( 'Showing %1$s of %2$s matching records.', 'openconsent-cmp' ), number_format_i18n( count( $logs ) ), number_format_i18n( $filtered_logs ) ) ); ?></span>
+				<?php if ( $current_page > 1 ) : ?>
+					<a class="button" href="<?php echo esc_url( $this->record_page_url( $record_filters, $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'openconsent-cmp' ); ?></a>
+				<?php endif; ?>
+				<span><?php echo esc_html( sprintf( __( 'Page %1$s of %2$s', 'openconsent-cmp' ), number_format_i18n( $current_page ), number_format_i18n( $page_count ) ) ); ?></span>
+				<?php if ( $current_page < $page_count ) : ?>
+					<a class="button" href="<?php echo esc_url( $this->record_page_url( $record_filters, $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'openconsent-cmp' ); ?></a>
+				<?php endif; ?>
+			</div>
 
 			<p><?php esc_html_e( 'Use shortcode [openconsent_declaration] on a Cookie Policy page to publish the declaration.', 'openconsent-cmp' ); ?></p>
 		</div>
@@ -518,9 +591,10 @@ final class OpenConsent_CMP_Admin {
 	/**
 	 * Get recent consent logs.
 	 *
+	 * @param array $filters Record filters.
 	 * @return array
 	 */
-	private function recent_logs() {
+	private function recent_logs( $filters = array() ) {
 		global $wpdb;
 		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
 
@@ -528,7 +602,20 @@ final class OpenConsent_CMP_Admin {
 			return array();
 		}
 
-		return $wpdb->get_results( "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, consent_hash FROM {$table} ORDER BY id DESC LIMIT 50" );
+		$filters = wp_parse_args( $filters, $this->record_filters( array() ) );
+		$params  = array();
+		$where   = $this->record_where_sql( $filters, $params );
+		$limit   = max( 1, absint( $filters['per_page'] ) );
+		$offset  = max( 0, ( absint( $filters['page'] ) - 1 ) * $limit );
+		$params[] = $limit;
+		$params[] = $offset;
+
+		return $wpdb->get_results(
+			$wpdb->prepare(
+				"SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d",
+				$params
+			)
+		);
 	}
 
 	/**
@@ -545,6 +632,204 @@ final class OpenConsent_CMP_Admin {
 		}
 
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+	}
+
+	/**
+	 * Count consent logs matching the current admin filters.
+	 *
+	 * @param array $filters Record filters.
+	 * @return int
+	 */
+	private function filtered_logs_count( $filters ) {
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			return 0;
+		}
+
+		$params = array();
+		$where  = $this->record_where_sql( $filters, $params );
+		$sql    = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
+
+		return (int) ( $params ? $wpdb->get_var( $wpdb->prepare( $sql, $params ) ) : $wpdb->get_var( $sql ) );
+	}
+
+	/**
+	 * Build sanitized record filters from request data.
+	 *
+	 * @param array|null $source Request source. Defaults to $_GET.
+	 * @return array
+	 */
+	private function record_filters( $source = null ) {
+		$source = is_array( $source ) ? $source : $_GET; // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+		$action = sanitize_key( wp_unslash( $source['openconsent_action'] ?? '' ) );
+		$category = sanitize_key( wp_unslash( $source['openconsent_category'] ?? '' ) );
+		$from = sanitize_text_field( wp_unslash( $source['openconsent_from'] ?? '' ) );
+		$to = sanitize_text_field( wp_unslash( $source['openconsent_to'] ?? '' ) );
+		$per_page = absint( $source['openconsent_per_page'] ?? 50 );
+
+		if ( ! in_array( $action, array( 'accept_all', 'necessary_only', 'save_choices' ), true ) ) {
+			$action = '';
+		}
+
+		if ( ! in_array( $category, array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ) {
+			$category = '';
+		}
+
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $from ) ) {
+			$from = '';
+		}
+
+		if ( ! preg_match( '/^\d{4}-\d{2}-\d{2}$/', $to ) ) {
+			$to = '';
+		}
+
+		if ( ! in_array( $per_page, array( 25, 50, 100 ), true ) ) {
+			$per_page = 50;
+		}
+
+		return array(
+			'action'   => $action,
+			'category' => $category,
+			'from'     => $from,
+			'to'       => $to,
+			'search'   => sanitize_text_field( wp_unslash( $source['openconsent_search'] ?? '' ) ),
+			'page'     => max( 1, absint( $source['openconsent_page'] ?? 1 ) ),
+			'per_page' => $per_page,
+		);
+	}
+
+	/**
+	 * Create a whitelisted SQL WHERE clause and parameter list.
+	 *
+	 * @param array $filters Record filters.
+	 * @param array $params  Query params passed by reference.
+	 * @return string
+	 */
+	private function record_where_sql( $filters, &$params ) {
+		global $wpdb;
+		$where = array( '1=1' );
+		$params = array();
+
+		if ( ! empty( $filters['action'] ) ) {
+			$where[] = 'consent_action = %s';
+			$params[] = $filters['action'];
+		}
+
+		if ( ! empty( $filters['category'] ) && in_array( $filters['category'], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ) {
+			$where[] = "`{$filters['category']}` = 1";
+		}
+
+		if ( ! empty( $filters['from'] ) ) {
+			$where[] = 'created_at >= %s';
+			$params[] = $filters['from'] . ' 00:00:00';
+		}
+
+		if ( ! empty( $filters['to'] ) ) {
+			$where[] = 'created_at <= %s';
+			$params[] = $filters['to'] . ' 23:59:59';
+		}
+
+		if ( ! empty( $filters['search'] ) ) {
+			$like = '%' . $wpdb->esc_like( $filters['search'] ) . '%';
+			$where[] = '(consent_id LIKE %s OR page_url LIKE %s OR referrer_url LIKE %s)';
+			$params[] = $like;
+			$params[] = $like;
+			$params[] = $like;
+		}
+
+		return implode( ' AND ', $where );
+	}
+
+	/**
+	 * Build export URL that preserves current record filters.
+	 *
+	 * @param string $action  Admin-post action.
+	 * @param array  $filters Record filters.
+	 * @return string
+	 */
+	private function record_export_url( $action, $filters ) {
+		$args = array(
+			'action' => $action,
+		);
+
+		foreach ( $this->filter_query_args( $filters ) as $key => $value ) {
+			$args[ $key ] = $value;
+		}
+
+		return wp_nonce_url( add_query_arg( $args, admin_url( 'admin-post.php' ) ), 'openconsent_export_logs' );
+	}
+
+	/**
+	 * Build a pagination URL for the records table.
+	 *
+	 * @param array $filters Record filters.
+	 * @param int   $page    Page number.
+	 * @return string
+	 */
+	private function record_page_url( $filters, $page ) {
+		$args = array_merge(
+			array(
+				'page' => 'openconsent-cmp',
+				'openconsent_page' => max( 1, absint( $page ) ),
+			),
+			$this->filter_query_args( $filters )
+		);
+
+		return add_query_arg( $args, admin_url( 'options-general.php' ) );
+	}
+
+	/**
+	 * Return active filter query args.
+	 *
+	 * @param array $filters Record filters.
+	 * @return array
+	 */
+	private function filter_query_args( $filters ) {
+		$args = array();
+		$map  = array(
+			'action'   => 'openconsent_action',
+			'category' => 'openconsent_category',
+			'from'     => 'openconsent_from',
+			'to'       => 'openconsent_to',
+			'search'   => 'openconsent_search',
+			'per_page' => 'openconsent_per_page',
+		);
+
+		foreach ( $map as $filter_key => $query_key ) {
+			if ( isset( $filters[ $filter_key ] ) && '' !== (string) $filters[ $filter_key ] ) {
+				$args[ $query_key ] = $filters[ $filter_key ];
+			}
+		}
+
+		return $args;
+	}
+
+	/**
+	 * Render expandable consent record detail.
+	 *
+	 * @param object $log Consent log row.
+	 * @return void
+	 */
+	private function render_record_details( $log ) {
+		?>
+		<details class="openconsent-record-detail">
+			<summary><?php esc_html_e( 'View', 'openconsent-cmp' ); ?></summary>
+			<dl>
+				<dt><?php esc_html_e( 'Referrer', 'openconsent-cmp' ); ?></dt>
+				<dd><?php echo $log->referrer_url ? '<a href="' . esc_url( $log->referrer_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( wp_parse_url( $log->referrer_url, PHP_URL_PATH ) ?: $log->referrer_url ) . '</a>' : '&mdash;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></dd>
+				<dt><?php esc_html_e( 'Plugin version', 'openconsent-cmp' ); ?></dt>
+				<dd><code><?php echo esc_html( $log->plugin_version ); ?></code></dd>
+				<dt><?php esc_html_e( 'IP hash', 'openconsent-cmp' ); ?></dt>
+				<dd><code><?php echo esc_html( substr( (string) $log->ip_hash, 0, 16 ) ); ?></code></dd>
+				<dt><?php esc_html_e( 'User-agent hash', 'openconsent-cmp' ); ?></dt>
+				<dd><code><?php echo esc_html( substr( (string) $log->user_agent_hash, 0, 16 ) ); ?></code></dd>
+				<dt><?php esc_html_e( 'Raw consent JSON', 'openconsent-cmp' ); ?></dt>
+				<dd><textarea class="large-text code" rows="4" readonly><?php echo esc_textarea( $log->consent_json ); ?></textarea></dd>
+			</dl>
+		</details>
+		<?php
 	}
 
 	/**
@@ -659,6 +944,35 @@ final class OpenConsent_CMP_Admin {
 	}
 
 	/**
+	 * Delete consent records older than the configured retention period.
+	 *
+	 * @return void
+	 */
+	public function prune_logs() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to prune consent logs.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_prune_logs' );
+
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=0' ) );
+			exit;
+		}
+
+		$options = $this->plugin->options();
+		$days    = max( 1, absint( $options['log_retention_days'] ?? 365 ) );
+		$cutoff  = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
+		$deleted = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $cutoff ) );
+
+		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=' . max( 0, $deleted ) ) );
+		exit;
+	}
+
+	/**
 	 * Render a Google consent signal category mapping control.
 	 *
 	 * @param string $signal      Google signal name.
@@ -700,7 +1014,7 @@ final class OpenConsent_CMP_Admin {
 
 		check_admin_referer( 'openconsent_export_logs' );
 
-		$rows = $this->export_rows();
+		$rows = $this->export_rows( $this->record_filters() );
 
 		nocache_headers();
 		header( 'Content-Type: text/csv; charset=utf-8' );
@@ -738,7 +1052,7 @@ final class OpenConsent_CMP_Admin {
 				'site_url'     => home_url( '/' ),
 				'plugin'       => 'OpenConsent CMP',
 				'version'      => OPENCONSENT_CMP_VERSION,
-				'records'      => array_map( array( $this, 'normalize_export_row' ), $this->export_rows() ),
+				'records'      => array_map( array( $this, 'normalize_export_row' ), $this->export_rows( $this->record_filters() ) ),
 			),
 			JSON_PRETTY_PRINT
 		);
@@ -789,9 +1103,10 @@ final class OpenConsent_CMP_Admin {
 	/**
 	 * Get rows for export.
 	 *
+	 * @param array $filters Record filters.
 	 * @return array
 	 */
-	private function export_rows() {
+	private function export_rows( $filters = array() ) {
 		global $wpdb;
 		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
 
@@ -799,10 +1114,12 @@ final class OpenConsent_CMP_Admin {
 			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
 		}
 
-		return $wpdb->get_results(
-			"SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} ORDER BY id DESC",
-			ARRAY_A
-		);
+		$filters = wp_parse_args( $filters, $this->record_filters( array() ) );
+		$params  = array();
+		$where   = $this->record_where_sql( $filters, $params );
+		$sql     = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC";
+
+		return $wpdb->get_results( $params ? $wpdb->prepare( $sql, $params ) : $sql, ARRAY_A );
 	}
 
 	/**

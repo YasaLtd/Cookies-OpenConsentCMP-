@@ -56,6 +56,64 @@
 	padding: 8px 10px;
 }
 
+.openconsent-record-filters {
+	align-items: end;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	display: grid;
+	gap: 12px;
+	grid-template-columns: repeat(6, minmax(130px, 1fr)) auto auto;
+	margin: 14px 0;
+	padding: 14px;
+}
+
+.openconsent-record-filters label {
+	display: grid;
+	gap: 5px;
+}
+
+.openconsent-record-filters span {
+	font-weight: 600;
+}
+
+.openconsent-record-detail summary {
+	cursor: pointer;
+	font-weight: 600;
+}
+
+.openconsent-record-detail dl {
+	display: grid;
+	gap: 6px 10px;
+	grid-template-columns: max-content minmax(180px, 1fr);
+	margin: 10px 0 0;
+	max-width: 520px;
+}
+
+.openconsent-record-detail dt {
+	color: #50575e;
+	font-weight: 600;
+}
+
+.openconsent-record-detail dd {
+	margin: 0;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.openconsent-record-detail textarea {
+	min-width: 260px;
+	resize: vertical;
+}
+
+.openconsent-pagination {
+	align-items: center;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 14px 0;
+}
+
 .openconsent-badge {
 	border-radius: 999px;
 	display: inline-block;
@@ -105,7 +163,8 @@
 
 @media (max-width: 1100px) {
 	.openconsent-admin-grid,
-	.openconsent-button-grid {
+	.openconsent-button-grid,
+	.openconsent-record-filters {
 		grid-template-columns: repeat(2, minmax(0, 1fr));
 	}
 
@@ -116,7 +175,12 @@
 
 @media (max-width: 782px) {
 	.openconsent-admin-grid,
-	.openconsent-button-grid {
+	.openconsent-button-grid,
+	.openconsent-record-filters {
+		grid-template-columns: 1fr;
+	}
+
+	.openconsent-record-detail dl {
 		grid-template-columns: 1fr;
 	}
 }
