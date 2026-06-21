@@ -36,6 +36,9 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
 		add_action( 'admin_post_openconsent_export_logs_json', array( $this, 'export_logs_json' ) );
 		add_action( 'admin_post_openconsent_prune_logs', array( $this, 'prune_logs' ) );
+		add_action( 'admin_post_openconsent_export_settings', array( $this, 'export_settings' ) );
+		add_action( 'admin_post_openconsent_export_services', array( $this, 'export_services' ) );
+		add_action( 'admin_post_openconsent_import_settings', array( $this, 'import_settings' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widget' ) );
 	}
 
@@ -155,6 +158,8 @@ final class OpenConsent_CMP_Admin {
 			'url_passthrough'     => empty( $input['url_passthrough'] ) ? 0 : 1,
 			'ads_data_redaction'  => empty( $input['ads_data_redaction'] ) ? 0 : 1,
 			'wp_consent_api'      => empty( $input['wp_consent_api'] ) ? 0 : 1,
+			'debug_mode'          => empty( $input['debug_mode'] ) ? 0 : 1,
+			'scan_page_limit'     => min( 25, max( 1, absint( $input['scan_page_limit'] ?? 5 ) ) ),
 			'log_retention_days'  => max( 1, absint( $input['log_retention_days'] ?? 365 ) ),
 			'services'            => $this->sanitize_services( $input['services'] ?? '' ),
 			'script_handles'      => $this->sanitize_script_handles( $input['script_handles'] ?? '' ),
@@ -211,8 +216,13 @@ final class OpenConsent_CMP_Admin {
 
 		check_admin_referer( 'openconsent_run_scan' );
 
-		$options = $this->plugin->options();
-		$report  = $this->plugin->scanner->scan_homepage();
+		$options        = $this->plugin->options();
+		$posted_options = isset( $_POST[ OpenConsent_CMP::OPTION ] ) ? (array) wp_unslash( $_POST[ OpenConsent_CMP::OPTION ] ) : array(); // phpcs:ignore WordPress.Security.ValidatedSanitizedInput.InputNotSanitized
+		if ( isset( $posted_options['scan_page_limit'] ) ) {
+			$options['scan_page_limit'] = min( 25, max( 1, absint( $posted_options['scan_page_limit'] ) ) );
+		}
+		$page_limit = min( 25, max( 1, absint( $options['scan_page_limit'] ?? 5 ) ) );
+		$report  = $this->plugin->scanner->scan_site( $page_limit );
 
 		$options['scan_report']           = $report;
 		$options['scan_report_generated'] = current_time( 'mysql' );
@@ -257,6 +267,9 @@ final class OpenConsent_CMP_Admin {
 			<?php endif; ?>
 			<?php if ( isset( $_GET['openconsent_pruned'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( __( 'Removed %s expired consent records.', 'openconsent-cmp' ), number_format_i18n( absint( $_GET['openconsent_pruned'] ) ) ) ); ?></p></div>
+			<?php endif; ?>
+			<?php if ( isset( $_GET['openconsent_imported'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'OpenConsent settings imported.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
 
 			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
@@ -409,6 +422,13 @@ final class OpenConsent_CMP_Admin {
 						</td>
 					</tr>
 					<tr>
+						<th scope="row"><?php esc_html_e( 'Debug mode', 'openconsent-cmp' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[debug_mode]" value="1" <?php checked( $options['debug_mode'], 1 ); ?>> <?php esc_html_e( 'Expose blocked resource diagnostics in the browser console and window.OpenConsentDebug', 'openconsent-cmp' ); ?></label>
+							<p class="description"><?php esc_html_e( 'Use only while configuring a site. Debug mode lists blocked scripts and embeds, matched category, provider, purpose, and source URL.', 'openconsent-cmp' ); ?></p>
+						</td>
+					</tr>
+					<tr>
 						<th scope="row"><?php esc_html_e( 'WordPress Consent API', 'openconsent-cmp' ); ?></th>
 						<td>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[wp_consent_api]" value="1" <?php checked( $options['wp_consent_api'], 1 ); ?>> <?php esc_html_e( 'Publish consent choices to the WP Consent API when it is installed', 'openconsent-cmp' ); ?></label>
@@ -437,6 +457,12 @@ final class OpenConsent_CMP_Admin {
 				</div>
 
 				<div class="openconsent-settings-card">
+				<h2><?php esc_html_e( 'Service inventory', 'openconsent-cmp' ); ?></h2>
+				<p><?php esc_html_e( 'Review configured services in a structured table. Edit the textarea above when you need to change the registry.', 'openconsent-cmp' ); ?></p>
+				<?php $this->render_service_inventory( $services ); ?>
+				</div>
+
+				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Category descriptions', 'openconsent-cmp' ); ?></h2>
 				<table class="form-table" role="presentation">
 					<?php foreach ( array( 'preferences', 'statistics', 'marketing', 'unclassified' ) as $category ) : ?>
@@ -446,6 +472,23 @@ final class OpenConsent_CMP_Admin {
 						</tr>
 					<?php endforeach; ?>
 				</table>
+				</div>
+
+				<div class="openconsent-settings-card">
+				<h2><?php esc_html_e( 'Configuration import and export', 'openconsent-cmp' ); ?></h2>
+				<p><?php esc_html_e( 'Export settings before major changes, or move a registry between WordPress installations.', 'openconsent-cmp' ); ?></p>
+				<p class="openconsent-export-actions">
+					<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_settings' ), 'openconsent_export_settings' ) ); ?>"><?php esc_html_e( 'Export settings JSON', 'openconsent-cmp' ); ?></a>
+					<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_services' ), 'openconsent_export_services' ) ); ?>"><?php esc_html_e( 'Export services CSV', 'openconsent-cmp' ); ?></a>
+				</p>
+				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+					<input type="hidden" name="action" value="openconsent_import_settings">
+					<?php wp_nonce_field( 'openconsent_import_settings' ); ?>
+					<label for="openconsent-import-file"><?php esc_html_e( 'Import settings JSON', 'openconsent-cmp' ); ?></label>
+					<input id="openconsent-import-file" type="file" name="openconsent_settings_file" accept="application/json,.json">
+					<?php submit_button( __( 'Import settings', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+				</form>
+				<p class="description"><?php esc_html_e( 'Import replaces plugin settings but keeps existing consent records.', 'openconsent-cmp' ); ?></p>
 				</div>
 
 				<div class="openconsent-settings-card">
@@ -482,21 +525,16 @@ final class OpenConsent_CMP_Admin {
 			</form>
 
 			<hr>
-			<h2><?php esc_html_e( 'Local scan', 'openconsent-cmp' ); ?></h2>
-			<p><?php esc_html_e( 'The scanner checks the homepage for Set-Cookie headers and external script, iframe, and image hosts. It is a lightweight local inventory tool and does not run JavaScript like a full browser crawler.', 'openconsent-cmp' ); ?></p>
+			<h2><?php esc_html_e( 'Crawl scan', 'openconsent-cmp' ); ?></h2>
+			<p><?php esc_html_e( 'The scanner crawls internal pages, records Set-Cookie headers, finds static external script/embed/media hosts, and suggests unreviewed service registry entries. It does not execute JavaScript like a full browser crawler.', 'openconsent-cmp' ); ?></p>
 			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
 				<input type="hidden" name="action" value="openconsent_run_scan">
 				<?php wp_nonce_field( 'openconsent_run_scan' ); ?>
-				<?php submit_button( __( 'Scan homepage', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+				<label for="openconsent-scan-limit"><?php esc_html_e( 'Pages to scan', 'openconsent-cmp' ); ?></label>
+				<input id="openconsent-scan-limit" type="number" min="1" max="25" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[scan_page_limit]" value="<?php echo esc_attr( $options['scan_page_limit'] ); ?>">
+				<?php submit_button( __( 'Run crawl scan', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
 			</form>
-			<?php if ( ! empty( $options['scan_report_generated'] ) ) : ?>
-				<p><strong><?php esc_html_e( 'Last scan:', 'openconsent-cmp' ); ?></strong> <?php echo esc_html( $options['scan_report_generated'] ); ?></p>
-				<ul>
-					<?php foreach ( (array) $options['scan_report'] as $item ) : ?>
-						<li><code><?php echo esc_html( $item ); ?></code></li>
-					<?php endforeach; ?>
-				</ul>
-			<?php endif; ?>
+			<?php $this->render_scan_report( $options ); ?>
 
 			<h2><?php esc_html_e( 'Consent records', 'openconsent-cmp' ); ?></h2>
 			<div class="openconsent-record-summary" aria-label="<?php esc_attr_e( 'Consent record summary', 'openconsent-cmp' ); ?>">
@@ -600,6 +638,219 @@ final class OpenConsent_CMP_Admin {
 
 			<p><?php esc_html_e( 'Use shortcode [openconsent_declaration] on a Cookie Policy page to publish the declaration.', 'openconsent-cmp' ); ?></p>
 		</div>
+		<?php
+	}
+
+	/**
+	 * Render configured services as an inventory table.
+	 *
+	 * @param array $services Parsed service registry rows.
+	 * @return void
+	 */
+	private function render_service_inventory( $services ) {
+		if ( empty( $services ) ) {
+			?>
+			<p><?php esc_html_e( 'No services are configured yet. Add one service rule per line in the service registry.', 'openconsent-cmp' ); ?></p>
+			<?php
+			return;
+		}
+		?>
+		<table class="widefat striped openconsent-inventory-table">
+			<thead>
+				<tr>
+					<th scope="col"><?php esc_html_e( 'Service', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Category', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Provider', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Purpose', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'URL rule', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Privacy policy', 'openconsent-cmp' ); ?></th>
+					<th scope="col"><?php esc_html_e( 'Review status', 'openconsent-cmp' ); ?></th>
+				</tr>
+			</thead>
+			<tbody>
+				<?php foreach ( $services as $service ) : ?>
+					<?php
+					$complete = ! empty( $service['provider'] ) && ! empty( $service['purpose'] ) && ! empty( $service['privacy_url'] );
+					?>
+					<tr>
+						<td><strong><?php echo esc_html( $service['name'] ?? $service['pattern'] ); ?></strong></td>
+						<td><span class="openconsent-badge openconsent-badge--category"><?php echo esc_html( ucfirst( $service['category'] ?? 'unclassified' ) ); ?></span></td>
+						<td><?php echo esc_html( $service['provider'] ?? '' ); ?></td>
+						<td><?php echo esc_html( $service['purpose'] ?? '' ); ?></td>
+						<td><code><?php echo esc_html( $service['pattern'] ?? '' ); ?></code></td>
+						<td>
+							<?php if ( ! empty( $service['privacy_url'] ) ) : ?>
+								<a href="<?php echo esc_url( $service['privacy_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Open', 'openconsent-cmp' ); ?></a>
+							<?php else : ?>
+								&mdash;
+							<?php endif; ?>
+						</td>
+						<td>
+							<span class="openconsent-badge openconsent-badge--<?php echo $complete ? 'granted' : 'denied'; ?>">
+								<?php echo esc_html( $complete ? __( 'Documented', 'openconsent-cmp' ) : __( 'Needs details', 'openconsent-cmp' ) ); ?>
+							</span>
+						</td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Render latest scanner report.
+	 *
+	 * @param array $options Plugin options.
+	 * @return void
+	 */
+	private function render_scan_report( $options ) {
+		$report = isset( $options['scan_report'] ) && is_array( $options['scan_report'] ) ? $options['scan_report'] : array();
+
+		if ( empty( $report ) ) {
+			?>
+			<p><?php esc_html_e( 'No crawl report has been generated yet.', 'openconsent-cmp' ); ?></p>
+			<?php
+			return;
+		}
+
+		if ( empty( $report['version'] ) || 2 > absint( $report['version'] ) ) {
+			?>
+			<ul class="openconsent-help-list">
+				<?php foreach ( $report as $finding ) : ?>
+					<li><?php echo esc_html( $finding ); ?></li>
+				<?php endforeach; ?>
+			</ul>
+			<?php
+			return;
+		}
+
+		$summary = wp_parse_args(
+			$report['summary'] ?? array(),
+			array(
+				'pages_scanned'      => 0,
+				'cookies_found'      => 0,
+				'external_resources' => 0,
+				'suggestions'        => 0,
+			)
+		);
+		?>
+		<div class="openconsent-record-summary" aria-label="<?php esc_attr_e( 'Crawl report summary', 'openconsent-cmp' ); ?>">
+			<div><strong><?php echo esc_html( number_format_i18n( $summary['pages_scanned'] ) ); ?></strong><span><?php esc_html_e( 'Pages scanned', 'openconsent-cmp' ); ?></span></div>
+			<div><strong><?php echo esc_html( number_format_i18n( $summary['cookies_found'] ) ); ?></strong><span><?php esc_html_e( 'Set-Cookie headers', 'openconsent-cmp' ); ?></span></div>
+			<div><strong><?php echo esc_html( number_format_i18n( $summary['external_resources'] ) ); ?></strong><span><?php esc_html_e( 'External resources', 'openconsent-cmp' ); ?></span></div>
+			<div><strong><?php echo esc_html( number_format_i18n( $summary['suggestions'] ) ); ?></strong><span><?php esc_html_e( 'Registry suggestions', 'openconsent-cmp' ); ?></span></div>
+		</div>
+
+		<h3><?php esc_html_e( 'Scanned pages', 'openconsent-cmp' ); ?></h3>
+		<table class="widefat striped">
+			<thead><tr><th scope="col"><?php esc_html_e( 'URL', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Status', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Cookies', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Resources', 'openconsent-cmp' ); ?></th></tr></thead>
+			<tbody>
+				<?php foreach ( $report['pages'] ?? array() as $page ) : ?>
+					<tr>
+						<td><a href="<?php echo esc_url( $page['url'] ?? '' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $page['url'] ?? '' ); ?></a></td>
+						<td><?php echo esc_html( $page['message'] ?? $page['status'] ?? '' ); ?></td>
+						<td><?php echo esc_html( number_format_i18n( count( $page['cookies'] ?? array() ) ) ); ?></td>
+						<td><?php echo esc_html( number_format_i18n( count( $page['resources'] ?? array() ) ) ); ?></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+
+		<h3><?php esc_html_e( 'Cookies found', 'openconsent-cmp' ); ?></h3>
+		<?php $this->render_scan_cookies_table( $report['cookies'] ?? array() ); ?>
+
+		<h3><?php esc_html_e( 'External resources', 'openconsent-cmp' ); ?></h3>
+		<?php $this->render_scan_resources_table( $report['resources'] ?? array() ); ?>
+
+		<h3><?php esc_html_e( 'Suggested service rows', 'openconsent-cmp' ); ?></h3>
+		<?php $this->render_scan_suggestions( $report['suggestions'] ?? array() ); ?>
+		<?php
+	}
+
+	/**
+	 * Render cookies from scanner report.
+	 *
+	 * @param array $cookies Cookie rows.
+	 * @return void
+	 */
+	private function render_scan_cookies_table( $cookies ) {
+		if ( empty( $cookies ) ) {
+			echo '<p>' . esc_html__( 'No Set-Cookie headers were found in the scanned responses.', 'openconsent-cmp' ) . '</p>';
+			return;
+		}
+		?>
+		<table class="widefat striped">
+			<thead><tr><th scope="col"><?php esc_html_e( 'Cookie name', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Expiry hint', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Page', 'openconsent-cmp' ); ?></th></tr></thead>
+			<tbody>
+				<?php foreach ( $cookies as $cookie ) : ?>
+					<tr>
+						<td><code><?php echo esc_html( $cookie['name'] ?? '' ); ?></code></td>
+						<td><?php echo esc_html( $cookie['expires'] ?? '' ); ?></td>
+						<td><a href="<?php echo esc_url( $cookie['page_url'] ?? '' ); ?>" target="_blank" rel="noopener noreferrer"><?php echo esc_html( $cookie['page_url'] ?? '' ); ?></a></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Render external resources from scanner report.
+	 *
+	 * @param array $resources Resource rows.
+	 * @return void
+	 */
+	private function render_scan_resources_table( $resources ) {
+		if ( empty( $resources ) ) {
+			echo '<p>' . esc_html__( 'No external static resources were found in scanned markup.', 'openconsent-cmp' ) . '</p>';
+			return;
+		}
+		?>
+		<table class="widefat striped">
+			<thead><tr><th scope="col"><?php esc_html_e( 'Host', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Type', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Suggested category', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'Registry match', 'openconsent-cmp' ); ?></th><th scope="col"><?php esc_html_e( 'URL', 'openconsent-cmp' ); ?></th></tr></thead>
+			<tbody>
+				<?php foreach ( $resources as $resource ) : ?>
+					<tr>
+						<td><?php echo esc_html( $resource['host'] ?? '' ); ?></td>
+						<td><?php echo esc_html( $resource['type'] ?? '' ); ?></td>
+						<td><?php echo esc_html( ucfirst( $resource['category'] ?? 'unclassified' ) ); ?></td>
+						<td><?php echo ! empty( $resource['matched'] ) ? esc_html__( 'Configured', 'openconsent-cmp' ) : esc_html__( 'Needs review', 'openconsent-cmp' ); ?></td>
+						<td><code><?php echo esc_html( $resource['url'] ?? '' ); ?></code></td>
+					</tr>
+				<?php endforeach; ?>
+			</tbody>
+		</table>
+		<?php
+	}
+
+	/**
+	 * Render suggested service registry rows from scanner report.
+	 *
+	 * @param array $suggestions Suggestion rows.
+	 * @return void
+	 */
+	private function render_scan_suggestions( $suggestions ) {
+		if ( empty( $suggestions ) ) {
+			echo '<p>' . esc_html__( 'No unconfigured external resources were found.', 'openconsent-cmp' ) . '</p>';
+			return;
+		}
+		$rows = array();
+		foreach ( $suggestions as $suggestion ) {
+			$rows[] = implode(
+				'|',
+				array(
+					$suggestion['pattern'] ?? '',
+					$suggestion['category'] ?? 'unclassified',
+					$suggestion['name'] ?? '',
+					$suggestion['provider'] ?? '',
+					$suggestion['purpose'] ?? '',
+					$suggestion['privacy_url'] ?? '',
+				)
+			);
+		}
+		?>
+		<p><?php esc_html_e( 'Review these rows before adding them to the service registry. The category is a heuristic suggestion, not a legal classification.', 'openconsent-cmp' ); ?></p>
+		<textarea class="large-text code" rows="5" readonly><?php echo esc_textarea( implode( "\n", $rows ) ); ?></textarea>
 		<?php
 	}
 
@@ -1071,6 +1322,104 @@ final class OpenConsent_CMP_Admin {
 			),
 			JSON_PRETTY_PRINT
 		);
+		exit;
+	}
+
+	/**
+	 * Export plugin settings as JSON.
+	 *
+	 * @return void
+	 */
+	public function export_settings() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export settings.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_export_settings' );
+
+		nocache_headers();
+		header( 'Content-Type: application/json; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="openconsent-cmp-settings-' . gmdate( 'Y-m-d' ) . '.json"' );
+		header( 'X-Content-Type-Options: nosniff' );
+		echo wp_json_encode(
+			array(
+				'plugin'       => 'OpenConsent CMP',
+				'version'      => OPENCONSENT_CMP_VERSION,
+				'generated_at' => gmdate( 'c' ),
+				'site_url'     => home_url( '/' ),
+				'settings'     => $this->plugin->options(),
+			),
+			JSON_PRETTY_PRINT
+		);
+		exit;
+	}
+
+	/**
+	 * Export service registry as CSV.
+	 *
+	 * @return void
+	 */
+	public function export_services() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export services.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_export_services' );
+
+		nocache_headers();
+		header( 'Content-Type: text/csv; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="openconsent-cmp-services-' . gmdate( 'Y-m-d' ) . '.csv"' );
+		header( 'X-Content-Type-Options: nosniff' );
+
+		$output = fopen( 'php://output', 'w' );
+		fputcsv( $output, array( 'pattern', 'category', 'name', 'provider', 'purpose', 'privacy_url' ) );
+		foreach ( $this->plugin->services() as $service ) {
+			fputcsv(
+				$output,
+				array(
+					$service['pattern'] ?? '',
+					$service['category'] ?? 'unclassified',
+					$service['name'] ?? '',
+					$service['provider'] ?? '',
+					$service['purpose'] ?? '',
+					$service['privacy_url'] ?? '',
+				)
+			);
+		}
+		fclose( $output );
+		exit;
+	}
+
+	/**
+	 * Import plugin settings from a JSON export.
+	 *
+	 * @return void
+	 */
+	public function import_settings() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to import settings.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_import_settings' );
+
+		if ( empty( $_FILES['openconsent_settings_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['openconsent_settings_file']['tmp_name'] ) ) {
+			wp_die( esc_html__( 'No settings file was uploaded.', 'openconsent-cmp' ) );
+		}
+
+		$raw = file_get_contents( $_FILES['openconsent_settings_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( false === $raw || '' === trim( $raw ) ) {
+			wp_die( esc_html__( 'The uploaded settings file is empty.', 'openconsent-cmp' ) );
+		}
+
+		$decoded = json_decode( $raw, true );
+		if ( ! is_array( $decoded ) ) {
+			wp_die( esc_html__( 'The uploaded settings file is not valid JSON.', 'openconsent-cmp' ) );
+		}
+
+		$settings = isset( $decoded['settings'] ) && is_array( $decoded['settings'] ) ? $decoded['settings'] : $decoded;
+		update_option( OpenConsent_CMP::OPTION, $this->sanitize_options( $settings ) );
+
+		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_imported=1' ) );
 		exit;
 	}
 

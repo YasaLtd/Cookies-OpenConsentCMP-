@@ -6,6 +6,7 @@
 	var cookieName = 'openconsent_cmp';
 	var themeStorageKey = 'openconsent_cmp_theme';
 	var categories = ['preferences', 'statistics', 'marketing', 'unclassified'];
+	window.OpenConsentDebug = window.OpenConsentDebug || { blocked: [] };
 	var themePresets = [
 		{ key: 'dark-teal', label: 'Teal', accent: '#54d2bf', background: '#111827', text: '#ffffff' },
 		{ key: 'dark-blue', label: 'Blue', accent: '#73a7ff', background: '#101828', text: '#ffffff' },
@@ -346,6 +347,25 @@
 		return null;
 	}
 
+	function recordDebugBlocked(kind, category, src, service) {
+		var item = {
+			kind: kind,
+			category: category || '',
+			src: src || '',
+			service: service && service.name ? service.name : '',
+			provider: service && service.provider ? service.provider : '',
+			time: new Date().toISOString()
+		};
+
+		window.OpenConsentDebug.blocked.push(item);
+		if (config.debugMode && window.console && typeof window.console.info === 'function') {
+			window.console.info('[OpenConsent CMP] Blocked ' + kind + ' until consent is granted.', item);
+		}
+		try {
+			window.dispatchEvent(new CustomEvent('openconsent:debug-blocked', { detail: item }));
+		} catch (error) {}
+	}
+
 	function isGoogleConsentAwareUrl(url) {
 		var anchor = document.createElement('a');
 		anchor.href = url;
@@ -376,6 +396,7 @@
 		node.setAttribute('data-openconsent-blocked', '1');
 		window.OpenConsentQueue = window.OpenConsentQueue || [];
 		window.OpenConsentQueue.push(node);
+		recordDebugBlocked('script', category, src, service);
 	}
 
 	function blockFrame(node, category, src) {
@@ -394,6 +415,7 @@
 		if (service && service.purpose) {
 			node.setAttribute('data-openconsent-purpose', service.purpose);
 		}
+		recordDebugBlocked('embed', category, src, service);
 	}
 
 	function shouldBlockScript(node) {
@@ -914,6 +936,7 @@
 		getConsent: readConsent,
 		setConsent: saveConsent,
 		showBanner: renderBanner,
+		debug: window.OpenConsentDebug,
 		showPreferences: function () {
 			renderBanner({ force: true, showCategories: true });
 		},

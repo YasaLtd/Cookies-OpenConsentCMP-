@@ -1,0 +1,38 @@
+name: Plugin checks
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '7.4'
+          coverage: none
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: PHP syntax
+        run: find . -name '*.php' -not -path './vendor/*' -print0 | xargs -0 -n1 php -l
+
+      - name: JavaScript syntax
+        run: node --check assets/js/openconsent-cmp.js
+
+      - name: Required plugin files
+        run: |
+          test -f openconsent-cmp.php
+          test -f readme.txt
+          test -f LICENSE.txt
+          test -f uninstall.php
+          grep -q "Text Domain: openconsent-cmp" openconsent-cmp.php

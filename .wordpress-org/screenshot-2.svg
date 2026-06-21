@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-labelledby="title desc">
+  <title id="title">OpenConsent CMP frontend dialog</title>
+  <desc id="desc">Illustration of the centered consent dialog with category controls.</desc>
+  <rect width="1280" height="800" fill="#0b1715"/>
+  <rect x="360" y="115" width="560" height="570" rx="18" fill="#111827" stroke="#54d2bf"/>
+  <text x="410" y="185" fill="#ffffff" font-family="Arial, sans-serif" font-size="36" font-weight="800">Your privacy choices</text>
+  <text x="410" y="235" fill="#cbd5e1" font-family="Arial, sans-serif" font-size="18">Choose which optional services may run.</text>
+  <g fill="#1f2937" stroke="#334155">
+    <rect x="410" y="280" width="460" height="58" rx="10"/>
+    <rect x="410" y="354" width="460" height="58" rx="10"/>
+    <rect x="410" y="428" width="460" height="58" rx="10"/>
+  </g>
+  <circle cx="835" cy="309" r="17" fill="#54d2bf"/>
+  <circle cx="835" cy="383" r="17" fill="#334155"/>
+  <circle cx="835" cy="457" r="17" fill="#334155"/>
+  <rect x="410" y="560" width="140" height="48" rx="8" fill="#334155"/>
+  <rect x="570" y="560" width="140" height="48" rx="8" fill="#54d2bf"/>
+  <rect x="730" y="560" width="140" height="48" rx="8" fill="#73a7ff"/>
+</svg>

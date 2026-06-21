@@ -249,6 +249,8 @@ final class OpenConsent_CMP {
 			'url_passthrough'       => 0,
 			'ads_data_redaction'    => 1,
 			'wp_consent_api'        => 1,
+			'debug_mode'            => 0,
+			'scan_page_limit'       => 5,
 			'log_retention_days'    => 365,
 			'services'              => "google-analytics.com|statistics|Google Analytics|Google LLC|Audience measurement and analytics.|https://policies.google.com/privacy\nwww.googletagmanager.com|statistics|Google Tag Manager|Google LLC|Tag loading and consent-aware measurement.|https://policies.google.com/privacy\nconnect.facebook.net|marketing|Meta Pixel|Meta Platforms Ireland Limited|Advertising measurement and remarketing.|https://www.facebook.com/privacy/policy/\ndoubleclick.net|marketing|Google Ads|Google LLC|Advertising measurement and remarketing.|https://policies.google.com/privacy\npagead2.googlesyndication.com|marketing|Google AdSense|Google LLC|Publisher advertising and ad measurement.|https://policies.google.com/privacy\ngooglesyndication.com|marketing|Google publisher ads|Google LLC|Publisher advertising and ad delivery.|https://policies.google.com/privacy\nyoutube.com|marketing|YouTube embeds|Google LLC|Embedded video playback and related measurement.|https://policies.google.com/privacy\nvimeo.com|marketing|Vimeo embeds|Vimeo.com, Inc.|Embedded video playback and related measurement.|https://vimeo.com/privacy",
 			'script_handles'        => '',

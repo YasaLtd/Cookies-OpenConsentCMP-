@@ -29,6 +29,10 @@ Open source WordPress consent management plugin by YASA LTD with consent categor
 - Supports Google Consent Mode Basic or Advanced behavior. Advanced mode lets consent-aware Google tags load with denied defaults so they can adjust behavior before consent.
 - Stores anonymized consent audit records in a local WordPress table.
 - Shows structured consent records in the WordPress admin and lets administrators download CSV or JSON exports.
+- Shows a structured cookie/service inventory table with provider, purpose, privacy policy URL, category, and review status.
+- Runs a local crawl scanner for internal pages, `Set-Cookie` headers, external static resources, and suggested service registry rows.
+- Provides JSON settings export/import and CSV service registry export for migration and review workflows.
+- Includes optional debug mode so site owners can inspect blocked scripts and embeds through `OpenConsent.debug` and console notices.
 - Shows a persistent Privacy choices control after consent so visitors can reopen the dialog and change their choices.
 - Detects the visitor browser language for built-in banner labels and category names when the site owner has not customized that text.
 - Keeps banner copy as regular visible DOM text with `translate="yes"` and `lang` attributes so browser translation tools can translate it.
@@ -117,6 +121,7 @@ OpenConsent.getConsent();
 OpenConsent.setConsent({ preferences: true, statistics: true, marketing: false });
 OpenConsent.showBanner();
 OpenConsent.revoke();
+OpenConsent.debug.blocked;
 
 window.addEventListener('openconsent:updated', (event) => {
   console.log(event.detail);

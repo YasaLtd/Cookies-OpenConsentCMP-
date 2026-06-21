@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.0.15\n"
+"Project-Id-Version: OpenConsent CMP 1.0.16\n"
 "Report-Msgid-Bugs-To: https://cookies.yasa.fi/\n"
 "POT-Creation-Date: 2026-06-19 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -108,6 +108,48 @@ msgid "Recent consent logs"
 msgstr ""
 
 msgid "Cookie declaration"
+msgstr ""
+
+msgid "Service inventory"
+msgstr ""
+
+msgid "Review configured services in a structured table. Edit the textarea above when you need to change the registry."
+msgstr ""
+
+msgid "Configuration import and export"
+msgstr ""
+
+msgid "Export settings JSON"
+msgstr ""
+
+msgid "Export services CSV"
+msgstr ""
+
+msgid "Import settings JSON"
+msgstr ""
+
+msgid "Crawl scan"
+msgstr ""
+
+msgid "Run crawl scan"
+msgstr ""
+
+msgid "Pages scanned"
+msgstr ""
+
+msgid "External resources"
+msgstr ""
+
+msgid "Suggested service rows"
+msgstr ""
+
+msgid "Enable debug mode for blocked scripts and embeds"
+msgstr ""
+
+msgid "Documented"
+msgstr ""
+
+msgid "Needs details"
 msgstr ""
 
 msgid "Necessary cookies keep the site secure and working. They are always active."

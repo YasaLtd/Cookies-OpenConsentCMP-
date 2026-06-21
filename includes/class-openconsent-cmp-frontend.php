@@ -89,6 +89,7 @@ final class OpenConsent_CMP_Frontend {
 				'urlPassthrough'    => ! empty( $options['url_passthrough'] ),
 				'adsDataRedaction'  => ! empty( $options['ads_data_redaction'] ),
 				'wpConsentApi'      => ! empty( $options['wp_consent_api'] ),
+				'debugMode'         => ! empty( $options['debug_mode'] ),
 				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ) && 'auto' === $banner_language,
 				'detectedLanguage'   => $detected_locale,
 				'siteLocale'        => $site_locale,

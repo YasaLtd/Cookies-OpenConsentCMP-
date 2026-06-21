@@ -47,13 +47,31 @@
 	margin-top: 10px;
 }
 
+.openconsent-record-summary > div,
 .openconsent-record-summary span {
 	background: #f6f7f7;
 	border: 1px solid #dcdcde;
 	border-radius: 4px;
 	display: inline-flex;
+	flex-direction: column;
 	gap: 5px;
 	padding: 8px 10px;
+}
+
+.openconsent-record-summary strong {
+	font-size: 20px;
+	line-height: 1;
+}
+
+.openconsent-inventory-table code,
+.widefat code {
+	overflow-wrap: anywhere;
+	white-space: normal;
+}
+
+.openconsent-badge--category {
+	background: #eff6ff;
+	color: #1d4ed8;
 }
 
 .openconsent-record-filters {

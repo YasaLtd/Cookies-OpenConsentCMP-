@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-labelledby="title desc">
+  <title id="title">OpenConsent CMP admin screen</title>
+  <desc id="desc">Illustration of the admin service inventory and scanner report.</desc>
+  <rect width="1280" height="800" fill="#f6f7f7"/>
+  <rect x="80" y="70" width="1120" height="660" rx="10" fill="#ffffff" stroke="#dcdcde"/>
+  <text x="120" y="130" fill="#111827" font-family="Arial, sans-serif" font-size="42" font-weight="800">OpenConsent CMP</text>
+  <rect x="120" y="180" width="1040" height="150" rx="8" fill="#f8fafc" stroke="#dcdcde"/>
+  <text x="150" y="228" fill="#111827" font-family="Arial, sans-serif" font-size="28" font-weight="700">Service inventory</text>
+  <g fill="#cbd5e1"><rect x="150" y="260" width="950" height="12"/><rect x="150" y="292" width="810" height="12"/></g>
+  <rect x="120" y="370" width="500" height="250" rx="8" fill="#f8fafc" stroke="#dcdcde"/>
+  <text x="150" y="418" fill="#111827" font-family="Arial, sans-serif" font-size="28" font-weight="700">Crawl report</text>
+  <rect x="660" y="370" width="500" height="250" rx="8" fill="#111827"/>
+  <text x="690" y="418" fill="#ffffff" font-family="Arial, sans-serif" font-size="28" font-weight="700">Consent records</text>
+</svg>

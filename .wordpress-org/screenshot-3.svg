@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1280 800" role="img" aria-labelledby="title desc">
+  <title id="title">OpenConsent CMP exports</title>
+  <desc id="desc">Illustration of import and export controls for settings, services, and consent records.</desc>
+  <rect width="1280" height="800" fill="#ffffff"/>
+  <rect x="110" y="105" width="1060" height="590" rx="12" fill="#f8fafc" stroke="#dcdcde"/>
+  <text x="155" y="170" fill="#111827" font-family="Arial, sans-serif" font-size="40" font-weight="800">Import, export, and audit</text>
+  <rect x="155" y="235" width="280" height="105" rx="8" fill="#111827"/>
+  <text x="185" y="295" fill="#ffffff" font-family="Arial, sans-serif" font-size="22" font-weight="700">Settings JSON</text>
+  <rect x="500" y="235" width="280" height="105" rx="8" fill="#54d2bf"/>
+  <text x="530" y="295" fill="#111827" font-family="Arial, sans-serif" font-size="22" font-weight="700">Services CSV</text>
+  <rect x="845" y="235" width="280" height="105" rx="8" fill="#73a7ff"/>
+  <text x="875" y="295" fill="#111827" font-family="Arial, sans-serif" font-size="22" font-weight="700">Consent logs</text>
+  <g fill="#cbd5e1"><rect x="155" y="420" width="970" height="14"/><rect x="155" y="466" width="880" height="14"/><rect x="155" y="512" width="930" height="14"/></g>
+</svg>

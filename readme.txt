@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.15
+Stable tag: 1.0.16
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -36,8 +36,11 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 * WP Consent API compatibility for plugin-to-plugin consent sharing when the WP Consent API plugin is installed.
 * Local anonymized consent log table with retention cleanup.
 * Structured consent records in the WordPress admin with filters, detail views, pagination, retention cleanup, and CSV/JSON downloads.
+* Structured cookie and service inventory table for reviewing provider, purpose, privacy URL, category, and registry status.
 * Cookie declaration shortcode: [openconsent_declaration].
-* Homepage scan for Set-Cookie headers and external static resource hosts.
+* Local crawl scanner for internal pages, Set-Cookie headers, external static resource hosts, and suggested service registry rows.
+* Debug mode for inspecting blocked scripts and embeds in the browser console and JavaScript API.
+* JSON settings export/import and CSV service registry export.
 * Suggested privacy policy text for WordPress privacy tools.
 
 = Google publisher ads and TCF =
@@ -50,7 +53,7 @@ OpenConsent CMP stores settings in the WordPress options table and stores anonym
 
 The plugin sets a first-party browser cookie named `openconsent_cmp` to remember the visitor consent choice. It does not send consent records to YASA LTD or any external service.
 
-The optional homepage scanner sends an HTTP request only to the site's own homepage URL and stores the resulting local scan report in WordPress options.
+The optional crawl scanner sends HTTP requests only to the site's own internal pages and stores the resulting local scan report in WordPress options.
 
 == Installation ==
 
@@ -78,7 +81,20 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
+== Screenshots ==
+
+1. Admin settings with service inventory, Google Consent Mode mapping, crawl scanner, and import/export tools.
+2. Frontend consent dialog with expandable category details, theme selector, and privacy policy links.
+3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
+
 == Changelog ==
+
+= 1.0.16 =
+* Adds a structured cookie and service inventory table in the WordPress admin.
+* Replaces the homepage-only scan with a local crawl report for internal pages, Set-Cookie headers, external resources, and suggested service registry rows.
+* Adds frontend debug mode for blocked scripts and embeds.
+* Adds JSON settings export/import and CSV service registry export.
+* Adds WordPress.org submission assets and automated lint checks.
 
 = 1.0.15 =
 * Extends the service registry with provider, purpose, and provider privacy URL fields.
