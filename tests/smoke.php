@@ -22,7 +22,7 @@ if ( ! defined( 'OPENCONSENT_CMP_VERSION' ) ) {
 	exit( 1 );
 }
 
-if ( '1.0.17' !== OPENCONSENT_CMP_VERSION ) {
+if ( '1.0.18' !== OPENCONSENT_CMP_VERSION ) {
 	fwrite( STDERR, "Unexpected version: " . OPENCONSENT_CMP_VERSION . "\n" );
 	exit( 1 );
 }

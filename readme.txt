@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.17
+Stable tag: 1.0.18
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -88,6 +88,10 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.0.18 =
+* Rebuilds the install package with runtime plugin files only at the ZIP root.
+* Removes repository-only assets and local test scripts from the WordPress upload package.
 
 = 1.0.17 =
 * Adds CSV import for the service registry with replace and append modes.
