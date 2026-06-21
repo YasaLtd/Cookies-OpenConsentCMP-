@@ -88,6 +88,7 @@ final class OpenConsent_CMP_Frontend {
 				),
 				'urlPassthrough'    => ! empty( $options['url_passthrough'] ),
 				'adsDataRedaction'  => ! empty( $options['ads_data_redaction'] ),
+				'wpConsentApi'      => ! empty( $options['wp_consent_api'] ),
 				'autoDetectLanguage' => ! empty( $options['auto_detect_language'] ) && 'auto' === $banner_language,
 				'detectedLanguage'   => $detected_locale,
 				'siteLocale'        => $site_locale,
@@ -166,6 +167,12 @@ final class OpenConsent_CMP_Frontend {
 		(function () {
 			window.OpenConsentQueue = window.OpenConsentQueue || [];
 			window.OpenConsentServices = <?php echo $services; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?>;
+			<?php if ( ! empty( $options['wp_consent_api'] ) ) : ?>
+			window.wp_consent_type = '<?php echo esc_js( $this->wp_consent_type_for_options( $options ) ); ?>';
+			try {
+				document.dispatchEvent(new CustomEvent('wp_consent_type_defined', { detail: { consent_type: window.wp_consent_type, source: 'openconsent-cmp' } }));
+			} catch (error) {}
+			<?php endif; ?>
 			window.dataLayer = window.dataLayer || [];
 			window.gtag = window.gtag || function(){ window.dataLayer.push(arguments); };
 			<?php if ( ! empty( $options['google_consent_mode'] ) ) : ?>
@@ -372,5 +379,15 @@ final class OpenConsent_CMP_Frontend {
 			|| false !== strpos( $host, 'google-analytics.com' )
 			|| false !== strpos( $host, 'googleadservices.com' )
 			|| false !== strpos( $host, 'doubleclick.net' );
+	}
+
+	/**
+	 * Map plugin options to the WP Consent API consent type.
+	 *
+	 * @param array $options Plugin options.
+	 * @return string
+	 */
+	private function wp_consent_type_for_options( $options ) {
+		return 'opt_out' === $options['consent_model'] && 'strict' !== $options['region_mode'] ? 'optout' : 'optin';
 	}
 }

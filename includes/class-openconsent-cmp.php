@@ -74,6 +74,9 @@ final class OpenConsent_CMP {
 		add_action( 'openconsent_cmp_cleanup_logs', array( $this, 'cleanup_logs' ) );
 		add_action( 'admin_init', array( $this, 'add_privacy_policy_content' ) );
 		add_action( 'admin_init', array( $this, 'maybe_upgrade_database' ) );
+		add_action( 'init', array( $this, 'register_wp_consent_api_cookie' ) );
+		add_filter( 'wp_get_consent_type', array( $this, 'wp_consent_type' ) );
+		add_filter( 'wp_consent_api_registered_' . plugin_basename( OPENCONSENT_CMP_FILE ), '__return_true' );
 		add_filter( 'plugin_action_links_' . plugin_basename( OPENCONSENT_CMP_FILE ), array( $this, 'plugin_action_links' ) );
 		add_shortcode( 'openconsent_declaration', array( $this, 'cookie_declaration_shortcode' ) );
 	}
@@ -245,6 +248,7 @@ final class OpenConsent_CMP {
 			'google_signal_map_personalization_storage' => 'preferences',
 			'url_passthrough'       => 0,
 			'ads_data_redaction'    => 1,
+			'wp_consent_api'        => 1,
 			'log_retention_days'    => 365,
 			'services'              => "google-analytics.com|statistics|Google Analytics\nwww.googletagmanager.com|statistics|Google Tag Manager\nconnect.facebook.net|marketing|Meta Pixel\ndoubleclick.net|marketing|Google Ads\npagead2.googlesyndication.com|marketing|Google AdSense\ngooglesyndication.com|marketing|Google publisher ads\nyoutube.com|marketing|YouTube embeds\nvimeo.com|marketing|Vimeo embeds",
 			'script_handles'        => '',
@@ -320,6 +324,46 @@ final class OpenConsent_CMP {
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Return this site's consent type for the WP Consent API plugin.
+	 *
+	 * @param string $type Current consent type.
+	 * @return string
+	 */
+	public function wp_consent_type( $type ) {
+		$options = $this->options();
+		if ( empty( $options['enabled'] ) || empty( $options['wp_consent_api'] ) ) {
+			return $type;
+		}
+
+		return 'opt_out' === $options['consent_model'] && 'strict' !== $options['region_mode'] ? 'optout' : 'optin';
+	}
+
+	/**
+	 * Register OpenConsent's own cookie with the WP Consent API cookie inventory.
+	 *
+	 * @return void
+	 */
+	public function register_wp_consent_api_cookie() {
+		$options = $this->options();
+		if ( empty( $options['enabled'] ) || empty( $options['wp_consent_api'] ) || ! function_exists( 'wp_add_cookie_info' ) ) {
+			return;
+		}
+
+		wp_add_cookie_info(
+			'openconsent_cmp',
+			'OpenConsent CMP',
+			'functional',
+			'1 year',
+			__( 'Stores the visitor consent choice so the banner can remember and apply selected categories.', 'openconsent-cmp' ),
+			'',
+			false,
+			false,
+			'HTTP',
+			wp_parse_url( home_url( '/' ), PHP_URL_HOST ) ?: ''
+		);
 	}
 
 	/**

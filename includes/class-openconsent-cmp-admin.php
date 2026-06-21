@@ -154,6 +154,7 @@ final class OpenConsent_CMP_Admin {
 			'google_signal_map_personalization_storage' => $this->sanitize_signal_map( $input['google_signal_map_personalization_storage'] ?? 'preferences' ),
 			'url_passthrough'     => empty( $input['url_passthrough'] ) ? 0 : 1,
 			'ads_data_redaction'  => empty( $input['ads_data_redaction'] ) ? 0 : 1,
+			'wp_consent_api'      => empty( $input['wp_consent_api'] ) ? 0 : 1,
 			'log_retention_days'  => max( 1, absint( $input['log_retention_days'] ?? 365 ) ),
 			'services'            => $this->sanitize_services( $input['services'] ?? '' ),
 			'script_handles'      => $this->sanitize_script_handles( $input['script_handles'] ?? '' ),
@@ -400,6 +401,14 @@ final class OpenConsent_CMP_Admin {
 							<p class="description"><a href="https://developers.google.com/tag-platform/security/guides/consent" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google Consent Mode setup guide', 'openconsent-cmp' ); ?></a> | <a href="https://www.google.com/about/company/user-consent-policy/" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Google EU user consent policy', 'openconsent-cmp' ); ?></a></p>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[ads_data_redaction]" value="1" <?php checked( $options['ads_data_redaction'], 1 ); ?>> <?php esc_html_e( 'Enable ads data redaction', 'openconsent-cmp' ); ?></label><br>
 							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[url_passthrough]" value="1" <?php checked( $options['url_passthrough'], 1 ); ?>> <?php esc_html_e( 'Enable URL passthrough', 'openconsent-cmp' ); ?></label>
+						</td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'WordPress Consent API', 'openconsent-cmp' ); ?></th>
+						<td>
+							<label><input type="checkbox" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[wp_consent_api]" value="1" <?php checked( $options['wp_consent_api'], 1 ); ?>> <?php esc_html_e( 'Publish consent choices to the WP Consent API when it is installed', 'openconsent-cmp' ); ?></label>
+							<p class="description"><?php esc_html_e( 'OpenConsent declares compatibility to WP Consent API and maps Necessary to functional, Preferences to preferences, Statistics to statistics and statistics-anonymous, and Marketing to marketing. Unclassified services remain blocked until reviewed.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'This helps compatible plugins, such as analytics or ecommerce integrations, read the same consent state as the banner instead of using separate settings.', 'openconsent-cmp' ); ?></p>
 						</td>
 					</tr>
 					<tr>

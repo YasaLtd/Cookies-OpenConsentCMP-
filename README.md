@@ -25,6 +25,7 @@ Open source WordPress consent management plugin by YASA LTD with consent categor
 - Shows a configurable consent dialog with necessary, preferences, statistics, marketing, and unclassified categories.
 - Blocks configured WordPress script handles, URL-matched scripts, dynamically inserted scripts, and matching iframe embeds until the visitor grants the mapped category.
 - Emits Google Consent Mode v2 default denied signals and updates them after consent.
+- Integrates with the WP Consent API plugin by declaring compatibility, publishing the consent type, and syncing functional, preferences, statistics, statistics-anonymous, and marketing choices.
 - Supports Google Consent Mode Basic or Advanced behavior. Advanced mode lets consent-aware Google tags load with denied defaults so they can adjust behavior before consent.
 - Stores anonymized consent audit records in a local WordPress table.
 - Shows structured consent records in the WordPress admin and lets administrators download CSV or JSON exports.
@@ -42,6 +43,18 @@ Google requires publishers using AdSense, Ad Manager, or AdMob to use a Google-c
 ## Google EU user consent policy
 
 Google's EU user consent policy requires legally valid consent where required, consent records, clear revocation instructions, and clear identification of parties that may collect, receive, or use personal data. OpenConsent CMP includes local consent logs, a persistent privacy choices control, party disclosure text, and a cookie declaration shortcode to help site owners present this information. Site owners remain responsible for validating their notices, vendor list, and consent flows.
+
+## WP Consent API mapping
+
+When the WP Consent API plugin is installed and the integration is enabled in OpenConsent settings, OpenConsent publishes visitor choices to the standard API categories:
+
+- Necessary -> `functional`
+- Preferences -> `preferences`
+- Statistics -> `statistics` and `statistics-anonymous`
+- Marketing -> `marketing`
+- Unclassified -> not mapped; these services should stay blocked until reviewed
+
+This allows compatible WordPress plugins to read the same consent state as the OpenConsent banner.
 
 ## How this differs from hosted CMPs
 
