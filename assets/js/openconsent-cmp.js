@@ -363,6 +363,12 @@
 		if (service && service.name) {
 			node.setAttribute('data-openconsent-service', service.name);
 		}
+		if (service && service.provider) {
+			node.setAttribute('data-openconsent-provider', service.provider);
+		}
+		if (service && service.purpose) {
+			node.setAttribute('data-openconsent-purpose', service.purpose);
+		}
 		if (src) {
 			node.setAttribute('data-openconsent-src', src);
 			node.removeAttribute('src');
@@ -381,6 +387,12 @@
 		node.setAttribute('data-openconsent-blocked', '1');
 		if (service && service.name) {
 			node.setAttribute('data-openconsent-service', service.name);
+		}
+		if (service && service.provider) {
+			node.setAttribute('data-openconsent-provider', service.provider);
+		}
+		if (service && service.purpose) {
+			node.setAttribute('data-openconsent-purpose', service.purpose);
 		}
 	}
 
@@ -527,6 +539,20 @@
 		return services.filter(function (service) {
 			return service.category === category;
 		});
+	}
+
+	function readableService(service) {
+		var bits = [service.name || service.pattern || 'Configured service'];
+		if (service.provider) {
+			bits.push('provider: ' + service.provider);
+		}
+		if (service.purpose) {
+			bits.push('purpose: ' + service.purpose);
+		}
+		if (service.privacy_url) {
+			bits.push('policy: ' + service.privacy_url);
+		}
+		return bits.join(' | ');
 	}
 
 	function signalsForCategory(category) {
@@ -740,7 +766,7 @@
 				var blockedItems = blockedItemsForCategory(category);
 				var granted = input.checked || category === 'necessary';
 				serviceItem.textContent = categoryServices.length
-					? 'URL rules: ' + categoryServices.map(function (service) { return service.name || service.pattern; }).join(', ') + '.'
+					? 'Configured services: ' + categoryServices.map(readableService).join('; ') + '.'
 					: 'URL rules: no services configured in this category.';
 				runtimeItem.textContent = blockedItems.length
 					? 'Blocked on this page: ' + blockedItems.map(readableBlockedItem).slice(0, 4).join(', ') + (blockedItems.length > 4 ? ', +' + (blockedItems.length - 4) + ' more.' : '.')

@@ -181,14 +181,19 @@ final class OpenConsent_CMP_Admin {
 		$clean = array();
 
 		foreach ( $lines as $line ) {
-			$parts = array_map( 'trim', explode( '|', sanitize_text_field( $line ) ) );
+			$parts = array_map( 'trim', explode( '|', $line ) );
 			if ( count( $parts ) < 2 || '' === $parts[0] ) {
 				continue;
 			}
 
-			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
-			$name     = isset( $parts[2] ) ? $parts[2] : $parts[0];
-			$clean[]  = "{$parts[0]}|{$category}|{$name}";
+			$pattern     = sanitize_text_field( $parts[0] );
+			$category    = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
+			$name        = sanitize_text_field( $parts[2] ?? $pattern );
+			$provider    = sanitize_text_field( $parts[3] ?? '' );
+			$purpose     = sanitize_textarea_field( $parts[4] ?? '' );
+			$privacy_url = esc_url_raw( $parts[5] ?? '' );
+
+			$clean[] = implode( '|', array( $pattern, $category, $name, $provider, $purpose, $privacy_url ) );
 		}
 
 		return implode( "\n", $clean );
@@ -415,8 +420,9 @@ final class OpenConsent_CMP_Admin {
 						<th scope="row"><label for="openconsent-services"><?php esc_html_e( 'Service registry', 'openconsent-cmp' ); ?></label></th>
 						<td>
 							<textarea id="openconsent-services" class="large-text code" rows="9" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[services]"><?php echo esc_textarea( $options['services'] ); ?></textarea>
-							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing, unclassified.', 'openconsent-cmp' ); ?></p>
-							<p class="description"><?php esc_html_e( 'Examples:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool</code> <code>unknown.example.com|unclassified|Review needed</code></p>
+							<p class="description"><?php esc_html_e( 'One service per line: URL pattern | category | display name | provider | purpose | provider privacy URL. Categories: preferences, statistics, marketing, unclassified.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Older three-field lines still work and are normalized when settings are saved.', 'openconsent-cmp' ); ?></p>
+							<p class="description"><?php esc_html_e( 'Examples:', 'openconsent-cmp' ); ?> <code>analytics.example.com|statistics|Analytics tool|Example Ltd|Audience measurement.|https://example.com/privacy</code> <code>unknown.example.com|unclassified|Review needed|||</code></p>
 						</td>
 					</tr>
 					<tr>

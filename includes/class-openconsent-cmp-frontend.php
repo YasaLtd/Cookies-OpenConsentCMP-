@@ -281,11 +281,13 @@ final class OpenConsent_CMP_Frontend {
 
 				$clean = preg_replace( '/\s(?:src|srcdoc|data-openconsent-[a-z-]+)=(["\']).*?\1/i', '', $tag );
 				$attrs = sprintf(
-					' src="about:blank" srcdoc="%s" data-openconsent-category="%s" data-openconsent-src="%s" data-openconsent-service="%s" data-openconsent-blocked="1"',
+					' src="about:blank" srcdoc="%s" data-openconsent-category="%s" data-openconsent-src="%s" data-openconsent-service="%s" data-openconsent-provider="%s" data-openconsent-purpose="%s" data-openconsent-blocked="1"',
 					esc_attr__( 'This embed is blocked until you allow its cookie category.', 'openconsent-cmp' ),
 					esc_attr( $service['category'] ),
 					esc_url( $src ),
-					esc_attr( $service['name'] )
+					esc_attr( $service['name'] ),
+					esc_attr( $service['provider'] ?? '' ),
+					esc_attr( $service['purpose'] ?? '' )
 				);
 
 				return preg_replace( '/\s*>$/', $attrs . '>', $clean ) ?: $tag;

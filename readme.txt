@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.14
+Stable tag: 1.0.15
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -25,6 +25,7 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 = Features =
 
 * Necessary, preferences, statistics, marketing, and unclassified categories.
+* Service registry with match pattern, category, display name, provider, purpose, and provider privacy URL fields.
 * Configurable dialog text, disclosure text, colors, and buttons.
 * Browser-language detection, WordPress-locale mode, or fixed banner language for built-in frontend labels.
 * Region behavior controls for strict opt-in, browser-hint auto mode, or notice mode.
@@ -78,6 +79,12 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.15 =
+* Extends the service registry with provider, purpose, and provider privacy URL fields.
+* Adds richer service disclosures to the cookie declaration shortcode.
+* Shows provider and purpose context in visitor category details and blocked-resource diagnostics.
+* Keeps older three-field service registry lines backward-compatible.
 
 = 1.0.14 =
 * Adds WP Consent API compatibility declaration for OpenConsent CMP.

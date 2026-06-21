@@ -34,7 +34,7 @@ Open source WordPress consent management plugin by YASA LTD with consent categor
 - Keeps banner copy as regular visible DOM text with `translate="yes"` and `lang` attributes so browser translation tools can translate it.
 - Provides a `[openconsent_declaration]` shortcode for a cookie declaration page.
 - Includes a local homepage scanner that reports `Set-Cookie` headers and external static resource hosts.
-- Lets site owners maintain an open service registry using `pattern|category|name` lines and optional script-handle rules using `handle|category|name` lines.
+- Lets site owners maintain an open service registry using `pattern|category|name|provider|purpose|privacy_url` lines and optional script-handle rules using `handle|category|name` lines.
 
 ## Google publisher ads and TCF
 
@@ -93,6 +93,22 @@ contact-form-analytics|statistics|Contact form analytics
 ```
 
 Iframe embeds whose URLs match the service registry are replaced with a consent placeholder until the mapped category is granted.
+
+## Service Registry Format
+
+The service registry supports both the older three-field format and the richer six-field format:
+
+```text
+pattern|category|display name|provider|purpose|provider privacy URL
+```
+
+Example:
+
+```text
+analytics.example.com|statistics|Example Analytics|Example Ltd|Audience measurement.|https://example.com/privacy
+```
+
+The extra provider, purpose, and policy fields appear in the cookie declaration and visitor category details.
 
 ## Public JavaScript API
 

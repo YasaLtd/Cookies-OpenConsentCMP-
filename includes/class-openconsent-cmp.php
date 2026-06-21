@@ -250,7 +250,7 @@ final class OpenConsent_CMP {
 			'ads_data_redaction'    => 1,
 			'wp_consent_api'        => 1,
 			'log_retention_days'    => 365,
-			'services'              => "google-analytics.com|statistics|Google Analytics\nwww.googletagmanager.com|statistics|Google Tag Manager\nconnect.facebook.net|marketing|Meta Pixel\ndoubleclick.net|marketing|Google Ads\npagead2.googlesyndication.com|marketing|Google AdSense\ngooglesyndication.com|marketing|Google publisher ads\nyoutube.com|marketing|YouTube embeds\nvimeo.com|marketing|Vimeo embeds",
+			'services'              => "google-analytics.com|statistics|Google Analytics|Google LLC|Audience measurement and analytics.|https://policies.google.com/privacy\nwww.googletagmanager.com|statistics|Google Tag Manager|Google LLC|Tag loading and consent-aware measurement.|https://policies.google.com/privacy\nconnect.facebook.net|marketing|Meta Pixel|Meta Platforms Ireland Limited|Advertising measurement and remarketing.|https://www.facebook.com/privacy/policy/\ndoubleclick.net|marketing|Google Ads|Google LLC|Advertising measurement and remarketing.|https://policies.google.com/privacy\npagead2.googlesyndication.com|marketing|Google AdSense|Google LLC|Publisher advertising and ad measurement.|https://policies.google.com/privacy\ngooglesyndication.com|marketing|Google publisher ads|Google LLC|Publisher advertising and ad delivery.|https://policies.google.com/privacy\nyoutube.com|marketing|YouTube embeds|Google LLC|Embedded video playback and related measurement.|https://policies.google.com/privacy\nvimeo.com|marketing|Vimeo embeds|Vimeo.com, Inc.|Embedded video playback and related measurement.|https://vimeo.com/privacy",
 			'script_handles'        => '',
 			'category_preferences'  => 'Preferences cookies remember choices such as language, region, and interface settings.',
 			'category_statistics'   => 'Statistics cookies help us understand how visitors use the site.',
@@ -289,14 +289,54 @@ final class OpenConsent_CMP {
 			}
 
 			$category = in_array( $parts[1], array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ? $parts[1] : 'unclassified';
+			$metadata = $this->service_metadata_defaults( $parts[0] );
 			$items[]  = array(
-				'pattern'  => $parts[0],
-				'category' => $category,
-				'name'     => isset( $parts[2] ) && '' !== $parts[2] ? $parts[2] : $parts[0],
+				'pattern'     => $parts[0],
+				'category'    => $category,
+				'name'        => isset( $parts[2] ) && '' !== $parts[2] ? $parts[2] : $parts[0],
+				'provider'    => isset( $parts[3] ) && '' !== $parts[3] ? $parts[3] : $metadata['provider'],
+				'purpose'     => isset( $parts[4] ) && '' !== $parts[4] ? $parts[4] : $metadata['purpose'],
+				'privacy_url' => isset( $parts[5] ) && '' !== $parts[5] ? esc_url_raw( $parts[5] ) : $metadata['privacy_url'],
 			);
 		}
 
 		return $items;
+	}
+
+	/**
+	 * Return disclosure defaults for common bundled service patterns.
+	 *
+	 * @param string $pattern Service match pattern.
+	 * @return array
+	 */
+	private function service_metadata_defaults( $pattern ) {
+		$pattern = strtolower( $pattern );
+		$defaults = array(
+			'google-analytics.com'        => array( 'Google LLC', 'Audience measurement and analytics.', 'https://policies.google.com/privacy' ),
+			'www.googletagmanager.com'   => array( 'Google LLC', 'Tag loading and consent-aware measurement.', 'https://policies.google.com/privacy' ),
+			'connect.facebook.net'       => array( 'Meta Platforms Ireland Limited', 'Advertising measurement and remarketing.', 'https://www.facebook.com/privacy/policy/' ),
+			'doubleclick.net'            => array( 'Google LLC', 'Advertising measurement and remarketing.', 'https://policies.google.com/privacy' ),
+			'pagead2.googlesyndication.com' => array( 'Google LLC', 'Publisher advertising and ad measurement.', 'https://policies.google.com/privacy' ),
+			'googlesyndication.com'      => array( 'Google LLC', 'Publisher advertising and ad delivery.', 'https://policies.google.com/privacy' ),
+			'youtube.com'                => array( 'Google LLC', 'Embedded video playback and related measurement.', 'https://policies.google.com/privacy' ),
+			'vimeo.com'                  => array( 'Vimeo.com, Inc.', 'Embedded video playback and related measurement.', 'https://vimeo.com/privacy' ),
+		);
+
+		foreach ( $defaults as $needle => $values ) {
+			if ( false !== strpos( $pattern, $needle ) ) {
+				return array(
+					'provider'    => $values[0],
+					'purpose'     => $values[1],
+					'privacy_url' => $values[2],
+				);
+			}
+		}
+
+		return array(
+			'provider'    => '',
+			'purpose'     => '',
+			'privacy_url' => '',
+		);
 	}
 
 	/**
@@ -460,7 +500,10 @@ final class OpenConsent_CMP {
 					<tr>
 						<th><?php esc_html_e( 'Service', 'openconsent-cmp' ); ?></th>
 						<th><?php esc_html_e( 'Category', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Provider', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Purpose', 'openconsent-cmp' ); ?></th>
 						<th><?php esc_html_e( 'Match pattern', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Provider policy', 'openconsent-cmp' ); ?></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -468,7 +511,16 @@ final class OpenConsent_CMP {
 						<tr>
 							<td><?php echo esc_html( $service['name'] ); ?></td>
 							<td><?php echo esc_html( ucfirst( $service['category'] ) ); ?></td>
+							<td><?php echo esc_html( $service['provider'] ?: __( 'Not specified', 'openconsent-cmp' ) ); ?></td>
+							<td><?php echo esc_html( $service['purpose'] ?: __( 'Review needed', 'openconsent-cmp' ) ); ?></td>
 							<td><code><?php echo esc_html( $service['pattern'] ); ?></code></td>
+							<td>
+								<?php if ( ! empty( $service['privacy_url'] ) ) : ?>
+									<a href="<?php echo esc_url( $service['privacy_url'] ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Open policy', 'openconsent-cmp' ); ?></a>
+								<?php else : ?>
+									<?php esc_html_e( 'Not specified', 'openconsent-cmp' ); ?>
+								<?php endif; ?>
+							</td>
 						</tr>
 					<?php endforeach; ?>
 				</tbody>
