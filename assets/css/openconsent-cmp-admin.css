@@ -39,6 +39,47 @@
 	margin-left: 18px;
 }
 
+.openconsent-export-actions,
+.openconsent-record-summary {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin-top: 10px;
+}
+
+.openconsent-record-summary span {
+	background: #f6f7f7;
+	border: 1px solid #dcdcde;
+	border-radius: 4px;
+	display: inline-flex;
+	gap: 5px;
+	padding: 8px 10px;
+}
+
+.openconsent-badge {
+	border-radius: 999px;
+	display: inline-block;
+	font-size: 11px;
+	line-height: 1.4;
+	margin: 0 3px 4px 0;
+	padding: 2px 7px;
+	white-space: nowrap;
+}
+
+.openconsent-badge--granted {
+	background: #ecfdf5;
+	color: #065f46;
+}
+
+.openconsent-badge--denied {
+	background: #f3f4f6;
+	color: #4b5563;
+}
+
+.openconsent-dashboard-list {
+	margin-left: 0;
+}
+
 .openconsent-button-grid {
 	display: grid;
 	gap: 10px;

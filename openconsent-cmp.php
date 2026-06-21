@@ -2,7 +2,7 @@
 /**
  * Plugin Name: OpenConsent CMP
  * Description: Open source cookie consent management for WordPress with consent categories, prior blocking, consent logs, cookie declaration, and Google Consent Mode v2 signals.
- * Version: 1.0.11
+ * Version: 1.0.12
  * Requires at least: 6.0
  * Tested up to: 7.0
  * Requires PHP: 7.4
@@ -21,7 +21,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-define( 'OPENCONSENT_CMP_VERSION', '1.0.11' );
+define( 'OPENCONSENT_CMP_VERSION', '1.0.12' );
 define( 'OPENCONSENT_CMP_FILE', __FILE__ );
 define( 'OPENCONSENT_CMP_DIR', plugin_dir_path( __FILE__ ) );
 define( 'OPENCONSENT_CMP_URL', plugin_dir_url( __FILE__ ) );

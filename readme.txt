@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.11
+Stable tag: 1.0.12
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -33,6 +33,7 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 * Google Consent Mode v2 Basic and Advanced behavior.
 * Per-signal Google Consent Mode mapping for ad storage, ad user data, ad personalization, analytics storage, functionality storage, and personalization storage.
 * Local anonymized consent log table with retention cleanup.
+* Structured consent records in the WordPress admin with CSV and JSON downloads.
 * Cookie declaration shortcode: [openconsent_declaration].
 * Homepage scan for Set-Cookie headers and external static resource hosts.
 * Suggested privacy policy text for WordPress privacy tools.
@@ -76,6 +77,12 @@ Use the GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 Yes. After consent, the frontend shows a Privacy choices control that reopens the full consent dialog with the current choices selected.
 
 == Changelog ==
+
+= 1.0.12 =
+* Stores consent records in structured database columns for action, categories, region, language, page URL, plugin version, and anonymized hashes.
+* Adds readable admin consent records with category badges and summary counts.
+* Adds CSV and JSON record downloads for administrators.
+* Adds a WordPress dashboard widget with consent record totals and download shortcuts.
 
 = 1.0.11 =
 * Adds WordPress script handle rules for local or plugin-registered scripts that cannot be identified by URL pattern alone.

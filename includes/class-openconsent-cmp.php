@@ -15,6 +15,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 final class OpenConsent_CMP {
 	const OPTION = 'openconsent_cmp_options';
 	const LOG_TABLE = 'openconsent_cmp_logs';
+	const DB_VERSION_OPTION = 'openconsent_cmp_db_version';
+	const DB_VERSION = '2';
 
 	/**
 	 * Singleton instance.
@@ -71,6 +73,7 @@ final class OpenConsent_CMP {
 		add_action( 'wp_ajax_nopriv_openconsent_log_consent', array( $this, 'ajax_log_consent' ) );
 		add_action( 'openconsent_cmp_cleanup_logs', array( $this, 'cleanup_logs' ) );
 		add_action( 'admin_init', array( $this, 'add_privacy_policy_content' ) );
+		add_action( 'admin_init', array( $this, 'maybe_upgrade_database' ) );
 		add_filter( 'plugin_action_links_' . plugin_basename( OPENCONSENT_CMP_FILE ), array( $this, 'plugin_action_links' ) );
 		add_shortcode( 'openconsent_declaration', array( $this, 'cookie_declaration_shortcode' ) );
 	}
@@ -87,20 +90,9 @@ final class OpenConsent_CMP {
 		$charset_collate = $wpdb->get_charset_collate();
 
 		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
-		dbDelta(
-			"CREATE TABLE {$table} (
-				id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
-				consent_id varchar(64) NOT NULL,
-				created_at datetime NOT NULL,
-				consent_hash char(64) NOT NULL,
-				consent_json longtext NOT NULL,
-				ip_hash char(64) NOT NULL,
-				user_agent_hash char(64) NOT NULL,
-				PRIMARY KEY  (id),
-				KEY consent_id (consent_id),
-				KEY created_at (created_at)
-			) {$charset_collate};"
-		);
+		dbDelta( self::log_table_schema( $table, $charset_collate ) );
+		self::backfill_log_columns( $table );
+		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
 
 		if ( false === get_option( self::OPTION ) ) {
 			add_option( self::OPTION, self::defaults() );
@@ -120,6 +112,99 @@ final class OpenConsent_CMP {
 	 */
 	public static function deactivate() {
 		wp_clear_scheduled_hook( 'openconsent_cmp_cleanup_logs' );
+	}
+
+	/**
+	 * Return the consent log table schema for install and upgrades.
+	 *
+	 * @param string $table           Full table name.
+	 * @param string $charset_collate Database charset/collation.
+	 * @return string
+	 */
+	private static function log_table_schema( $table, $charset_collate ) {
+		return "CREATE TABLE {$table} (
+			id bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+			consent_id varchar(64) NOT NULL,
+			created_at datetime NOT NULL,
+			consent_hash char(64) NOT NULL,
+			consent_json longtext NOT NULL,
+			consent_action varchar(32) NOT NULL DEFAULT '',
+			necessary tinyint(1) NOT NULL DEFAULT 1,
+			preferences tinyint(1) NOT NULL DEFAULT 0,
+			statistics tinyint(1) NOT NULL DEFAULT 0,
+			marketing tinyint(1) NOT NULL DEFAULT 0,
+			unclassified tinyint(1) NOT NULL DEFAULT 0,
+			region varchar(32) NOT NULL DEFAULT '',
+			region_mode varchar(32) NOT NULL DEFAULT '',
+			language varchar(20) NOT NULL DEFAULT '',
+			page_url text NOT NULL,
+			referrer_url text NOT NULL,
+			plugin_version varchar(20) NOT NULL DEFAULT '',
+			ip_hash char(64) NOT NULL,
+			user_agent_hash char(64) NOT NULL,
+			PRIMARY KEY  (id),
+			KEY consent_id (consent_id),
+			KEY created_at (created_at),
+			KEY consent_action (consent_action),
+			KEY region (region),
+			KEY plugin_version (plugin_version)
+		) {$charset_collate};";
+	}
+
+	/**
+	 * Upgrade database schema for existing installs when needed.
+	 *
+	 * @return void
+	 */
+	public function maybe_upgrade_database() {
+		if ( get_option( self::DB_VERSION_OPTION ) === self::DB_VERSION ) {
+			return;
+		}
+
+		global $wpdb;
+		$table = $wpdb->prefix . self::LOG_TABLE;
+
+		require_once ABSPATH . 'wp-admin/includes/upgrade.php';
+		dbDelta( self::log_table_schema( $table, $wpdb->get_charset_collate() ) );
+		self::backfill_log_columns( $table );
+		update_option( self::DB_VERSION_OPTION, self::DB_VERSION );
+	}
+
+	/**
+	 * Backfill structured columns for records written by older plugin versions.
+	 *
+	 * @param string $table Full table name.
+	 * @return void
+	 */
+	private static function backfill_log_columns( $table ) {
+		global $wpdb;
+
+		$rows = $wpdb->get_results( "SELECT id, consent_json FROM {$table} WHERE (plugin_version = '' OR consent_action = '') AND consent_json <> '' LIMIT 500", ARRAY_A );
+		foreach ( $rows as $row ) {
+			$decoded = json_decode( $row['consent_json'], true );
+			if ( ! is_array( $decoded ) ) {
+				continue;
+			}
+
+			$wpdb->update(
+				$table,
+				array(
+					'consent_action' => isset( $decoded['action'] ) ? sanitize_key( $decoded['action'] ) : 'save_choices',
+					'necessary'      => 1,
+					'preferences'    => ! empty( $decoded['preferences'] ) ? 1 : 0,
+					'statistics'     => ! empty( $decoded['statistics'] ) ? 1 : 0,
+					'marketing'      => ! empty( $decoded['marketing'] ) ? 1 : 0,
+					'unclassified'   => ! empty( $decoded['unclassified'] ) ? 1 : 0,
+					'region'         => isset( $decoded['region'] ) ? sanitize_key( $decoded['region'] ) : '',
+					'region_mode'    => isset( $decoded['region_mode'] ) ? sanitize_key( $decoded['region_mode'] ) : ( isset( $decoded['regionMode'] ) ? sanitize_key( $decoded['regionMode'] ) : '' ),
+					'language'       => isset( $decoded['language'] ) ? sanitize_text_field( $decoded['language'] ) : '',
+					'plugin_version' => isset( $decoded['version'] ) ? sanitize_text_field( $decoded['version'] ) : '',
+				),
+				array( 'id' => absint( $row['id'] ) ),
+				array( '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s' ),
+				array( '%d' )
+			);
+		}
 	}
 
 	/**
@@ -272,11 +357,15 @@ final class OpenConsent_CMP {
 			'unclassified' => ! empty( $decoded['unclassified'] ),
 			'region'      => isset( $decoded['region'] ) ? sanitize_key( $decoded['region'] ) : '',
 			'region_mode' => isset( $decoded['regionMode'] ) ? sanitize_key( $decoded['regionMode'] ) : '',
+			'action'      => isset( $decoded['action'] ) ? sanitize_key( $decoded['action'] ) : 'save_choices',
+			'language'    => isset( $decoded['language'] ) ? sanitize_text_field( $decoded['language'] ) : '',
 			'version'     => OPENCONSENT_CMP_VERSION,
 		);
 
 		$consent_json = wp_json_encode( $allowed );
 		$consent_id   = isset( $decoded['id'] ) ? sanitize_text_field( $decoded['id'] ) : wp_generate_uuid4();
+		$page_url     = isset( $_POST['page_url'] ) ? esc_url_raw( wp_unslash( $_POST['page_url'] ) ) : '';
+		$referrer_url = isset( $_POST['referrer_url'] ) ? esc_url_raw( wp_unslash( $_POST['referrer_url'] ) ) : '';
 
 		global $wpdb;
 		$wpdb->insert(
@@ -286,10 +375,22 @@ final class OpenConsent_CMP {
 				'created_at'      => current_time( 'mysql', true ),
 				'consent_hash'    => hash( 'sha256', $consent_json ),
 				'consent_json'    => $consent_json,
+				'consent_action'  => $allowed['action'],
+				'necessary'       => 1,
+				'preferences'     => $allowed['preferences'] ? 1 : 0,
+				'statistics'      => $allowed['statistics'] ? 1 : 0,
+				'marketing'       => $allowed['marketing'] ? 1 : 0,
+				'unclassified'    => $allowed['unclassified'] ? 1 : 0,
+				'region'          => $allowed['region'],
+				'region_mode'     => $allowed['region_mode'],
+				'language'        => $allowed['language'],
+				'page_url'        => $page_url,
+				'referrer_url'    => $referrer_url,
+				'plugin_version'  => OPENCONSENT_CMP_VERSION,
 				'ip_hash'         => hash( 'sha256', $this->remote_addr() . wp_salt( 'nonce' ) ),
 				'user_agent_hash' => hash( 'sha256', ( isset( $_SERVER['HTTP_USER_AGENT'] ) ? sanitize_text_field( wp_unslash( $_SERVER['HTTP_USER_AGENT'] ) ) : '' ) . wp_salt( 'auth' ) ),
 			),
-			array( '%s', '%s', '%s', '%s', '%s', '%s' )
+			array( '%s', '%s', '%s', '%s', '%s', '%d', '%d', '%d', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s' )
 		);
 
 		wp_send_json_success( array( 'consent_id' => $consent_id ) );

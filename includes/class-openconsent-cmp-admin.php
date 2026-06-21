@@ -34,6 +34,8 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
 		add_action( 'admin_post_openconsent_run_scan', array( $this, 'run_scan' ) );
 		add_action( 'admin_post_openconsent_export_logs', array( $this, 'export_logs' ) );
+		add_action( 'admin_post_openconsent_export_logs_json', array( $this, 'export_logs_json' ) );
+		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widget' ) );
 	}
 
 	/**
@@ -225,6 +227,8 @@ final class OpenConsent_CMP_Admin {
 
 		$options = $this->plugin->options();
 		$logs    = $this->recent_logs();
+		$total_logs = $this->total_logs();
+		$log_stats  = $this->log_stats();
 		$services = $this->plugin->services();
 		?>
 		<div class="wrap">
@@ -241,7 +245,7 @@ final class OpenConsent_CMP_Admin {
 			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
 				<div class="openconsent-admin-card"><strong><?php echo ! empty( $options['enabled'] ) ? esc_html__( 'On', 'openconsent-cmp' ) : esc_html__( 'Off', 'openconsent-cmp' ); ?></strong><span><?php esc_html_e( 'Frontend banner', 'openconsent-cmp' ); ?></span></div>
 				<div class="openconsent-admin-card"><strong><?php echo esc_html( count( $services ) ); ?></strong><span><?php esc_html_e( 'Configured services', 'openconsent-cmp' ); ?></span></div>
-				<div class="openconsent-admin-card"><strong><?php echo esc_html( count( $logs ) ); ?></strong><span><?php esc_html_e( 'Recent consent records', 'openconsent-cmp' ); ?></span></div>
+				<div class="openconsent-admin-card"><strong><?php echo esc_html( number_format_i18n( $total_logs ) ); ?></strong><span><?php esc_html_e( 'Stored consent records', 'openconsent-cmp' ); ?></span></div>
 				<div class="openconsent-admin-card"><strong><?php echo ! empty( $options['auto_detect_language'] ) ? esc_html__( 'Auto', 'openconsent-cmp' ) : esc_html__( 'Site', 'openconsent-cmp' ); ?></strong><span><?php esc_html_e( 'Language mode', 'openconsent-cmp' ); ?></span></div>
 			</div>
 
@@ -420,10 +424,23 @@ final class OpenConsent_CMP_Admin {
 
 				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Audit log', 'openconsent-cmp' ); ?></h2>
+				<p><?php esc_html_e( 'Consent choices are stored in a local WordPress database table with anonymized visitor hashes. Use exports for audits, support requests, or compliance reviews.', 'openconsent-cmp' ); ?></p>
 				<table class="form-table" role="presentation">
 					<tr>
 						<th scope="row"><label for="openconsent-retention"><?php esc_html_e( 'Retention', 'openconsent-cmp' ); ?></label></th>
 						<td><input id="openconsent-retention" type="number" min="1" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[log_retention_days]" value="<?php echo esc_attr( $options['log_retention_days'] ); ?>"> <?php esc_html_e( 'days', 'openconsent-cmp' ); ?></td>
+					</tr>
+					<tr>
+						<th scope="row"><?php esc_html_e( 'Stored records', 'openconsent-cmp' ); ?></th>
+						<td>
+							<strong><?php echo esc_html( number_format_i18n( $total_logs ) ); ?></strong>
+							<?php esc_html_e( 'records currently stored.', 'openconsent-cmp' ); ?>
+							<div class="openconsent-export-actions">
+								<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download CSV', 'openconsent-cmp' ); ?></a>
+								<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs_json' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download JSON', 'openconsent-cmp' ); ?></a>
+							</div>
+							<p class="description"><?php esc_html_e( 'Exports include consent ID, timestamp, selected categories, action, region, language, page URL, consent hash, IP hash, and user-agent hash.', 'openconsent-cmp' ); ?></p>
+						</td>
 					</tr>
 				</table>
 				</div>
@@ -448,28 +465,50 @@ final class OpenConsent_CMP_Admin {
 				</ul>
 			<?php endif; ?>
 
-			<h2><?php esc_html_e( 'Recent consent logs', 'openconsent-cmp' ); ?></h2>
-			<form method="post" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" style="margin: 0 0 12px;">
-				<input type="hidden" name="action" value="openconsent_export_logs">
-				<?php wp_nonce_field( 'openconsent_export_logs' ); ?>
-				<?php submit_button( __( 'Export consent logs CSV', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
-			</form>
+			<h2><?php esc_html_e( 'Consent records', 'openconsent-cmp' ); ?></h2>
+			<div class="openconsent-record-summary" aria-label="<?php esc_attr_e( 'Consent record summary', 'openconsent-cmp' ); ?>">
+				<span><strong><?php echo esc_html( number_format_i18n( $total_logs ) ); ?></strong> <?php esc_html_e( 'total', 'openconsent-cmp' ); ?></span>
+				<span><strong><?php echo esc_html( number_format_i18n( $log_stats['accept_all'] ) ); ?></strong> <?php esc_html_e( 'accepted all', 'openconsent-cmp' ); ?></span>
+				<span><strong><?php echo esc_html( number_format_i18n( $log_stats['necessary_only'] ) ); ?></strong> <?php esc_html_e( 'necessary only', 'openconsent-cmp' ); ?></span>
+				<span><strong><?php echo esc_html( number_format_i18n( $log_stats['save_choices'] ) ); ?></strong> <?php esc_html_e( 'custom choices', 'openconsent-cmp' ); ?></span>
+			</div>
+			<p>
+				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download all records as CSV', 'openconsent-cmp' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs_json' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download all records as JSON', 'openconsent-cmp' ); ?></a>
+			</p>
 			<table class="widefat striped">
-				<thead><tr><th><?php esc_html_e( 'Time', 'openconsent-cmp' ); ?></th><th><?php esc_html_e( 'Consent ID', 'openconsent-cmp' ); ?></th><th><?php esc_html_e( 'Consent', 'openconsent-cmp' ); ?></th></tr></thead>
+				<thead>
+					<tr>
+						<th><?php esc_html_e( 'Time', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Consent ID', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Action', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Categories', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Region', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Language', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Page', 'openconsent-cmp' ); ?></th>
+						<th><?php esc_html_e( 'Hash', 'openconsent-cmp' ); ?></th>
+					</tr>
+				</thead>
 				<tbody>
 					<?php if ( empty( $logs ) ) : ?>
-						<tr><td colspan="3"><?php esc_html_e( 'No consent logs yet.', 'openconsent-cmp' ); ?></td></tr>
+						<tr><td colspan="8"><?php esc_html_e( 'No consent records yet.', 'openconsent-cmp' ); ?></td></tr>
 					<?php else : ?>
 						<?php foreach ( $logs as $log ) : ?>
 							<tr>
 								<td><?php echo esc_html( $log->created_at ); ?></td>
 								<td><code><?php echo esc_html( $log->consent_id ); ?></code></td>
-								<td><code><?php echo esc_html( $log->consent_json ); ?></code></td>
+								<td><?php echo esc_html( $this->format_action_label( $log->consent_action ) ); ?></td>
+								<td><?php echo wp_kses_post( $this->format_category_badges( $log ) ); ?></td>
+								<td><?php echo esc_html( trim( $log->region . ' / ' . $log->region_mode, ' /' ) ); ?></td>
+								<td><?php echo esc_html( $log->language ); ?></td>
+								<td><?php echo $log->page_url ? '<a href="' . esc_url( $log->page_url ) . '" target="_blank" rel="noopener noreferrer">' . esc_html( wp_parse_url( $log->page_url, PHP_URL_PATH ) ?: $log->page_url ) . '</a>' : '&mdash;'; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></td>
+								<td><code><?php echo esc_html( substr( $log->consent_hash, 0, 12 ) ); ?></code></td>
 							</tr>
 						<?php endforeach; ?>
 					<?php endif; ?>
 				</tbody>
 			</table>
+			<p class="description"><?php esc_html_e( 'Showing the 50 newest consent records. Download the full dataset using CSV or JSON export.', 'openconsent-cmp' ); ?></p>
 
 			<p><?php esc_html_e( 'Use shortcode [openconsent_declaration] on a Cookie Policy page to publish the declaration.', 'openconsent-cmp' ); ?></p>
 		</div>
@@ -489,7 +528,97 @@ final class OpenConsent_CMP_Admin {
 			return array();
 		}
 
-		return $wpdb->get_results( "SELECT created_at, consent_id, consent_json FROM {$table} ORDER BY id DESC LIMIT 20" );
+		return $wpdb->get_results( "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, consent_hash FROM {$table} ORDER BY id DESC LIMIT 50" );
+	}
+
+	/**
+	 * Get total stored consent logs.
+	 *
+	 * @return int
+	 */
+	private function total_logs() {
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			return 0;
+		}
+
+		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
+	}
+
+	/**
+	 * Get basic consent action counts.
+	 *
+	 * @return array
+	 */
+	private function log_stats() {
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$stats = array(
+			'accept_all'     => 0,
+			'necessary_only' => 0,
+			'save_choices'   => 0,
+		);
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			return $stats;
+		}
+
+		$rows = $wpdb->get_results( "SELECT consent_action, COUNT(*) AS total FROM {$table} GROUP BY consent_action", ARRAY_A );
+		foreach ( $rows as $row ) {
+			$action = isset( $row['consent_action'] ) && '' !== $row['consent_action'] ? $row['consent_action'] : 'save_choices';
+			if ( isset( $stats[ $action ] ) ) {
+				$stats[ $action ] = (int) $row['total'];
+			}
+		}
+
+		return $stats;
+	}
+
+	/**
+	 * Convert action key to an admin label.
+	 *
+	 * @param string $action Action key.
+	 * @return string
+	 */
+	private function format_action_label( $action ) {
+		$labels = array(
+			'accept_all'     => __( 'Accept all', 'openconsent-cmp' ),
+			'necessary_only' => __( 'Necessary only', 'openconsent-cmp' ),
+			'save_choices'   => __( 'Saved choices', 'openconsent-cmp' ),
+		);
+
+		return $labels[ $action ] ?? ( $action ? ucwords( str_replace( '_', ' ', $action ) ) : __( 'Saved choices', 'openconsent-cmp' ) );
+	}
+
+	/**
+	 * Render compact category badges for a consent record.
+	 *
+	 * @param object $log Consent log row.
+	 * @return string
+	 */
+	private function format_category_badges( $log ) {
+		$labels = array(
+			'necessary'    => __( 'Necessary', 'openconsent-cmp' ),
+			'preferences'  => __( 'Preferences', 'openconsent-cmp' ),
+			'statistics'   => __( 'Statistics', 'openconsent-cmp' ),
+			'marketing'    => __( 'Marketing', 'openconsent-cmp' ),
+			'unclassified' => __( 'Unclassified', 'openconsent-cmp' ),
+		);
+		$output = array();
+
+		foreach ( $labels as $key => $label ) {
+			$granted = ! empty( $log->{$key} );
+			$output[] = sprintf(
+				'<span class="openconsent-badge openconsent-badge--%1$s">%2$s: %3$s</span>',
+				$granted ? 'granted' : 'denied',
+				esc_html( $label ),
+				esc_html( $granted ? __( 'yes', 'openconsent-cmp' ) : __( 'no', 'openconsent-cmp' ) )
+			);
+		}
+
+		return implode( ' ', $output );
 	}
 
 	/**
@@ -571,14 +700,7 @@ final class OpenConsent_CMP_Admin {
 
 		check_admin_referer( 'openconsent_export_logs' );
 
-		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
-
-		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
-			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
-		}
-
-		$rows = $wpdb->get_results( "SELECT created_at, consent_id, consent_json, consent_hash, ip_hash, user_agent_hash FROM {$table} ORDER BY id DESC", ARRAY_A );
+		$rows = $this->export_rows();
 
 		nocache_headers();
 		header( 'Content-Type: text/csv; charset=utf-8' );
@@ -586,11 +708,145 @@ final class OpenConsent_CMP_Admin {
 		header( 'X-Content-Type-Options: nosniff' );
 
 		$output = fopen( 'php://output', 'w' );
-		fputcsv( $output, array( 'created_at', 'consent_id', 'consent_json', 'consent_hash', 'ip_hash', 'user_agent_hash' ) );
+		fputcsv( $output, array_keys( $this->export_header_map() ) );
 		foreach ( $rows as $row ) {
-			fputcsv( $output, $row );
+			fputcsv( $output, $this->normalize_export_row( $row ) );
 		}
 		fclose( $output );
 		exit;
+	}
+
+	/**
+	 * Export consent logs as JSON for admin download.
+	 *
+	 * @return void
+	 */
+	public function export_logs_json() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to export consent logs.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_export_logs' );
+
+		nocache_headers();
+		header( 'Content-Type: application/json; charset=utf-8' );
+		header( 'Content-Disposition: attachment; filename="openconsent-cmp-logs-' . gmdate( 'Y-m-d' ) . '.json"' );
+		header( 'X-Content-Type-Options: nosniff' );
+		echo wp_json_encode(
+			array(
+				'generated_at' => gmdate( 'c' ),
+				'site_url'     => home_url( '/' ),
+				'plugin'       => 'OpenConsent CMP',
+				'version'      => OPENCONSENT_CMP_VERSION,
+				'records'      => array_map( array( $this, 'normalize_export_row' ), $this->export_rows() ),
+			),
+			JSON_PRETTY_PRINT
+		);
+		exit;
+	}
+
+	/**
+	 * Register WordPress dashboard widget with consent record shortcuts.
+	 *
+	 * @return void
+	 */
+	public function register_dashboard_widget() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
+		wp_add_dashboard_widget(
+			'openconsent_cmp_records',
+			__( 'OpenConsent CMP records', 'openconsent-cmp' ),
+			array( $this, 'render_dashboard_widget' )
+		);
+	}
+
+	/**
+	 * Render dashboard widget.
+	 *
+	 * @return void
+	 */
+	public function render_dashboard_widget() {
+		$stats = $this->log_stats();
+		?>
+		<p>
+			<strong><?php echo esc_html( number_format_i18n( $this->total_logs() ) ); ?></strong>
+			<?php esc_html_e( 'consent records stored locally.', 'openconsent-cmp' ); ?>
+		</p>
+		<ul class="openconsent-dashboard-list">
+			<li><?php esc_html_e( 'Accepted all:', 'openconsent-cmp' ); ?> <strong><?php echo esc_html( number_format_i18n( $stats['accept_all'] ) ); ?></strong></li>
+			<li><?php esc_html_e( 'Necessary only:', 'openconsent-cmp' ); ?> <strong><?php echo esc_html( number_format_i18n( $stats['necessary_only'] ) ); ?></strong></li>
+			<li><?php esc_html_e( 'Custom choices:', 'openconsent-cmp' ); ?> <strong><?php echo esc_html( number_format_i18n( $stats['save_choices'] ) ); ?></strong></li>
+		</ul>
+		<p>
+			<a class="button button-primary" href="<?php echo esc_url( admin_url( 'options-general.php?page=openconsent-cmp' ) ); ?>"><?php esc_html_e( 'Open records', 'openconsent-cmp' ); ?></a>
+			<a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download CSV', 'openconsent-cmp' ); ?></a>
+		</p>
+		<?php
+	}
+
+	/**
+	 * Get rows for export.
+	 *
+	 * @return array
+	 */
+	private function export_rows() {
+		global $wpdb;
+		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+
+		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
+			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
+		}
+
+		return $wpdb->get_results(
+			"SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} ORDER BY id DESC",
+			ARRAY_A
+		);
+	}
+
+	/**
+	 * Return export fields in stable order.
+	 *
+	 * @return array
+	 */
+	private function export_header_map() {
+		return array(
+			'created_at'      => '',
+			'consent_id'      => '',
+			'consent_action'  => '',
+			'necessary'       => 1,
+			'preferences'     => 0,
+			'statistics'      => 0,
+			'marketing'       => 0,
+			'unclassified'    => 0,
+			'region'          => '',
+			'region_mode'     => '',
+			'language'        => '',
+			'page_url'        => '',
+			'referrer_url'    => '',
+			'plugin_version'  => '',
+			'consent_hash'    => '',
+			'ip_hash'         => '',
+			'user_agent_hash' => '',
+			'consent_json'    => '',
+		);
+	}
+
+	/**
+	 * Normalize export row so CSV and JSON use the same fields.
+	 *
+	 * @param array $row Database row.
+	 * @return array
+	 */
+	private function normalize_export_row( $row ) {
+		$defaults = $this->export_header_map();
+		$clean    = array();
+
+		foreach ( $defaults as $key => $default ) {
+			$clean[ $key ] = isset( $row[ $key ] ) ? $row[ $key ] : $default;
+		}
+
+		return $clean;
 	}
 }

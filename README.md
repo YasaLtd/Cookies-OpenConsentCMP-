@@ -27,6 +27,7 @@ Open source WordPress consent management plugin by YASA LTD with consent categor
 - Emits Google Consent Mode v2 default denied signals and updates them after consent.
 - Supports Google Consent Mode Basic or Advanced behavior. Advanced mode lets consent-aware Google tags load with denied defaults so they can adjust behavior before consent.
 - Stores anonymized consent audit records in a local WordPress table.
+- Shows structured consent records in the WordPress admin and lets administrators download CSV or JSON exports.
 - Shows a persistent Privacy choices control after consent so visitors can reopen the dialog and change their choices.
 - Detects the visitor browser language for built-in banner labels and category names when the site owner has not customized that text.
 - Keeps banner copy as regular visible DOM text with `translate="yes"` and `lang` attributes so browser translation tools can translate it.

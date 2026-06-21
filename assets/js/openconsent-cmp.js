@@ -580,6 +580,8 @@
 		payload.append('action', 'openconsent_log_consent');
 		payload.append('nonce', config.nonce || '');
 		payload.append('consent', JSON.stringify(consent));
+		payload.append('page_url', window.location ? window.location.href : '');
+		payload.append('referrer_url', document.referrer || '');
 
 		window.fetch(config.ajaxUrl, {
 			method: 'POST',
@@ -588,7 +590,7 @@
 		}).catch(function () {});
 	}
 
-	function saveConsent(values) {
+	function saveConsent(values, actionName) {
 		var consent = {
 			id: (readConsent() && readConsent().id) || String(Date.now()) + Math.random().toString(16).slice(2),
 			necessary: true,
@@ -598,6 +600,8 @@
 			unclassified: Boolean(values.unclassified),
 			region: detectRegion(),
 			regionMode: String(config.regionMode || 'strict').toLowerCase(),
+			action: actionName || 'save_choices',
+			language: languageCode(),
 			updated: new Date().toISOString()
 		};
 
@@ -764,7 +768,7 @@
 		actions.className = 'openconsent__actions';
 
 		var reject = makeButton(ui.reject || 'Necessary only', 'openconsent__button openconsent__button--ghost', function () {
-			saveConsent({});
+			saveConsent({}, 'necessary_only');
 			root.remove();
 		});
 		var customize = makeButton(ui.customize || 'Customize', 'openconsent__button openconsent__button--ghost', function () {
@@ -788,11 +792,11 @@
 				statistics: inputs.statistics.checked,
 				marketing: inputs.marketing.checked,
 				unclassified: inputs.unclassified.checked
-			});
+			}, 'save_choices');
 			root.remove();
 		});
 		var accept = makeButton(ui.accept || 'Accept all', 'openconsent__button openconsent__button--primary', function () {
-			saveConsent({ preferences: true, statistics: true, marketing: true, unclassified: true });
+			saveConsent({ preferences: true, statistics: true, marketing: true, unclassified: true }, 'accept_all');
 			root.remove();
 		});
 
