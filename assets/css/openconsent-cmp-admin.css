@@ -47,6 +47,16 @@
 	margin-top: 10px;
 }
 
+.openconsent-import-services-form {
+	align-items: center;
+	border-top: 1px solid #dcdcde;
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin-top: 14px;
+	padding-top: 14px;
+}
+
 .openconsent-record-summary > div,
 .openconsent-record-summary span {
 	background: #f6f7f7;

@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.16
+Stable tag: 1.0.17
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -40,7 +40,7 @@ Important: OpenConsent CMP helps configure and document consent choices. Legal r
 * Cookie declaration shortcode: [openconsent_declaration].
 * Local crawl scanner for internal pages, Set-Cookie headers, external static resource hosts, and suggested service registry rows.
 * Debug mode for inspecting blocked scripts and embeds in the browser console and JavaScript API.
-* JSON settings export/import and CSV service registry export.
+* JSON settings export/import and CSV service registry export/import.
 * Suggested privacy policy text for WordPress privacy tools.
 
 = Google publisher ads and TCF =
@@ -88,6 +88,11 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.0.17 =
+* Adds CSV import for the service registry with replace and append modes.
+* Accepts service CSV files with or without a header row.
+* Improves the admin import/export workflow for moving service inventories between WordPress sites.
 
 = 1.0.16 =
 * Adds a structured cookie and service inventory table in the WordPress admin.

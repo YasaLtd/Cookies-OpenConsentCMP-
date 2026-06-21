@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.0.16\n"
+"Project-Id-Version: OpenConsent CMP 1.0.17\n"
 "Report-Msgid-Bugs-To: https://cookies.yasa.fi/\n"
 "POT-Creation-Date: 2026-06-19 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -123,6 +123,21 @@ msgid "Export settings JSON"
 msgstr ""
 
 msgid "Export services CSV"
+msgstr ""
+
+msgid "Import services CSV"
+msgstr ""
+
+msgid "Replace current service registry"
+msgstr ""
+
+msgid "Append to current service registry"
+msgstr ""
+
+msgid "Import services"
+msgstr ""
+
+msgid "CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted."
 msgstr ""
 
 msgid "Import settings JSON"

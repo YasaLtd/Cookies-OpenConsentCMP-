@@ -31,7 +31,7 @@ Open source WordPress consent management plugin by YASA LTD with consent categor
 - Shows structured consent records in the WordPress admin and lets administrators download CSV or JSON exports.
 - Shows a structured cookie/service inventory table with provider, purpose, privacy policy URL, category, and review status.
 - Runs a local crawl scanner for internal pages, `Set-Cookie` headers, external static resources, and suggested service registry rows.
-- Provides JSON settings export/import and CSV service registry export for migration and review workflows.
+- Provides JSON settings export/import and CSV service registry export/import for migration and review workflows.
 - Includes optional debug mode so site owners can inspect blocked scripts and embeds through `OpenConsent.debug` and console notices.
 - Shows a persistent Privacy choices control after consent so visitors can reopen the dialog and change their choices.
 - Detects the visitor browser language for built-in banner labels and category names when the site owner has not customized that text.
@@ -113,6 +113,8 @@ analytics.example.com|statistics|Example Analytics|Example Ltd|Audience measurem
 ```
 
 The extra provider, purpose, and policy fields appear in the cookie declaration and visitor category details.
+
+The admin screen can export the registry as CSV and import CSV rows back in replace or append mode. CSV files may include a header row with `pattern,category,name,provider,purpose,privacy_url`.
 
 ## Public JavaScript API
 

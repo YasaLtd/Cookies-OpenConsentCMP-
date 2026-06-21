@@ -22,7 +22,7 @@ if ( ! defined( 'OPENCONSENT_CMP_VERSION' ) ) {
 	exit( 1 );
 }
 
-if ( '1.0.16' !== OPENCONSENT_CMP_VERSION ) {
+if ( '1.0.17' !== OPENCONSENT_CMP_VERSION ) {
 	fwrite( STDERR, "Unexpected version: " . OPENCONSENT_CMP_VERSION . "\n" );
 	exit( 1 );
 }
@@ -39,6 +39,20 @@ $scanner = new OpenConsent_CMP_Scanner();
 $report  = $scanner->scan_site( 1 );
 if ( empty( $report['version'] ) || 2 !== (int) $report['version'] || empty( $report['summary'] ) ) {
 	fwrite( STDERR, "Scanner did not return a structured report.\n" );
+	exit( 1 );
+}
+
+$admin  = new OpenConsent_CMP_Admin( OpenConsent_CMP::instance() );
+$method = new ReflectionMethod( $admin, 'service_line_from_csv_row' );
+$method->setAccessible( true );
+if ( '' !== $method->invoke( $admin, array( 'pattern', 'category', 'name', 'provider', 'purpose', 'privacy_url' ) ) ) {
+	fwrite( STDERR, "Service CSV parser did not skip a header row.\n" );
+	exit( 1 );
+}
+
+$line = $method->invoke( $admin, array( 'analytics.example.test', 'statistics', 'Example Analytics', 'Example Ltd', 'Audience measurement.', 'https://example.test/privacy' ) );
+if ( 'analytics.example.test|statistics|Example Analytics|Example Ltd|Audience measurement.|https://example.test/privacy' !== $line ) {
+	fwrite( STDERR, "Service CSV parser did not normalize a valid row.\n" );
 	exit( 1 );
 }
 

@@ -39,6 +39,7 @@ final class OpenConsent_CMP_Admin {
 		add_action( 'admin_post_openconsent_export_settings', array( $this, 'export_settings' ) );
 		add_action( 'admin_post_openconsent_export_services', array( $this, 'export_services' ) );
 		add_action( 'admin_post_openconsent_import_settings', array( $this, 'import_settings' ) );
+		add_action( 'admin_post_openconsent_import_services', array( $this, 'import_services' ) );
 		add_action( 'wp_dashboard_setup', array( $this, 'register_dashboard_widget' ) );
 	}
 
@@ -271,6 +272,9 @@ final class OpenConsent_CMP_Admin {
 			<?php if ( isset( $_GET['openconsent_imported'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'OpenConsent settings imported.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
+			<?php if ( isset( $_GET['openconsent_services_imported'] ) ) : ?>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( __( 'Imported %s service registry rows.', 'openconsent-cmp' ), number_format_i18n( absint( $_GET['openconsent_services_imported'] ) ) ) ); ?></p></div>
+			<?php endif; ?>
 
 			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
 				<div class="openconsent-admin-card"><strong><?php echo ! empty( $options['enabled'] ) ? esc_html__( 'On', 'openconsent-cmp' ) : esc_html__( 'Off', 'openconsent-cmp' ); ?></strong><span><?php esc_html_e( 'Frontend banner', 'openconsent-cmp' ); ?></span></div>
@@ -489,6 +493,16 @@ final class OpenConsent_CMP_Admin {
 					<?php submit_button( __( 'Import settings', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
 				</form>
 				<p class="description"><?php esc_html_e( 'Import replaces plugin settings but keeps existing consent records.', 'openconsent-cmp' ); ?></p>
+				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="openconsent-import-services-form">
+					<input type="hidden" name="action" value="openconsent_import_services">
+					<?php wp_nonce_field( 'openconsent_import_services' ); ?>
+					<label for="openconsent-import-services-file"><?php esc_html_e( 'Import services CSV', 'openconsent-cmp' ); ?></label>
+					<input id="openconsent-import-services-file" type="file" name="openconsent_services_file" accept="text/csv,.csv">
+					<label><input type="radio" name="openconsent_services_mode" value="replace" checked> <?php esc_html_e( 'Replace current service registry', 'openconsent-cmp' ); ?></label>
+					<label><input type="radio" name="openconsent_services_mode" value="append"> <?php esc_html_e( 'Append to current service registry', 'openconsent-cmp' ); ?></label>
+					<?php submit_button( __( 'Import services', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+				</form>
+				<p class="description"><?php esc_html_e( 'CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted.', 'openconsent-cmp' ); ?></p>
 				</div>
 
 				<div class="openconsent-settings-card">
@@ -1421,6 +1435,87 @@ final class OpenConsent_CMP_Admin {
 
 		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_imported=1' ) );
 		exit;
+	}
+
+	/**
+	 * Import service registry rows from CSV.
+	 *
+	 * @return void
+	 */
+	public function import_services() {
+		if ( ! current_user_can( 'manage_options' ) ) {
+			wp_die( esc_html__( 'You do not have permission to import services.', 'openconsent-cmp' ) );
+		}
+
+		check_admin_referer( 'openconsent_import_services' );
+
+		if ( empty( $_FILES['openconsent_services_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['openconsent_services_file']['tmp_name'] ) ) {
+			wp_die( esc_html__( 'No services CSV file was uploaded.', 'openconsent-cmp' ) );
+		}
+
+		$handle = fopen( $_FILES['openconsent_services_file']['tmp_name'], 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
+		if ( false === $handle ) {
+			wp_die( esc_html__( 'The services CSV file could not be opened.', 'openconsent-cmp' ) );
+		}
+
+		$rows = array();
+		while ( false !== ( $row = fgetcsv( $handle ) ) ) {
+			$line = $this->service_line_from_csv_row( $row );
+			if ( '' !== $line ) {
+				$rows[] = $line;
+			}
+		}
+		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
+
+		if ( empty( $rows ) ) {
+			wp_die( esc_html__( 'The services CSV did not contain valid service rows.', 'openconsent-cmp' ) );
+		}
+
+		$options       = $this->plugin->options();
+		$mode          = isset( $_POST['openconsent_services_mode'] ) && 'append' === sanitize_key( wp_unslash( $_POST['openconsent_services_mode'] ) ) ? 'append' : 'replace';
+		$current_rows  = 'append' === $mode ? preg_split( '/\r\n|\r|\n/', (string) $options['services'] ) : array();
+		$merged        = array_merge( array_filter( array_map( 'trim', $current_rows ) ), $rows );
+		$options['services'] = $this->sanitize_services( implode( "\n", array_unique( $merged ) ) );
+		update_option( OpenConsent_CMP::OPTION, $options );
+
+		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_services_imported=' . count( $rows ) ) );
+		exit;
+	}
+
+	/**
+	 * Convert a CSV row to a service registry line.
+	 *
+	 * @param array $row Raw CSV row.
+	 * @return string
+	 */
+	private function service_line_from_csv_row( $row ) {
+		$row = array_map( 'trim', array_map( 'strval', $row ) );
+		if ( empty( $row ) || '' === implode( '', $row ) ) {
+			return '';
+		}
+
+		$first = strtolower( $row[0] ?? '' );
+		if ( in_array( $first, array( 'pattern', 'url pattern', 'match pattern' ), true ) ) {
+			return '';
+		}
+
+		$pattern = $row[0] ?? '';
+		$category = $row[1] ?? 'unclassified';
+		if ( '' === $pattern || ! in_array( $category, array( 'preferences', 'statistics', 'marketing', 'unclassified' ), true ) ) {
+			return '';
+		}
+
+		return implode(
+			'|',
+			array(
+				$pattern,
+				$category,
+				$row[2] ?? $pattern,
+				$row[3] ?? '',
+				$row[4] ?? '',
+				$row[5] ?? '',
+			)
+		);
 	}
 
 	/**

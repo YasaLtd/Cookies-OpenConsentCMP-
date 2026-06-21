@@ -12,4 +12,4 @@
 10. Commit, push GitHub main, and tag the release.
 11. Upload the website/download files and keep only the current release ZIP on the server.
 
-Suggested tag format: `v1.0.16`.
+Suggested tag format: `v1.0.17`.
