@@ -14,13 +14,13 @@
 		{ key: 'dark-rose', label: 'Rose', accent: '#fb7185', background: '#18111f', text: '#ffffff' }
 	];
 	var googleSignalInfo = {
-		ad_storage: 'Advertising cookies and ad measurement.',
-		ad_user_data: 'User data sent to Google for advertising.',
-		ad_personalization: 'Personalized ads and remarketing.',
-		analytics_storage: 'Analytics cookies and measurement.',
-		functionality_storage: 'Functional storage for site features.',
-		personalization_storage: 'Personalization storage for saved preferences.',
-		security_storage: 'Security storage is always granted.'
+		ad_storage: true,
+		ad_user_data: true,
+		ad_personalization: true,
+		analytics_storage: true,
+		functionality_storage: true,
+		personalization_storage: true,
+		security_storage: true
 	};
 	var translations = {
 		en: {
@@ -33,8 +33,6 @@
 			customize: 'Customize',
 			revoke: 'Privacy choices',
 			privacyPolicy: 'Privacy policy',
-			googleGuide: 'Google Consent Mode guide',
-			consentPolicy: 'Google user consent policy',
 			regionStrict: 'Strict opt-in applies for your region.',
 			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
 			categories: {
@@ -136,6 +134,147 @@
 			categories: { necessary: 'Nödvändiga', preferences: 'Inställningar', statistics: 'Statistik', marketing: 'Marknadsföring' }
 		}
 	};
+	var translationUpdates = {
+		en: {
+			regionStrict: 'Strict opt-in applies for your region.',
+			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
+			whatThisControls: 'What this controls',
+			configuredServices: 'Configured services',
+			noServicesConfigured: 'URL rules: no services configured in this category.',
+			blockedOnPage: 'Blocked on this page',
+			noBlockedItems: 'Blocked on this page: no matching scripts or embeds right now.',
+			moreItems: 'more',
+			googleSignalsControlled: 'Google signals controlled here',
+			none: 'none',
+			currentStateAllowed: 'Current state: allowed after saving.',
+			currentStateBlocked: 'Current state: blocked or denied until allowed.',
+			selectedOptionalCategories: 'Selected optional categories',
+			onlyNecessarySelected: 'Only necessary cookies are selected.',
+			changeThemeAria: 'Change consent dialog theme color',
+			changeThemeTitle: 'Change theme color',
+			configuredService: 'Configured service',
+			providerLabel: 'provider',
+			purposeLabel: 'purpose',
+			policyLabel: 'policy',
+			blockedEmbed: 'Blocked embed',
+			configuredScript: 'Configured script',
+			inlineScript: 'Inline script',
+			embedBlocked: 'This embed is blocked until you allow its cookie category.',
+			themeLabels: { 'dark-teal': 'Teal', 'dark-blue': 'Blue', 'dark-gold': 'Gold', 'dark-rose': 'Rose' }
+		},
+		fi: {
+			title: 'Tietosuoja-asetukset',
+			message: 'Käytämme evästeitä ja vastaavia tekniikoita sivuston toimivuuteen, käytön mittaamiseen ja markkinoinnin parantamiseen. Valitse, mitä haluat sallia.',
+			partyDisclosure: 'Google ja muut listatut palveluntarjoajat voivat kerätä, vastaanottaa tai käyttää henkilötietoja, kun niiden palvelut otetaan käyttöön. Lisätiedot ovat evästeilmoituksessa ja tietosuojakäytännössä.',
+			accept: 'Hyväksy kaikki',
+			reject: 'Vain välttämättömät',
+			save: 'Tallenna valinnat',
+			customize: 'Mukauta',
+			revoke: 'Tietosuoja-asetukset',
+			privacyPolicy: 'Tietosuojakäytäntö',
+			regionStrict: 'Alueellasi sovelletaan tiukkaa opt-in-suostumusta.',
+			regionNotice: 'Alueellasi käytetään ilmoitustilaa. Voit kieltäytyä valinnaisista luokista.',
+			categories: { necessary: 'Välttämättömät', preferences: 'Asetukset', statistics: 'Tilastot', marketing: 'Markkinointi', unclassified: 'Luokittelemattomat' },
+			descriptions: {
+				necessary: 'Välttämättömät evästeet pitävät sivuston turvallisena ja toimivana. Ne ovat aina käytössä.',
+				preferences: 'Asetusevästeet muistavat valintoja, kuten kielen, alueen ja käyttöliittymän asetukset.',
+				statistics: 'Tilastoevästeet auttavat ymmärtämään, miten kävijät käyttävät sivustoa.',
+				marketing: 'Markkinointievästeet tukevat mainontaa, mittaamista ja upotettua mediaa.',
+				unclassified: 'Luokittelemattomat palvelut estetään, kunnes sivuston omistaja tarkistaa ne.'
+			},
+			whatThisControls: 'Mitä tämä hallitsee',
+			configuredServices: 'Määritetyt palvelut',
+			noServicesConfigured: 'URL-säännöt: tässä luokassa ei ole määritettyjä palveluja.',
+			blockedOnPage: 'Tällä sivulla estetyt',
+			noBlockedItems: 'Tällä sivulla estetyt: ei vastaavia skriptejä tai upotuksia juuri nyt.',
+			moreItems: 'lisää',
+			googleSignalsControlled: 'Tässä hallitut Google-signaalit',
+			none: 'ei mitään',
+			currentStateAllowed: 'Nykyinen tila: sallitaan tallennuksen jälkeen.',
+			currentStateBlocked: 'Nykyinen tila: estetty tai evätty, kunnes se sallitaan.',
+			selectedOptionalCategories: 'Valitut valinnaiset luokat',
+			onlyNecessarySelected: 'Vain välttämättömät evästeet on valittu.',
+			changeThemeAria: 'Vaihda suostumusikkunan teemaväriä',
+			changeThemeTitle: 'Vaihda teemaväri',
+			configuredService: 'Määritetty palvelu',
+			providerLabel: 'tarjoaja',
+			purposeLabel: 'tarkoitus',
+			policyLabel: 'käytäntö',
+			blockedEmbed: 'Estetty upotus',
+			configuredScript: 'Määritetty skripti',
+			inlineScript: 'Upotettu skripti',
+			embedBlocked: 'Tämä upotus on estetty, kunnes sallit sen evästeluokan.',
+			themeLabels: { 'dark-teal': 'Turkoosi', 'dark-blue': 'Sininen', 'dark-gold': 'Kulta', 'dark-rose': 'Roosa' }
+		},
+		de: {
+			message: 'Wir verwenden Cookies und ahnliche Technologien, um diese Website zuverlassig zu betreiben, die Nutzung zu messen und Marketing zu verbessern. Wahlen Sie, was Sie erlauben mochten.',
+			partyDisclosure: 'Google und andere aufgefuhrte Dienstanbieter konnen personenbezogene Daten erfassen, empfangen oder verwenden, wenn ihre Dienste aktiviert sind. Details finden Sie in der Cookie-Erklarung und Datenschutzerklarung.',
+			regionStrict: 'Fur Ihre Region gilt striktes Opt-in.',
+			regionNotice: 'Fur Ihre Region gilt der Hinweis-Modus. Sie konnen optionale Kategorien abwahlen.',
+			categories: { necessary: 'Notwendig', preferences: 'Praferenzen', statistics: 'Statistiken', marketing: 'Marketing', unclassified: 'Nicht klassifiziert' },
+			descriptions: { necessary: 'Notwendige Cookies halten die Website sicher und funktionsfahig. Sie sind immer aktiv.', preferences: 'Praferenz-Cookies speichern Entscheidungen wie Sprache, Region und Oberflacheneinstellungen.', statistics: 'Statistik-Cookies helfen uns zu verstehen, wie Besucher die Website nutzen.', marketing: 'Marketing-Cookies unterstutzen Werbung, Messung und eingebettete Medien.', unclassified: 'Nicht klassifizierte Dienste werden blockiert, bis der Websitebetreiber sie gepruft hat.' },
+			whatThisControls: 'Was dies steuert', configuredServices: 'Konfigurierte Dienste', noServicesConfigured: 'URL-Regeln: In dieser Kategorie sind keine Dienste konfiguriert.', blockedOnPage: 'Auf dieser Seite blockiert', noBlockedItems: 'Auf dieser Seite blockiert: derzeit keine passenden Skripte oder Einbettungen.', moreItems: 'weitere', googleSignalsControlled: 'Hier gesteuerte Google-Signale', none: 'keine', currentStateAllowed: 'Aktueller Status: nach dem Speichern erlaubt.', currentStateBlocked: 'Aktueller Status: blockiert oder verweigert, bis erlaubt.', selectedOptionalCategories: 'Ausgewahlte optionale Kategorien', onlyNecessarySelected: 'Nur notwendige Cookies sind ausgewahlt.', changeThemeAria: 'Farbe des Einwilligungsdialogs andern', changeThemeTitle: 'Designfarbe andern', configuredService: 'Konfigurierter Dienst', providerLabel: 'Anbieter', purposeLabel: 'Zweck', policyLabel: 'Richtlinie', blockedEmbed: 'Blockierte Einbettung', configuredScript: 'Konfiguriertes Skript', inlineScript: 'Inline-Skript', embedBlocked: 'Diese Einbettung ist blockiert, bis Sie ihre Cookie-Kategorie erlauben.', themeLabels: { 'dark-teal': 'Petrol', 'dark-blue': 'Blau', 'dark-gold': 'Gold', 'dark-rose': 'Rose' }
+		},
+		es: {
+			message: 'Usamos cookies y tecnologias similares para mantener el sitio fiable, medir el uso y mejorar el marketing. Elige que quieres permitir.',
+			partyDisclosure: 'Google y otros proveedores listados pueden recopilar, recibir o usar datos personales cuando sus servicios estan habilitados. Revisa la declaracion de cookies y la politica de privacidad para mas detalles.',
+			regionStrict: 'Se aplica consentimiento opt-in estricto en tu region.',
+			regionNotice: 'Se aplica modo de aviso en tu region. Puedes rechazar las categorias opcionales.',
+			categories: { necessary: 'Necesarias', preferences: 'Preferencias', statistics: 'Estadisticas', marketing: 'Marketing', unclassified: 'Sin clasificar' },
+			descriptions: { necessary: 'Las cookies necesarias mantienen el sitio seguro y funcionando. Siempre estan activas.', preferences: 'Las cookies de preferencias recuerdan opciones como idioma, region y ajustes de interfaz.', statistics: 'Las cookies de estadisticas nos ayudan a entender como usan el sitio los visitantes.', marketing: 'Las cookies de marketing admiten publicidad, medicion y medios incrustados.', unclassified: 'Los servicios sin clasificar se bloquean hasta que el propietario del sitio los revise.' },
+			whatThisControls: 'Que controla esto', configuredServices: 'Servicios configurados', noServicesConfigured: 'Reglas URL: no hay servicios configurados en esta categoria.', blockedOnPage: 'Bloqueado en esta pagina', noBlockedItems: 'Bloqueado en esta pagina: no hay scripts ni inserciones coincidentes ahora.', moreItems: 'mas', googleSignalsControlled: 'Senales de Google controladas aqui', none: 'ninguna', currentStateAllowed: 'Estado actual: permitido despues de guardar.', currentStateBlocked: 'Estado actual: bloqueado o denegado hasta que se permita.', selectedOptionalCategories: 'Categorias opcionales seleccionadas', onlyNecessarySelected: 'Solo estan seleccionadas las cookies necesarias.', changeThemeAria: 'Cambiar color del dialogo de consentimiento', changeThemeTitle: 'Cambiar color del tema', configuredService: 'Servicio configurado', providerLabel: 'proveedor', purposeLabel: 'finalidad', policyLabel: 'politica', blockedEmbed: 'Insercion bloqueada', configuredScript: 'Script configurado', inlineScript: 'Script en linea', embedBlocked: 'Esta insercion esta bloqueada hasta que permitas su categoria de cookies.', themeLabels: { 'dark-teal': 'Verde azulado', 'dark-blue': 'Azul', 'dark-gold': 'Dorado', 'dark-rose': 'Rosa' }
+		},
+		fr: {
+			message: 'Nous utilisons des cookies et des technologies similaires pour assurer la fiabilite du site, mesurer l utilisation et ameliorer le marketing. Choisissez ce que vous autorisez.',
+			partyDisclosure: 'Google et les autres fournisseurs listes peuvent collecter, recevoir ou utiliser des donnees personnelles lorsque leurs services sont actives. Consultez la declaration relative aux cookies et la politique de confidentialite pour plus de details.',
+			regionStrict: 'Un consentement opt-in strict s applique a votre region.',
+			regionNotice: 'Le mode information s applique a votre region. Vous pouvez refuser les categories optionnelles.',
+			categories: { necessary: 'Necessaires', preferences: 'Preferences', statistics: 'Statistiques', marketing: 'Marketing', unclassified: 'Non classes' },
+			descriptions: { necessary: 'Les cookies necessaires assurent la securite et le fonctionnement du site. Ils sont toujours actifs.', preferences: 'Les cookies de preferences memorisent des choix comme la langue, la region et les reglages d interface.', statistics: 'Les cookies statistiques nous aident a comprendre comment les visiteurs utilisent le site.', marketing: 'Les cookies marketing prennent en charge la publicite, la mesure et les medias integres.', unclassified: 'Les services non classes sont bloques jusqu a leur examen par le proprietaire du site.' },
+			whatThisControls: 'Ce que cela controle', configuredServices: 'Services configures', noServicesConfigured: 'Regles URL: aucun service configure dans cette categorie.', blockedOnPage: 'Bloque sur cette page', noBlockedItems: 'Bloque sur cette page: aucun script ou contenu integre correspondant pour le moment.', moreItems: 'autres', googleSignalsControlled: 'Signaux Google controles ici', none: 'aucun', currentStateAllowed: 'Etat actuel: autorise apres enregistrement.', currentStateBlocked: 'Etat actuel: bloque ou refuse jusqu a autorisation.', selectedOptionalCategories: 'Categories optionnelles selectionnees', onlyNecessarySelected: 'Seuls les cookies necessaires sont selectionnes.', changeThemeAria: 'Changer la couleur du dialogue de consentement', changeThemeTitle: 'Changer la couleur du theme', configuredService: 'Service configure', providerLabel: 'fournisseur', purposeLabel: 'finalite', policyLabel: 'politique', blockedEmbed: 'Contenu integre bloque', configuredScript: 'Script configure', inlineScript: 'Script integre', embedBlocked: 'Ce contenu integre est bloque jusqu a ce que vous autorisiez sa categorie de cookies.', themeLabels: { 'dark-teal': 'Sarcelle', 'dark-blue': 'Bleu', 'dark-gold': 'Or', 'dark-rose': 'Rose' }
+		},
+		it: {
+			message: 'Usiamo cookie e tecnologie simili per mantenere affidabile il sito, misurare l uso e migliorare il marketing. Scegli cosa consentire.',
+			partyDisclosure: 'Google e gli altri fornitori elencati possono raccogliere, ricevere o usare dati personali quando i loro servizi sono abilitati. Consulta la dichiarazione sui cookie e l informativa privacy per i dettagli.',
+			regionStrict: 'Nella tua area si applica il consenso opt-in rigoroso.',
+			regionNotice: 'Nella tua area si applica la modalita avviso. Puoi rifiutare le categorie opzionali.',
+			categories: { necessary: 'Necessari', preferences: 'Preferenze', statistics: 'Statistiche', marketing: 'Marketing', unclassified: 'Non classificati' },
+			descriptions: { necessary: 'I cookie necessari mantengono il sito sicuro e funzionante. Sono sempre attivi.', preferences: 'I cookie di preferenza ricordano scelte come lingua, area geografica e impostazioni dell interfaccia.', statistics: 'I cookie statistici ci aiutano a capire come i visitatori usano il sito.', marketing: 'I cookie di marketing supportano pubblicita, misurazione e media incorporati.', unclassified: 'I servizi non classificati sono bloccati finche il proprietario del sito non li verifica.' },
+			whatThisControls: 'Cosa controlla', configuredServices: 'Servizi configurati', noServicesConfigured: 'Regole URL: nessun servizio configurato in questa categoria.', blockedOnPage: 'Bloccati in questa pagina', noBlockedItems: 'Bloccati in questa pagina: nessuno script o incorporamento corrispondente al momento.', moreItems: 'altri', googleSignalsControlled: 'Segnali Google controllati qui', none: 'nessuno', currentStateAllowed: 'Stato attuale: consentito dopo il salvataggio.', currentStateBlocked: 'Stato attuale: bloccato o negato finche non consentito.', selectedOptionalCategories: 'Categorie opzionali selezionate', onlyNecessarySelected: 'Sono selezionati solo i cookie necessari.', changeThemeAria: 'Cambia colore della finestra di consenso', changeThemeTitle: 'Cambia colore tema', configuredService: 'Servizio configurato', providerLabel: 'fornitore', purposeLabel: 'scopo', policyLabel: 'informativa', blockedEmbed: 'Incorporamento bloccato', configuredScript: 'Script configurato', inlineScript: 'Script inline', embedBlocked: 'Questo incorporamento e bloccato finche non consenti la sua categoria di cookie.', themeLabels: { 'dark-teal': 'Verde acqua', 'dark-blue': 'Blu', 'dark-gold': 'Oro', 'dark-rose': 'Rosa' }
+		},
+		nl: {
+			message: 'We gebruiken cookies en vergelijkbare technologieen om deze site betrouwbaar te houden, gebruik te meten en marketing te verbeteren. Kies wat u wilt toestaan.',
+			partyDisclosure: 'Google en andere vermelde dienstverleners kunnen persoonsgegevens verzamelen, ontvangen of gebruiken wanneer hun diensten zijn ingeschakeld. Bekijk de cookieverklaring en het privacybeleid voor details.',
+			regionStrict: 'Voor uw regio geldt strikte opt-in.',
+			regionNotice: 'Voor uw regio geldt de meldingsmodus. U kunt optionele categorieen weigeren.',
+			categories: { necessary: 'Noodzakelijk', preferences: 'Voorkeuren', statistics: 'Statistieken', marketing: 'Marketing', unclassified: 'Niet geclassificeerd' },
+			descriptions: { necessary: 'Noodzakelijke cookies houden de site veilig en werkend. Ze zijn altijd actief.', preferences: 'Voorkeurscookies onthouden keuzes zoals taal, regio en interface-instellingen.', statistics: 'Statistiekcookies helpen ons begrijpen hoe bezoekers de site gebruiken.', marketing: 'Marketingcookies ondersteunen advertenties, meting en ingesloten media.', unclassified: 'Niet-geclassificeerde diensten worden geblokkeerd totdat de site-eigenaar ze beoordeelt.' },
+			whatThisControls: 'Wat dit beheert', configuredServices: 'Geconfigureerde diensten', noServicesConfigured: 'URL-regels: geen diensten geconfigureerd in deze categorie.', blockedOnPage: 'Geblokkeerd op deze pagina', noBlockedItems: 'Geblokkeerd op deze pagina: momenteel geen overeenkomende scripts of embeds.', moreItems: 'meer', googleSignalsControlled: 'Google-signalen die hier worden beheerd', none: 'geen', currentStateAllowed: 'Huidige status: toegestaan na opslaan.', currentStateBlocked: 'Huidige status: geblokkeerd of geweigerd totdat toegestaan.', selectedOptionalCategories: 'Geselecteerde optionele categorieen', onlyNecessarySelected: 'Alleen noodzakelijke cookies zijn geselecteerd.', changeThemeAria: 'Wijzig kleur van toestemmingsvenster', changeThemeTitle: 'Wijzig themakleur', configuredService: 'Geconfigureerde dienst', providerLabel: 'provider', purposeLabel: 'doel', policyLabel: 'beleid', blockedEmbed: 'Geblokkeerde embed', configuredScript: 'Geconfigureerd script', inlineScript: 'Inline script', embedBlocked: 'Deze embed is geblokkeerd totdat u de cookiecategorie toestaat.', themeLabels: { 'dark-teal': 'Zeegroen', 'dark-blue': 'Blauw', 'dark-gold': 'Goud', 'dark-rose': 'Roze' }
+		},
+		sv: {
+			message: 'Vi anvander cookies och liknande tekniker for att halla webbplatsen tillforlitlig, mata anvandning och forbattra marknadsforing. Valj vad du vill tillata.',
+			partyDisclosure: 'Google och andra listade tjansteleverantorer kan samla in, ta emot eller anvanda personuppgifter nar deras tjanster aktiveras. Se cookiedeklarationen och integritetspolicyn for detaljer.',
+			regionStrict: 'Strikt opt-in galler for din region.',
+			regionNotice: 'Meddelandelage galler for din region. Du kan valja bort valfria kategorier.',
+			categories: { necessary: 'Nodvandiga', preferences: 'Installningar', statistics: 'Statistik', marketing: 'Marknadsforing', unclassified: 'Oklassificerade' },
+			descriptions: { necessary: 'Nodvandiga cookies haller webbplatsen saker och fungerande. De ar alltid aktiva.', preferences: 'Installningscookies minns val som sprak, region och granssnittsinstallningar.', statistics: 'Statistikcookies hjalper oss att forsta hur besokare anvander webbplatsen.', marketing: 'Marknadsforingscookies stodjer annonsering, matning och inbaddade medier.', unclassified: 'Oklassificerade tjanster blockeras tills webbplatsagaren granskar dem.' },
+			whatThisControls: 'Vad detta styr', configuredServices: 'Konfigurerade tjanster', noServicesConfigured: 'URL-regler: inga tjanster ar konfigurerade i denna kategori.', blockedOnPage: 'Blockerat pa denna sida', noBlockedItems: 'Blockerat pa denna sida: inga matchande skript eller inbaddningar just nu.', moreItems: 'fler', googleSignalsControlled: 'Google-signaler som styrs har', none: 'inga', currentStateAllowed: 'Aktuellt lage: tillats efter sparande.', currentStateBlocked: 'Aktuellt lage: blockerat eller nekat tills det tillats.', selectedOptionalCategories: 'Valda valfria kategorier', onlyNecessarySelected: 'Endast nodvandiga cookies ar valda.', changeThemeAria: 'Andra farg pa samtyckesdialogen', changeThemeTitle: 'Andra temafarg', configuredService: 'Konfigurerad tjanst', providerLabel: 'leverantor', purposeLabel: 'syfte', policyLabel: 'policy', blockedEmbed: 'Blockerad inbaddning', configuredScript: 'Konfigurerat skript', inlineScript: 'Inline-skript', embedBlocked: 'Denna inbaddning ar blockerad tills du tillater dess cookiekategori.', themeLabels: { 'dark-teal': 'Turkos', 'dark-blue': 'Bla', 'dark-gold': 'Guld', 'dark-rose': 'Rosa' }
+		}
+	};
+	function mergeTranslation(base, update) {
+		Object.keys(update).forEach(function (key) {
+			if (update[key] && typeof update[key] === 'object' && !Array.isArray(update[key])) {
+				base[key] = base[key] || {};
+				mergeTranslation(base[key], update[key]);
+			} else {
+				base[key] = update[key];
+			}
+		});
+	}
+	Object.keys(translationUpdates).forEach(function (lang) {
+		translations[lang] = translations[lang] || {};
+		mergeTranslation(translations[lang], translationUpdates[lang]);
+	});
 	var originalCreateElement = document.createElement.bind(document);
 	var originalAppendChild = Element.prototype.appendChild;
 	var originalInsertBefore = Element.prototype.insertBefore;
@@ -250,9 +389,33 @@
 			resolved[key] = value && value !== defaultValue ? value : (dictionary[key] || english[key] || value);
 		});
 
-		resolved.privacyPolicy = dictionary.privacyPolicy || english.privacyPolicy;
-		resolved.googleGuide = dictionary.googleGuide || english.googleGuide;
-		resolved.consentPolicy = dictionary.consentPolicy || english.consentPolicy;
+		[
+			'privacyPolicy',
+			'whatThisControls',
+			'configuredServices',
+			'noServicesConfigured',
+			'blockedOnPage',
+			'noBlockedItems',
+			'moreItems',
+			'googleSignalsControlled',
+			'none',
+			'currentStateAllowed',
+			'currentStateBlocked',
+			'selectedOptionalCategories',
+			'onlyNecessarySelected',
+			'changeThemeAria',
+			'changeThemeTitle',
+			'configuredService',
+			'providerLabel',
+			'purposeLabel',
+			'policyLabel',
+			'blockedEmbed',
+			'configuredScript',
+			'inlineScript',
+			'embedBlocked'
+		].forEach(function (key) {
+			resolved[key] = dictionary[key] || english[key] || '';
+		});
 		resolved.position = ui.position;
 		resolved.accent = ui.accent;
 		resolved.background = ui.background;
@@ -261,12 +424,17 @@
 		resolved.lang = lang;
 		resolved.descriptions = {};
 		resolved.categoryLabels = {};
+		resolved.themeLabels = {};
 
 		['necessary'].concat(categories).forEach(function (category) {
 			var configured = ui.descriptions && ui.descriptions[category] ? ui.descriptions[category] : '';
 			var fallback = defaults.descriptions && defaults.descriptions[category] ? defaults.descriptions[category] : '';
 			resolved.descriptions[category] = configured && configured !== fallback ? configured : ((dictionary.descriptions && dictionary.descriptions[category]) || english.descriptions[category] || configured);
 			resolved.categoryLabels[category] = (dictionary.categories && dictionary.categories[category]) || english.categories[category] || category;
+		});
+
+		themePresets.forEach(function (theme) {
+			resolved.themeLabels[theme.key] = (dictionary.themeLabels && dictionary.themeLabels[theme.key]) || (english.themeLabels && english.themeLabels[theme.key]) || theme.label;
 		});
 
 		return resolved;
@@ -304,6 +472,10 @@
 		root.style.setProperty('--openconsent-background', selected.background || ui.background || '#111827');
 		root.style.setProperty('--openconsent-text', selected.text || ui.text || '#ffffff');
 		return selected;
+	}
+
+	function localizedThemeLabel(theme, ui) {
+		return (ui.themeLabels && ui.themeLabels[theme.key]) || theme.label || theme.key;
 	}
 
 	function writeConsent(consent) {
@@ -401,8 +573,9 @@
 
 	function blockFrame(node, category, src) {
 		var service = serviceForUrl(src);
+		var ui = translatedUi();
 		node.setAttribute('src', 'about:blank');
-		node.setAttribute('srcdoc', 'This embed is blocked until you allow its cookie category.');
+		node.setAttribute('srcdoc', ui.embedBlocked || 'This embed is blocked until you allow its cookie category.');
 		node.setAttribute('data-openconsent-category', category);
 		node.setAttribute('data-openconsent-src', src);
 		node.setAttribute('data-openconsent-blocked', '1');
@@ -563,16 +736,16 @@
 		});
 	}
 
-	function readableService(service) {
-		var bits = [service.name || service.pattern || 'Configured service'];
+	function readableService(service, ui) {
+		var bits = [service.name || service.pattern || ui.configuredService || 'Configured service'];
 		if (service.provider) {
-			bits.push('provider: ' + service.provider);
+			bits.push((ui.providerLabel || 'provider') + ': ' + service.provider);
 		}
 		if (service.purpose) {
-			bits.push('purpose: ' + service.purpose);
+			bits.push((ui.purposeLabel || 'purpose') + ': ' + service.purpose);
 		}
 		if (service.privacy_url) {
-			bits.push('policy: ' + service.privacy_url);
+			bits.push((ui.policyLabel || 'policy') + ': ' + service.privacy_url);
 		}
 		return bits.join(' | ');
 	}
@@ -595,12 +768,12 @@
 		return scripts.concat(frames);
 	}
 
-	function readableBlockedItem(node) {
-		var fallback = node.tagName === 'IFRAME' ? 'Blocked embed' : 'Configured script';
+	function readableBlockedItem(node, ui) {
+		var fallback = node.tagName === 'IFRAME' ? (ui.blockedEmbed || 'Blocked embed') : (ui.configuredScript || 'Configured script');
 		return node.getAttribute('data-openconsent-service') ||
 			node.getAttribute('data-openconsent-src') ||
 			node.getAttribute('src') ||
-			(node.textContent ? 'Inline script' : fallback);
+			(node.textContent ? (ui.inlineScript || 'Inline script') : fallback);
 	}
 
 	function unblockScripts() {
@@ -777,7 +950,7 @@
 			var details = document.createElement('details');
 			details.className = 'openconsent__details';
 			var summary = document.createElement('summary');
-			summary.textContent = 'What this controls';
+			summary.textContent = ui.whatThisControls || 'What this controls';
 			var detailList = document.createElement('ul');
 			var serviceItem = document.createElement('li');
 			var runtimeItem = document.createElement('li');
@@ -786,17 +959,22 @@
 			function updateCategoryDetails() {
 				var categoryServices = servicesForCategory(category);
 				var blockedItems = blockedItemsForCategory(category);
+				var signals = signalsForCategory(category);
 				var granted = input.checked || category === 'necessary';
 				serviceItem.textContent = categoryServices.length
-					? 'Configured services: ' + categoryServices.map(readableService).join('; ') + '.'
-					: 'URL rules: no services configured in this category.';
+					? (ui.configuredServices || 'Configured services') + ': ' + categoryServices.map(function (service) {
+						return readableService(service, ui);
+					}).join('; ') + '.'
+					: (ui.noServicesConfigured || 'URL rules: no services configured in this category.');
 				runtimeItem.textContent = blockedItems.length
-					? 'Blocked on this page: ' + blockedItems.map(readableBlockedItem).slice(0, 4).join(', ') + (blockedItems.length > 4 ? ', +' + (blockedItems.length - 4) + ' more.' : '.')
-					: 'Blocked on this page: no matching scripts or embeds right now.';
-				signalItem.textContent = signalsForCategory(category).length
-					? 'Google signals controlled here: ' + signalsForCategory(category).join(', ') + '.'
-					: 'Google signals controlled here: none.';
-				statusItem.textContent = granted ? 'Current state: allowed after saving.' : 'Current state: blocked or denied until allowed.';
+					? (ui.blockedOnPage || 'Blocked on this page') + ': ' + blockedItems.map(function (item) {
+						return readableBlockedItem(item, ui);
+					}).slice(0, 4).join(', ') + (blockedItems.length > 4 ? ', +' + (blockedItems.length - 4) + ' ' + (ui.moreItems || 'more') + '.' : '.')
+					: (ui.noBlockedItems || 'Blocked on this page: no matching scripts or embeds right now.');
+				signalItem.textContent = signals.length
+					? (ui.googleSignalsControlled || 'Google signals controlled here') + ': ' + signals.join(', ') + '.'
+					: (ui.googleSignalsControlled || 'Google signals controlled here') + ': ' + (ui.none || 'none') + '.';
+				statusItem.textContent = granted ? (ui.currentStateAllowed || 'Current state: allowed after saving.') : (ui.currentStateBlocked || 'Current state: blocked or denied until allowed.');
 			}
 
 			detailList.appendChild(serviceItem);
@@ -832,8 +1010,8 @@
 		function updateChoicesSummary() {
 			var selected = selectedOptionalLabels();
 			choicesSummary.textContent = selected.length
-				? 'Selected optional categories: ' + selected.join(', ') + '.'
-				: 'Only necessary cookies are selected.';
+				? (ui.selectedOptionalCategories || 'Selected optional categories') + ': ' + selected.join(', ') + '.'
+				: (ui.onlyNecessarySelected || 'Only necessary cookies are selected.');
 		}
 
 		categories.forEach(function (category) {
@@ -858,11 +1036,11 @@
 			}
 			selectedTheme = applyTheme(root, themePresets[nextIndex], ui);
 			writeStoredTheme(selectedTheme.key);
-			customize.textContent = (ui.customize || 'Customize') + ': ' + selectedTheme.label;
+			customize.textContent = (ui.customize || 'Customize') + ': ' + localizedThemeLabel(selectedTheme, ui);
 		});
-		customize.textContent = (ui.customize || 'Customize') + ': ' + selectedTheme.label;
-		customize.setAttribute('aria-label', 'Change consent dialog theme color');
-		customize.title = 'Change theme color';
+		customize.textContent = (ui.customize || 'Customize') + ': ' + localizedThemeLabel(selectedTheme, ui);
+		customize.setAttribute('aria-label', ui.changeThemeAria || 'Change consent dialog theme color');
+		customize.title = ui.changeThemeTitle || 'Change theme color';
 		var save = makeButton(ui.save || 'Save choices', 'openconsent__button openconsent__button--secondary', function () {
 			saveConsent({
 				preferences: inputs.preferences.checked,
@@ -896,11 +1074,6 @@
 			privacy.textContent = ui.privacyPolicy || 'Privacy policy';
 			panel.appendChild(privacy);
 		}
-
-		var links = document.createElement('p');
-		links.className = 'openconsent__links';
-		links.innerHTML = '<a href="https://developers.google.com/tag-platform/security/guides/consent" target="_blank" rel="noopener noreferrer">' + (ui.googleGuide || 'Google Consent Mode guide') + '</a> <span>/</span> <a href="https://www.google.com/about/company/user-consent-policy/" target="_blank" rel="noopener noreferrer">' + (ui.consentPolicy || 'Google user consent policy') + '</a>';
-		panel.appendChild(links);
 
 		panel.appendChild(categoriesWrap);
 		panel.appendChild(choicesSummary);

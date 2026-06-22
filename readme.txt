@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.18
+Stable tag: 1.0.20
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -84,10 +84,21 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 == Screenshots ==
 
 1. Admin settings with service inventory, Google Consent Mode mapping, crawl scanner, and import/export tools.
-2. Frontend consent dialog with expandable category details, theme selector, and privacy policy links.
+2. Frontend consent dialog with expandable category details, theme selector, localized labels, and a site privacy policy link.
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.0.20 =
+* Removes visitor-facing Google documentation links from the public consent dialog.
+* Completes built-in frontend translations for category details, summaries, blocked embed text, and theme controls.
+* Keeps Google Consent Mode reference links in the WordPress admin where site owners configure the integration.
+* Removes unused public banner link styling after the UI cleanup.
+
+= 1.0.19 =
+* Rebuilds the WordPress upload package with a standard `openconsent-cmp` top-level folder.
+* Uses ZIP-standard forward-slash paths so managed Linux hosts can extract plugin directories correctly.
+* Fixes activation failures caused by missing `includes` paths after upload extraction.
 
 = 1.0.18 =
 * Rebuilds the install package with runtime plugin files only at the ZIP root.

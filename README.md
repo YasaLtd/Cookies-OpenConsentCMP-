@@ -12,6 +12,8 @@ GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 
 Logo asset: `assets/openconsent-cmp-logo.svg`.
 
+Current release: `1.0.20`.
+
 ## Repository Description
 
 Open source WordPress consent management plugin by YASA LTD with consent categories, script and embed blocking, local consent logs, cookie declarations, browser-language detection, region behavior controls, and Google Consent Mode v2 support.
