@@ -188,6 +188,9 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 * Hardens activation defaults and locale detection.
 * Corrects the public GitHub repository URL.
 
+= 1.0.3 =
+* Cache-busts frontend assets after the live controller polish pass.
+
 = 1.0.2 =
 * Adds a theme selector to the Customize button.
 * Keeps the live website demo and plugin frontend controller aligned.
