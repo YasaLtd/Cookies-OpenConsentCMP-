@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.21
+Stable tag: 1.0.22
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,9 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.0.22 =
+* Rebuilds the versioned WordPress upload package with plugin files at the ZIP root for reliable WordPress activation.
 
 = 1.0.21 =
 * Adds clear YASA LTD credits and optional open source support links to the frontend consent dialog.
