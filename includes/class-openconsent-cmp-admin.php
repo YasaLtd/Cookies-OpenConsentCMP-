@@ -259,6 +259,16 @@ final class OpenConsent_CMP_Admin {
 		<div class="wrap">
 			<h1><?php esc_html_e( 'OpenConsent CMP', 'openconsent-cmp' ); ?></h1>
 			<p><?php esc_html_e( 'A self-hosted consent manager for WordPress: present clear choices, categorize services, block optional scripts, publish a declaration, record consent choices, and send Google Consent Mode signals.', 'openconsent-cmp' ); ?></p>
+			<div class="openconsent-credit-card">
+				<div>
+					<strong><?php esc_html_e( 'OpenConsent CMP by YASA LTD', 'openconsent-cmp' ); ?></strong>
+					<p><?php esc_html_e( 'Open source software is easier to maintain when users can trace the author and support ongoing work.', 'openconsent-cmp' ); ?></p>
+				</div>
+				<p class="openconsent-credit-actions">
+					<a class="button button-secondary" href="<?php echo esc_url( OPENCONSENT_CMP_AUTHOR_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Visit YASA LTD', 'openconsent-cmp' ); ?></a>
+					<a class="button button-primary" href="<?php echo esc_url( OPENCONSENT_CMP_DONATION_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Support open source development', 'openconsent-cmp' ); ?></a>
+				</p>
+			</div>
 			<div class="notice notice-warning">
 				<p><strong><?php esc_html_e( 'Publisher ads note:', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Google requires a Google-certified CMP integrated with the IAB TCF when serving personalized AdSense, Ad Manager, or AdMob ads to users in the EEA, UK, or Switzerland. OpenConsent CMP is self-hosted and is not a Google-certified TCF CMP. Use it for publisher ads only after reviewing your ad mode, regions, and legal requirements.', 'openconsent-cmp' ); ?></p>
 			</div>
@@ -1555,6 +1565,12 @@ final class OpenConsent_CMP_Admin {
 		<p>
 			<a class="button button-primary" href="<?php echo esc_url( admin_url( 'options-general.php?page=openconsent-cmp' ) ); ?>"><?php esc_html_e( 'Open records', 'openconsent-cmp' ); ?></a>
 			<a class="button" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_logs' ), 'openconsent_export_logs' ) ); ?>"><?php esc_html_e( 'Download CSV', 'openconsent-cmp' ); ?></a>
+		</p>
+		<p class="description">
+			<?php esc_html_e( 'OpenConsent CMP is built by YASA LTD.', 'openconsent-cmp' ); ?>
+			<a href="<?php echo esc_url( OPENCONSENT_CMP_AUTHOR_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'Visit YASA LTD', 'openconsent-cmp' ); ?></a>
+			<?php esc_html_e( 'or', 'openconsent-cmp' ); ?>
+			<a href="<?php echo esc_url( OPENCONSENT_CMP_DONATION_URL ); ?>" target="_blank" rel="noopener noreferrer"><?php esc_html_e( 'support open source development', 'openconsent-cmp' ); ?></a>.
 		</p>
 		<?php
 	}

@@ -2,7 +2,7 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.0.20\n"
+"Project-Id-Version: OpenConsent CMP 1.0.21\n"
 "Report-Msgid-Bugs-To: https://cookies.yasa.fi/\n"
 "POT-Creation-Date: 2026-06-22 00:00+0000\n"
 "MIME-Version: 1.0\n"
@@ -219,4 +219,25 @@ msgid "Inline script"
 msgstr ""
 
 msgid "This embed is blocked until you allow its cookie category."
+msgstr ""
+
+msgid "OpenConsent CMP by YASA LTD"
+msgstr ""
+
+msgid "Open source software is easier to maintain when users can trace the author and support ongoing work."
+msgstr ""
+
+msgid "Visit YASA LTD"
+msgstr ""
+
+msgid "Support open source development"
+msgstr ""
+
+msgid "OpenConsent CMP is built by YASA LTD."
+msgstr ""
+
+msgid "or"
+msgstr ""
+
+msgid "support open source development"
 msgstr ""

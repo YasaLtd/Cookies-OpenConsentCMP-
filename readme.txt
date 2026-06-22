@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.20
+Stable tag: 1.0.21
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,6 +15,10 @@ Self-hosted cookie consent management for WordPress with categories, prior block
 OpenConsent CMP is a self-hosted consent management plugin by YASA LTD. It helps WordPress site owners present clear cookie choices, categorize services, block optional scripts until consent, record anonymized consent choices, publish a cookie declaration, and send Google Consent Mode v2 signals.
 
 The plugin is open source and runs from your WordPress installation. It does not sell a hosted service and does not send consent logs to YASA LTD.
+
+Author: YASA LTD, https://yasa.fi/
+
+Support open source development: https://buymeacoffee.com/anteryasa/e/550479
 
 Source code: https://github.com/Yasaltd/cookies-openconsentcmp-
 
@@ -88,6 +92,11 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.0.21 =
+* Adds clear YASA LTD credits and optional open source support links to the frontend consent dialog.
+* Adds YASA LTD and donation links to the WordPress admin settings and dashboard widget.
+* Updates website/download release metadata for the credits release.
 
 = 1.0.20 =
 * Removes visitor-facing Google documentation links from the public consent dialog.

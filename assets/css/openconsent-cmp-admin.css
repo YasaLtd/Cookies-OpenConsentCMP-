@@ -34,6 +34,30 @@
 	margin-top: 0;
 }
 
+.openconsent-credit-card {
+	align-items: center;
+	background: #fff;
+	border: 1px solid #dcdcde;
+	border-left: 4px solid #2271b1;
+	border-radius: 4px;
+	display: flex;
+	gap: 16px;
+	justify-content: space-between;
+	margin: 16px 0;
+	padding: 14px 16px;
+}
+
+.openconsent-credit-card p {
+	margin: 6px 0 0;
+}
+
+.openconsent-credit-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+	margin: 0;
+}
+
 .openconsent-help-list {
 	list-style: disc;
 	margin-left: 18px;
@@ -210,5 +234,10 @@
 
 	.openconsent-record-detail dl {
 		grid-template-columns: 1fr;
+	}
+
+	.openconsent-credit-card {
+		align-items: flex-start;
+		flex-direction: column;
 	}
 }

@@ -33,6 +33,8 @@
 			customize: 'Customize',
 			revoke: 'Privacy choices',
 			privacyPolicy: 'Privacy policy',
+			creditsLabel: 'OpenConsent CMP by YASA LTD',
+			donationLabel: 'Support open source development',
 			regionStrict: 'Strict opt-in applies for your region.',
 			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
 			categories: {
@@ -60,6 +62,8 @@
 			customize: 'Mukauta',
 			revoke: 'Tietosuoja-asetukset',
 			privacyPolicy: 'Tietosuojakäytäntö',
+			creditsLabel: 'OpenConsent CMP, tekijä YASA LTD',
+			donationLabel: 'Tue avointa lähdekoodia',
 			categories: {
 				necessary: 'Välttämättömät',
 				preferences: 'Asetukset',
@@ -81,6 +85,8 @@
 			customize: 'Anpassen',
 			revoke: 'Datenschutzauswahl',
 			privacyPolicy: 'Datenschutzerklärung',
+			creditsLabel: 'OpenConsent CMP von YASA LTD',
+			donationLabel: 'Open-Source-Entwicklung unterstützen',
 			categories: { necessary: 'Notwendig', preferences: 'Präferenzen', statistics: 'Statistiken', marketing: 'Marketing' }
 		},
 		es: {
@@ -91,6 +97,8 @@
 			customize: 'Personalizar',
 			revoke: 'Opciones de privacidad',
 			privacyPolicy: 'Política de privacidad',
+			creditsLabel: 'OpenConsent CMP por YASA LTD',
+			donationLabel: 'Apoyar el desarrollo open source',
 			categories: { necessary: 'Necesarias', preferences: 'Preferencias', statistics: 'Estadísticas', marketing: 'Marketing' }
 		},
 		fr: {
@@ -101,6 +109,8 @@
 			customize: 'Personnaliser',
 			revoke: 'Choix de confidentialité',
 			privacyPolicy: 'Politique de confidentialité',
+			creditsLabel: 'OpenConsent CMP par YASA LTD',
+			donationLabel: 'Soutenir le développement open source',
 			categories: { necessary: 'Nécessaires', preferences: 'Préférences', statistics: 'Statistiques', marketing: 'Marketing' }
 		},
 		it: {
@@ -111,6 +121,8 @@
 			customize: 'Personalizza',
 			revoke: 'Scelte privacy',
 			privacyPolicy: 'Informativa privacy',
+			creditsLabel: 'OpenConsent CMP di YASA LTD',
+			donationLabel: 'Sostieni lo sviluppo open source',
 			categories: { necessary: 'Necessari', preferences: 'Preferenze', statistics: 'Statistiche', marketing: 'Marketing' }
 		},
 		nl: {
@@ -121,6 +133,8 @@
 			customize: 'Aanpassen',
 			revoke: 'Privacykeuzes',
 			privacyPolicy: 'Privacybeleid',
+			creditsLabel: 'OpenConsent CMP door YASA LTD',
+			donationLabel: 'Steun open-sourceontwikkeling',
 			categories: { necessary: 'Noodzakelijk', preferences: 'Voorkeuren', statistics: 'Statistieken', marketing: 'Marketing' }
 		},
 		sv: {
@@ -131,6 +145,8 @@
 			customize: 'Anpassa',
 			revoke: 'Integritetsval',
 			privacyPolicy: 'Integritetspolicy',
+			creditsLabel: 'OpenConsent CMP av YASA LTD',
+			donationLabel: 'Stöd utveckling med öppen källkod',
 			categories: { necessary: 'Nödvändiga', preferences: 'Inställningar', statistics: 'Statistik', marketing: 'Marknadsföring' }
 		}
 	};
@@ -172,6 +188,8 @@
 			customize: 'Mukauta',
 			revoke: 'Tietosuoja-asetukset',
 			privacyPolicy: 'Tietosuojakäytäntö',
+			creditsLabel: 'OpenConsent CMP, tekijä YASA LTD',
+			donationLabel: 'Tue avointa lähdekoodia',
 			regionStrict: 'Alueellasi sovelletaan tiukkaa opt-in-suostumusta.',
 			regionNotice: 'Alueellasi käytetään ilmoitustilaa. Voit kieltäytyä valinnaisista luokista.',
 			categories: { necessary: 'Välttämättömät', preferences: 'Asetukset', statistics: 'Tilastot', marketing: 'Markkinointi', unclassified: 'Luokittelemattomat' },
@@ -207,13 +225,13 @@
 			themeLabels: { 'dark-teal': 'Turkoosi', 'dark-blue': 'Sininen', 'dark-gold': 'Kulta', 'dark-rose': 'Roosa' }
 		},
 		de: {
-			message: 'Wir verwenden Cookies und ahnliche Technologien, um diese Website zuverlassig zu betreiben, die Nutzung zu messen und Marketing zu verbessern. Wahlen Sie, was Sie erlauben mochten.',
-			partyDisclosure: 'Google und andere aufgefuhrte Dienstanbieter konnen personenbezogene Daten erfassen, empfangen oder verwenden, wenn ihre Dienste aktiviert sind. Details finden Sie in der Cookie-Erklarung und Datenschutzerklarung.',
-			regionStrict: 'Fur Ihre Region gilt striktes Opt-in.',
-			regionNotice: 'Fur Ihre Region gilt der Hinweis-Modus. Sie konnen optionale Kategorien abwahlen.',
-			categories: { necessary: 'Notwendig', preferences: 'Praferenzen', statistics: 'Statistiken', marketing: 'Marketing', unclassified: 'Nicht klassifiziert' },
-			descriptions: { necessary: 'Notwendige Cookies halten die Website sicher und funktionsfahig. Sie sind immer aktiv.', preferences: 'Praferenz-Cookies speichern Entscheidungen wie Sprache, Region und Oberflacheneinstellungen.', statistics: 'Statistik-Cookies helfen uns zu verstehen, wie Besucher die Website nutzen.', marketing: 'Marketing-Cookies unterstutzen Werbung, Messung und eingebettete Medien.', unclassified: 'Nicht klassifizierte Dienste werden blockiert, bis der Websitebetreiber sie gepruft hat.' },
-			whatThisControls: 'Was dies steuert', configuredServices: 'Konfigurierte Dienste', noServicesConfigured: 'URL-Regeln: In dieser Kategorie sind keine Dienste konfiguriert.', blockedOnPage: 'Auf dieser Seite blockiert', noBlockedItems: 'Auf dieser Seite blockiert: derzeit keine passenden Skripte oder Einbettungen.', moreItems: 'weitere', googleSignalsControlled: 'Hier gesteuerte Google-Signale', none: 'keine', currentStateAllowed: 'Aktueller Status: nach dem Speichern erlaubt.', currentStateBlocked: 'Aktueller Status: blockiert oder verweigert, bis erlaubt.', selectedOptionalCategories: 'Ausgewahlte optionale Kategorien', onlyNecessarySelected: 'Nur notwendige Cookies sind ausgewahlt.', changeThemeAria: 'Farbe des Einwilligungsdialogs andern', changeThemeTitle: 'Designfarbe andern', configuredService: 'Konfigurierter Dienst', providerLabel: 'Anbieter', purposeLabel: 'Zweck', policyLabel: 'Richtlinie', blockedEmbed: 'Blockierte Einbettung', configuredScript: 'Konfiguriertes Skript', inlineScript: 'Inline-Skript', embedBlocked: 'Diese Einbettung ist blockiert, bis Sie ihre Cookie-Kategorie erlauben.', themeLabels: { 'dark-teal': 'Petrol', 'dark-blue': 'Blau', 'dark-gold': 'Gold', 'dark-rose': 'Rose' }
+			message: 'Wir verwenden Cookies und ähnliche Technologien, um diese Website zuverlässig zu betreiben, die Nutzung zu messen und Marketing zu verbessern. Wählen Sie, was Sie erlauben möchten.',
+			partyDisclosure: 'Google und andere aufgeführte Dienstanbieter können personenbezogene Daten erfassen, empfangen oder verwenden, wenn ihre Dienste aktiviert sind. Details finden Sie in der Cookie-Erklärung und Datenschutzerklärung.',
+			regionStrict: 'Für Ihre Region gilt striktes Opt-in.',
+			regionNotice: 'Für Ihre Region gilt der Hinweis-Modus. Sie können optionale Kategorien abwählen.',
+			categories: { necessary: 'Notwendig', preferences: 'Präferenzen', statistics: 'Statistiken', marketing: 'Marketing', unclassified: 'Nicht klassifiziert' },
+			descriptions: { necessary: 'Notwendige Cookies halten die Website sicher und funktionsfähig. Sie sind immer aktiv.', preferences: 'Präferenz-Cookies speichern Entscheidungen wie Sprache, Region und Oberflächeneinstellungen.', statistics: 'Statistik-Cookies helfen uns zu verstehen, wie Besucher die Website nutzen.', marketing: 'Marketing-Cookies unterstützen Werbung, Messung und eingebettete Medien.', unclassified: 'Nicht klassifizierte Dienste werden blockiert, bis der Websitebetreiber sie geprüft hat.' },
+			whatThisControls: 'Was dies steuert', configuredServices: 'Konfigurierte Dienste', noServicesConfigured: 'URL-Regeln: In dieser Kategorie sind keine Dienste konfiguriert.', blockedOnPage: 'Auf dieser Seite blockiert', noBlockedItems: 'Auf dieser Seite blockiert: derzeit keine passenden Skripte oder Einbettungen.', moreItems: 'weitere', googleSignalsControlled: 'Hier gesteuerte Google-Signale', none: 'keine', currentStateAllowed: 'Aktueller Status: nach dem Speichern erlaubt.', currentStateBlocked: 'Aktueller Status: blockiert oder verweigert, bis erlaubt.', selectedOptionalCategories: 'Ausgewählte optionale Kategorien', onlyNecessarySelected: 'Nur notwendige Cookies sind ausgewählt.', changeThemeAria: 'Farbe des Einwilligungsdialogs ändern', changeThemeTitle: 'Designfarbe ändern', configuredService: 'Konfigurierter Dienst', providerLabel: 'Anbieter', purposeLabel: 'Zweck', policyLabel: 'Richtlinie', blockedEmbed: 'Blockierte Einbettung', configuredScript: 'Konfiguriertes Skript', inlineScript: 'Inline-Skript', embedBlocked: 'Diese Einbettung ist blockiert, bis Sie ihre Cookie-Kategorie erlauben.', themeLabels: { 'dark-teal': 'Petrol', 'dark-blue': 'Blau', 'dark-gold': 'Gold', 'dark-rose': 'Rose' }
 		},
 		es: {
 			message: 'Usamos cookies y tecnologias similares para mantener el sitio fiable, medir el uso y mejorar el marketing. Elige que quieres permitir.',
@@ -391,6 +409,8 @@
 
 		[
 			'privacyPolicy',
+			'creditsLabel',
+			'donationLabel',
 			'whatThisControls',
 			'configuredServices',
 			'noServicesConfigured',
@@ -421,6 +441,9 @@
 		resolved.background = ui.background;
 		resolved.text = ui.text;
 		resolved.theme = ui.theme;
+		resolved.authorName = ui.authorName || 'YASA LTD';
+		resolved.authorUrl = ui.authorUrl || 'https://yasa.fi/';
+		resolved.donationUrl = ui.donationUrl || 'https://buymeacoffee.com/anteryasa/e/550479';
 		resolved.lang = lang;
 		resolved.descriptions = {};
 		resolved.categoryLabels = {};
@@ -1078,6 +1101,30 @@
 		panel.appendChild(categoriesWrap);
 		panel.appendChild(choicesSummary);
 		panel.appendChild(actions);
+		if (ui.authorUrl || ui.donationUrl) {
+			var credits = document.createElement('p');
+			credits.className = 'openconsent__credits';
+			if (ui.authorUrl) {
+				var author = document.createElement('a');
+				author.href = ui.authorUrl;
+				author.target = '_blank';
+				author.rel = 'noopener noreferrer';
+				author.textContent = ui.creditsLabel || 'OpenConsent CMP by YASA LTD';
+				credits.appendChild(author);
+			} else {
+				credits.appendChild(document.createTextNode(ui.creditsLabel || 'OpenConsent CMP by YASA LTD'));
+			}
+			if (ui.donationUrl) {
+				credits.appendChild(document.createTextNode(' · '));
+				var donation = document.createElement('a');
+				donation.href = ui.donationUrl;
+				donation.target = '_blank';
+				donation.rel = 'noopener noreferrer';
+				donation.textContent = ui.donationLabel || 'Support open source development';
+				credits.appendChild(donation);
+			}
+			panel.appendChild(credits);
+		}
 		root.appendChild(panel);
 		document.body.appendChild(root);
 	}
