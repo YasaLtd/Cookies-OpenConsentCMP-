@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.221
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -93,7 +93,7 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 
 == Changelog ==
 
-= 1.0.221 =
+= 1.0.3 =
 * Adds clear YASA LTD credits and optional open source support links to the frontend consent dialog.
 * Adds YASA LTD and donation links to the WordPress admin settings and dashboard widget.
 * Updates website/download release metadata for the credits release.
@@ -187,9 +187,6 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 = 1.0.4 =
 * Hardens activation defaults and locale detection.
 * Corrects the public GitHub repository URL.
-
-= 1.0.3 =
-* Cache-busts frontend assets after the live controller polish pass.
 
 = 1.0.2 =
 * Adds a theme selector to the Customize button.

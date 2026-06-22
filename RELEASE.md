@@ -1,41 +1,53 @@
-# FTP Source Sync Workflow
+# Release And Sync Workflow
 
-The live FTP site and the ZIP currently present in `/downloads/` are the source of truth for this project. For version `1.0.221`, sync local files and GitHub from FTP; do not generate or upload replacement files unless explicitly requested.
+## Packaging Rule
 
-## Current Source
+The WordPress upload ZIP must be root-packed. The ZIP root contains the plugin files directly:
 
-- FTP root: `/`
-- Website entrypoint: `/index.php`
-- Latest plugin package on FTP: `/downloads/openconsent-cmp-wordpress-plugin-1_0_221.zip`
-- Current plugin version inside the package: `1.0.221`
-- Public package layout: root-packed ZIP, with `openconsent-cmp.php` at the ZIP root.
+- `openconsent-cmp.php`
+- `readme.txt`
+- `uninstall.php`
+- `LICENSE.txt`
+- `assets/`
+- `includes/`
+- `languages/`
 
-## Sync Steps
+Do not put those files inside a wrapper folder such as `openconsent-cmp/`. The package layout `openconsent-cmp/openconsent-cmp.php` is incorrect for this project.
 
-1. Download the current FTP website files into `cookies-yasa-site/`.
-2. Download the current FTP `/assets/` files into `cookies-yasa-site/assets/`.
-3. Download the current FTP `/downloads/` package into `cookies-yasa-site/downloads/`.
-4. Extract the FTP plugin ZIP into a temporary directory.
-5. Replace the plugin repo runtime files from that extracted ZIP:
-   - `openconsent-cmp.php`
-   - `readme.txt`
-   - `uninstall.php`
-   - `LICENSE.txt`
-   - `assets/`
-   - `includes/`
-   - `languages/`
-6. Keep repo-only files such as `.github/`, `README.md`, `RELEASE.md`, `SECURITY.md`, `SUPPORT.md`, and `tests/`.
-7. Update repo-only version references and tests to match the FTP package version.
-8. Verify the ZIP structure before committing:
-   - `openconsent-cmp.php` exists at ZIP root.
-   - `openconsent-cmp/openconsent-cmp.php` does not exist.
-   - ZIP paths use forward slashes.
-   - plugin header and `OPENCONSENT_CMP_VERSION` match the FTP package version.
-9. Commit the synced plugin repo and tag GitHub with `v1.0.221`.
+## Version Rule
 
-## Do Not
+Every project change requires a version bump and a metadata sweep across the whole project before publishing.
 
-- Do not edit FTP during a sync-from-FTP task.
-- Do not rebuild the plugin package unless explicitly requested.
-- Do not rename the FTP download package during sync.
-- Do not change plugin or website behavior while syncing.
+Update all of these together:
+
+1. Plugin header `Version` in `openconsent-cmp.php`.
+2. `OPENCONSENT_CMP_VERSION` in `openconsent-cmp.php`.
+3. `Stable tag` and changelog in `readme.txt`.
+4. `Current release` in `README.md`.
+5. `Project-Id-Version` in `languages/openconsent-cmp.pot`.
+6. Test expectations in `tests/smoke.php`.
+7. Website `softwareVersion`, visible version labels, package filename, download URL, download attribute, file size, and asset cache-busters.
+8. `cookies-yasa-site/llms.txt`.
+9. `cookies-yasa-site/assets/openconsent-package.js`.
+10. GitHub commit and tag, using `v` plus the release version.
+
+## Current Release
+
+- Current version: `1.0.3`
+- Current tag: `v1.0.3`
+- Current public ZIP filename: `openconsent-cmp-wordpress-plugin-1.0.3.zip`
+
+## Verification
+
+Before publishing, verify:
+
+1. The plugin ZIP has `openconsent-cmp.php` at ZIP root.
+2. The plugin ZIP does not contain `openconsent-cmp/openconsent-cmp.php`.
+3. ZIP paths use forward slashes.
+4. The plugin header version, `OPENCONSENT_CMP_VERSION`, WordPress readme stable tag, website metadata, download link, embedded package metadata, and GitHub tag all match.
+5. The exact ZIP installs and activates in a local WordPress test site.
+6. The live website download link returns the same ZIP hash as the local package.
+
+## FTP Sync Rule
+
+When the user says FTP is the latest truth, download from FTP first and sync local/GitHub from that source. Do not upload to FTP during a sync-from-FTP task unless explicitly requested.
