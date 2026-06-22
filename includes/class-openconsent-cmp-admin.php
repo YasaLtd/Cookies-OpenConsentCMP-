@@ -273,24 +273,24 @@ final class OpenConsent_CMP_Admin {
 				<p><strong><?php esc_html_e( 'Publisher ads note:', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Google requires a Google-certified CMP integrated with the IAB TCF when serving personalized AdSense, Ad Manager, or AdMob ads to users in the EEA, UK, or Switzerland. OpenConsent CMP is self-hosted and is not a Google-certified TCF CMP. Use it for publisher ads only after reviewing your ad mode, regions, and legal requirements.', 'openconsent-cmp' ); ?></p>
 			</div>
 
-			<?php if ( isset( $_GET['openconsent_scanned'] ) ) : ?>
+			<?php if ( isset( $_GET['openconsent_scanned'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action. ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Homepage scan completed.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
-			<?php if ( isset( $_GET['openconsent_pruned'] ) ) : ?>
+			<?php if ( isset( $_GET['openconsent_pruned'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action. ?>
 				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf(
 					/* translators: %s: Number of expired consent records removed. */
 					__( 'Removed %s expired consent records.', 'openconsent-cmp' ),
-					number_format_i18n( absint( $_GET['openconsent_pruned'] ) )
+					number_format_i18n( absint( $_GET['openconsent_pruned'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action.
 				) ); ?></p></div>
 			<?php endif; ?>
-			<?php if ( isset( $_GET['openconsent_imported'] ) ) : ?>
+			<?php if ( isset( $_GET['openconsent_imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action. ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'OpenConsent settings imported.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
-			<?php if ( isset( $_GET['openconsent_services_imported'] ) ) : ?>
+			<?php if ( isset( $_GET['openconsent_services_imported'] ) ) : // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action. ?>
 				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf(
 					/* translators: %s: Number of imported service registry rows. */
 					__( 'Imported %s service registry rows.', 'openconsent-cmp' ),
-					number_format_i18n( absint( $_GET['openconsent_services_imported'] ) )
+					number_format_i18n( absint( $_GET['openconsent_services_imported'] ) ) // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Display-only admin notice after a nonced action.
 				) ); ?></p></div>
 			<?php endif; ?>
 
@@ -920,7 +920,7 @@ final class OpenConsent_CMP_Admin {
 
 		$sql = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
 		return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ) );
 	}
 
@@ -960,11 +960,11 @@ final class OpenConsent_CMP_Admin {
 		$sql    = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
 
 		if ( $params ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
 			return (int) $wpdb->get_var( $wpdb->prepare( $sql, ...$params ) );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
 		return (int) $wpdb->get_var( $sql );
 	}
 
@@ -1449,11 +1449,12 @@ final class OpenConsent_CMP_Admin {
 
 		check_admin_referer( 'openconsent_import_settings' );
 
-		if ( empty( $_FILES['openconsent_settings_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['openconsent_settings_file']['tmp_name'] ) ) {
+		$settings_tmp_name = isset( $_FILES['openconsent_settings_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['openconsent_settings_file']['tmp_name'] ) ) : '';
+		if ( '' === $settings_tmp_name || ! is_uploaded_file( $settings_tmp_name ) ) {
 			wp_die( esc_html__( 'No settings file was uploaded.', 'openconsent-cmp' ) );
 		}
 
-		$raw = file_get_contents( $_FILES['openconsent_settings_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$raw = file_get_contents( $settings_tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $raw || '' === trim( $raw ) ) {
 			wp_die( esc_html__( 'The uploaded settings file is empty.', 'openconsent-cmp' ) );
 		}
@@ -1482,11 +1483,12 @@ final class OpenConsent_CMP_Admin {
 
 		check_admin_referer( 'openconsent_import_services' );
 
-		if ( empty( $_FILES['openconsent_services_file']['tmp_name'] ) || ! is_uploaded_file( $_FILES['openconsent_services_file']['tmp_name'] ) ) {
+		$services_tmp_name = isset( $_FILES['openconsent_services_file']['tmp_name'] ) ? sanitize_text_field( wp_unslash( $_FILES['openconsent_services_file']['tmp_name'] ) ) : '';
+		if ( '' === $services_tmp_name || ! is_uploaded_file( $services_tmp_name ) ) {
 			wp_die( esc_html__( 'No services CSV file was uploaded.', 'openconsent-cmp' ) );
 		}
 
-		$csv_contents = file_get_contents( $_FILES['openconsent_services_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		$csv_contents = file_get_contents( $services_tmp_name ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
 		if ( false === $csv_contents || '' === trim( $csv_contents ) ) {
 			wp_die( esc_html__( 'The services CSV file could not be opened.', 'openconsent-cmp' ) );
 		}
@@ -1621,11 +1623,11 @@ final class OpenConsent_CMP_Admin {
 		$sql     = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC";
 
 		if ( $params ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
 			return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
 		return $wpdb->get_results( $sql, ARRAY_A );
 	}
 

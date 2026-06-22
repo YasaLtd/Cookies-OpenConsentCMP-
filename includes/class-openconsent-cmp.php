@@ -430,7 +430,7 @@ final class OpenConsent_CMP {
 	public function ajax_log_consent() {
 		check_ajax_referer( 'openconsent-cmp', 'nonce' );
 
-		$raw = isset( $_POST['consent'] ) ? wp_unslash( $_POST['consent'] ) : '';
+		$raw = isset( $_POST['consent'] ) ? sanitize_textarea_field( wp_unslash( $_POST['consent'] ) ) : '';
 		$decoded = json_decode( $raw, true );
 
 		if ( ! is_array( $decoded ) ) {

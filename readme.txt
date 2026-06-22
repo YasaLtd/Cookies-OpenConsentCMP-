@@ -4,7 +4,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1
+Stable tag: 1.1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -92,6 +92,11 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Changelog ==
+
+= 1.1.1 =
+* Normalizes frontend script line endings to reduce WordPress.org review noise.
+* Sanitizes uploaded import temp-file paths before reading settings and service CSV imports.
+* Clarifies static-analysis annotations around whitelisted consent-log SQL queries.
 
 = 1.1 =
 * Removes public frontend credit and donation links from the consent dialog for WordPress.org guideline readiness.
