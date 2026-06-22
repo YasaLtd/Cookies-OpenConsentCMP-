@@ -277,13 +277,21 @@ final class OpenConsent_CMP_Admin {
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'Homepage scan completed.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
 			<?php if ( isset( $_GET['openconsent_pruned'] ) ) : ?>
-				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( __( 'Removed %s expired consent records.', 'openconsent-cmp' ), number_format_i18n( absint( $_GET['openconsent_pruned'] ) ) ) ); ?></p></div>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf(
+					/* translators: %s: Number of expired consent records removed. */
+					__( 'Removed %s expired consent records.', 'openconsent-cmp' ),
+					number_format_i18n( absint( $_GET['openconsent_pruned'] ) )
+				) ); ?></p></div>
 			<?php endif; ?>
 			<?php if ( isset( $_GET['openconsent_imported'] ) ) : ?>
 				<div class="notice notice-success is-dismissible"><p><?php esc_html_e( 'OpenConsent settings imported.', 'openconsent-cmp' ); ?></p></div>
 			<?php endif; ?>
 			<?php if ( isset( $_GET['openconsent_services_imported'] ) ) : ?>
-				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf( __( 'Imported %s service registry rows.', 'openconsent-cmp' ), number_format_i18n( absint( $_GET['openconsent_services_imported'] ) ) ) ); ?></p></div>
+				<div class="notice notice-success is-dismissible"><p><?php echo esc_html( sprintf(
+					/* translators: %s: Number of imported service registry rows. */
+					__( 'Imported %s service registry rows.', 'openconsent-cmp' ),
+					number_format_i18n( absint( $_GET['openconsent_services_imported'] ) )
+				) ); ?></p></div>
 			<?php endif; ?>
 
 			<div class="openconsent-admin-grid" aria-label="<?php esc_attr_e( 'OpenConsent CMP status', 'openconsent-cmp' ); ?>">
@@ -650,11 +658,21 @@ final class OpenConsent_CMP_Admin {
 				</tbody>
 			</table>
 			<div class="openconsent-pagination">
-				<span><?php echo esc_html( sprintf( __( 'Showing %1$s of %2$s matching records.', 'openconsent-cmp' ), number_format_i18n( count( $logs ) ), number_format_i18n( $filtered_logs ) ) ); ?></span>
+				<span><?php echo esc_html( sprintf(
+					/* translators: 1: Number of records shown, 2: Total number of matching records. */
+					__( 'Showing %1$s of %2$s matching records.', 'openconsent-cmp' ),
+					number_format_i18n( count( $logs ) ),
+					number_format_i18n( $filtered_logs )
+				) ); ?></span>
 				<?php if ( $current_page > 1 ) : ?>
 					<a class="button" href="<?php echo esc_url( $this->record_page_url( $record_filters, $current_page - 1 ) ); ?>"><?php esc_html_e( 'Previous', 'openconsent-cmp' ); ?></a>
 				<?php endif; ?>
-				<span><?php echo esc_html( sprintf( __( 'Page %1$s of %2$s', 'openconsent-cmp' ), number_format_i18n( $current_page ), number_format_i18n( $page_count ) ) ); ?></span>
+				<span><?php echo esc_html( sprintf(
+					/* translators: 1: Current page number, 2: Total number of pages. */
+					__( 'Page %1$s of %2$s', 'openconsent-cmp' ),
+					number_format_i18n( $current_page ),
+					number_format_i18n( $page_count )
+				) ); ?></span>
 				<?php if ( $current_page < $page_count ) : ?>
 					<a class="button" href="<?php echo esc_url( $this->record_page_url( $record_filters, $current_page + 1 ) ); ?>"><?php esc_html_e( 'Next', 'openconsent-cmp' ); ?></a>
 				<?php endif; ?>
@@ -886,7 +904,7 @@ final class OpenConsent_CMP_Admin {
 	 */
 	private function recent_logs( $filters = array() ) {
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return array();
@@ -900,12 +918,10 @@ final class OpenConsent_CMP_Admin {
 		$params[] = $limit;
 		$params[] = $offset;
 
-		return $wpdb->get_results(
-			$wpdb->prepare(
-				"SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d",
-				$params
-			)
-		);
+		$sql = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d";
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ) );
 	}
 
 	/**
@@ -915,12 +931,13 @@ final class OpenConsent_CMP_Admin {
 	 */
 	private function total_logs() {
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return 0;
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 	}
 
@@ -932,7 +949,7 @@ final class OpenConsent_CMP_Admin {
 	 */
 	private function filtered_logs_count( $filters ) {
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return 0;
@@ -942,7 +959,13 @@ final class OpenConsent_CMP_Admin {
 		$where  = $this->record_where_sql( $filters, $params );
 		$sql    = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
 
-		return (int) ( $params ? $wpdb->get_var( $wpdb->prepare( $sql, $params ) ) : $wpdb->get_var( $sql ) );
+		if ( $params ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+			return (int) $wpdb->get_var( $wpdb->prepare( $sql, ...$params ) );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		return (int) $wpdb->get_var( $sql );
 	}
 
 	/**
@@ -1129,7 +1152,7 @@ final class OpenConsent_CMP_Admin {
 	 */
 	private function log_stats() {
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 		$stats = array(
 			'accept_all'     => 0,
 			'necessary_only' => 0,
@@ -1140,6 +1163,7 @@ final class OpenConsent_CMP_Admin {
 			return $stats;
 		}
 
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
 		$rows = $wpdb->get_results( "SELECT consent_action, COUNT(*) AS total FROM {$table} GROUP BY consent_action", ARRAY_A );
 		foreach ( $rows as $row ) {
 			$action = isset( $row['consent_action'] ) && '' !== $row['consent_action'] ? $row['consent_action'] : 'save_choices';
@@ -1246,7 +1270,7 @@ final class OpenConsent_CMP_Admin {
 		check_admin_referer( 'openconsent_prune_logs' );
 
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=0' ) );
@@ -1256,6 +1280,7 @@ final class OpenConsent_CMP_Admin {
 		$options = $this->plugin->options();
 		$days    = max( 1, absint( $options['log_retention_days'] ?? 365 ) );
 		$cutoff  = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
 		$deleted = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $cutoff ) );
 
 		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=' . max( 0, $deleted ) ) );
@@ -1316,7 +1341,6 @@ final class OpenConsent_CMP_Admin {
 		foreach ( $rows as $row ) {
 			fputcsv( $output, $this->normalize_export_row( $row ) );
 		}
-		fclose( $output );
 		exit;
 	}
 
@@ -1410,7 +1434,6 @@ final class OpenConsent_CMP_Admin {
 				)
 			);
 		}
-		fclose( $output );
 		exit;
 	}
 
@@ -1463,19 +1486,22 @@ final class OpenConsent_CMP_Admin {
 			wp_die( esc_html__( 'No services CSV file was uploaded.', 'openconsent-cmp' ) );
 		}
 
-		$handle = fopen( $_FILES['openconsent_services_file']['tmp_name'], 'r' ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fopen
-		if ( false === $handle ) {
+		$csv_contents = file_get_contents( $_FILES['openconsent_services_file']['tmp_name'] ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_get_contents_file_get_contents
+		if ( false === $csv_contents || '' === trim( $csv_contents ) ) {
 			wp_die( esc_html__( 'The services CSV file could not be opened.', 'openconsent-cmp' ) );
 		}
 
 		$rows = array();
-		while ( false !== ( $row = fgetcsv( $handle ) ) ) {
+		foreach ( preg_split( '/\r\n|\r|\n/', $csv_contents ) as $csv_line ) {
+			if ( '' === trim( $csv_line ) ) {
+				continue;
+			}
+			$row  = str_getcsv( $csv_line );
 			$line = $this->service_line_from_csv_row( $row );
 			if ( '' !== $line ) {
 				$rows[] = $line;
 			}
 		}
-		fclose( $handle ); // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
 
 		if ( empty( $rows ) ) {
 			wp_die( esc_html__( 'The services CSV did not contain valid service rows.', 'openconsent-cmp' ) );
@@ -1583,7 +1609,7 @@ final class OpenConsent_CMP_Admin {
 	 */
 	private function export_rows( $filters = array() ) {
 		global $wpdb;
-		$table = $wpdb->prefix . OpenConsent_CMP::LOG_TABLE;
+		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
@@ -1594,7 +1620,13 @@ final class OpenConsent_CMP_Admin {
 		$where   = $this->record_where_sql( $filters, $params );
 		$sql     = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC";
 
-		return $wpdb->get_results( $params ? $wpdb->prepare( $sql, $params ) : $sql, ARRAY_A );
+		if ( $params ) {
+			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+			return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
+		}
+
+		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared -- Table name and WHERE fragments are built from whitelisted values above.
+		return $wpdb->get_results( $sql, ARRAY_A );
 	}
 
 	/**

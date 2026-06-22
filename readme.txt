@@ -4,11 +4,11 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.0.3
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Self-hosted cookie consent management for WordPress with categories, prior blocking, local consent logs, declarations, and Google Consent Mode v2 signals.
+Self-hosted cookie consent management with prior blocking, local consent logs, declarations, and Google Consent Mode v2.
 
 == Description ==
 
@@ -93,10 +93,10 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 
 == Changelog ==
 
-= 1.0.3 =
-* Adds clear YASA LTD credits and optional open source support links to the frontend consent dialog.
-* Adds YASA LTD and donation links to the WordPress admin settings and dashboard widget.
-* Updates website/download release metadata for the credits release.
+= 1.1 =
+* Removes public frontend credit and donation links from the consent dialog for WordPress.org guideline readiness.
+* Keeps YASA LTD credits and optional donation links in the WordPress admin for site owners.
+* Cleans submission-readiness issues found by Plugin Check, including translator comments, SQL preparation annotations, CSV import handling, and readme metadata.
 
 = 1.0.20 =
 * Removes visitor-facing Google documentation links from the public consent dialog.

@@ -33,8 +33,6 @@
 			customize: 'Customize',
 			revoke: 'Privacy choices',
 			privacyPolicy: 'Privacy policy',
-			creditsLabel: 'OpenConsent CMP by YASA LTD',
-			donationLabel: 'Support open source development',
 			regionStrict: 'Strict opt-in applies for your region.',
 			regionNotice: 'Notice mode applies for your region. You can opt out of optional categories.',
 			categories: {
@@ -62,8 +60,6 @@
 			customize: 'Mukauta',
 			revoke: 'Tietosuoja-asetukset',
 			privacyPolicy: 'Tietosuojakäytäntö',
-			creditsLabel: 'OpenConsent CMP, tekijä YASA LTD',
-			donationLabel: 'Tue avointa lähdekoodia',
 			categories: {
 				necessary: 'Välttämättömät',
 				preferences: 'Asetukset',
@@ -85,8 +81,6 @@
 			customize: 'Anpassen',
 			revoke: 'Datenschutzauswahl',
 			privacyPolicy: 'Datenschutzerklärung',
-			creditsLabel: 'OpenConsent CMP von YASA LTD',
-			donationLabel: 'Open-Source-Entwicklung unterstützen',
 			categories: { necessary: 'Notwendig', preferences: 'Präferenzen', statistics: 'Statistiken', marketing: 'Marketing' }
 		},
 		es: {
@@ -97,8 +91,6 @@
 			customize: 'Personalizar',
 			revoke: 'Opciones de privacidad',
 			privacyPolicy: 'Política de privacidad',
-			creditsLabel: 'OpenConsent CMP por YASA LTD',
-			donationLabel: 'Apoyar el desarrollo open source',
 			categories: { necessary: 'Necesarias', preferences: 'Preferencias', statistics: 'Estadísticas', marketing: 'Marketing' }
 		},
 		fr: {
@@ -109,8 +101,6 @@
 			customize: 'Personnaliser',
 			revoke: 'Choix de confidentialité',
 			privacyPolicy: 'Politique de confidentialité',
-			creditsLabel: 'OpenConsent CMP par YASA LTD',
-			donationLabel: 'Soutenir le développement open source',
 			categories: { necessary: 'Nécessaires', preferences: 'Préférences', statistics: 'Statistiques', marketing: 'Marketing' }
 		},
 		it: {
@@ -121,8 +111,6 @@
 			customize: 'Personalizza',
 			revoke: 'Scelte privacy',
 			privacyPolicy: 'Informativa privacy',
-			creditsLabel: 'OpenConsent CMP di YASA LTD',
-			donationLabel: 'Sostieni lo sviluppo open source',
 			categories: { necessary: 'Necessari', preferences: 'Preferenze', statistics: 'Statistiche', marketing: 'Marketing' }
 		},
 		nl: {
@@ -133,8 +121,6 @@
 			customize: 'Aanpassen',
 			revoke: 'Privacykeuzes',
 			privacyPolicy: 'Privacybeleid',
-			creditsLabel: 'OpenConsent CMP door YASA LTD',
-			donationLabel: 'Steun open-sourceontwikkeling',
 			categories: { necessary: 'Noodzakelijk', preferences: 'Voorkeuren', statistics: 'Statistieken', marketing: 'Marketing' }
 		},
 		sv: {
@@ -145,8 +131,6 @@
 			customize: 'Anpassa',
 			revoke: 'Integritetsval',
 			privacyPolicy: 'Integritetspolicy',
-			creditsLabel: 'OpenConsent CMP av YASA LTD',
-			donationLabel: 'Stöd utveckling med öppen källkod',
 			categories: { necessary: 'Nödvändiga', preferences: 'Inställningar', statistics: 'Statistik', marketing: 'Marknadsföring' }
 		}
 	};
@@ -188,8 +172,6 @@
 			customize: 'Mukauta',
 			revoke: 'Tietosuoja-asetukset',
 			privacyPolicy: 'Tietosuojakäytäntö',
-			creditsLabel: 'OpenConsent CMP, tekijä YASA LTD',
-			donationLabel: 'Tue avointa lähdekoodia',
 			regionStrict: 'Alueellasi sovelletaan tiukkaa opt-in-suostumusta.',
 			regionNotice: 'Alueellasi käytetään ilmoitustilaa. Voit kieltäytyä valinnaisista luokista.',
 			categories: { necessary: 'Välttämättömät', preferences: 'Asetukset', statistics: 'Tilastot', marketing: 'Markkinointi', unclassified: 'Luokittelemattomat' },
@@ -409,8 +391,6 @@
 
 		[
 			'privacyPolicy',
-			'creditsLabel',
-			'donationLabel',
 			'whatThisControls',
 			'configuredServices',
 			'noServicesConfigured',
@@ -441,9 +421,6 @@
 		resolved.background = ui.background;
 		resolved.text = ui.text;
 		resolved.theme = ui.theme;
-		resolved.authorName = ui.authorName || 'YASA LTD';
-		resolved.authorUrl = ui.authorUrl || 'https://yasa.fi/';
-		resolved.donationUrl = ui.donationUrl || 'https://buymeacoffee.com/anteryasa/e/550479';
 		resolved.lang = lang;
 		resolved.descriptions = {};
 		resolved.categoryLabels = {};
@@ -1101,30 +1078,6 @@
 		panel.appendChild(categoriesWrap);
 		panel.appendChild(choicesSummary);
 		panel.appendChild(actions);
-		if (ui.authorUrl || ui.donationUrl) {
-			var credits = document.createElement('p');
-			credits.className = 'openconsent__credits';
-			if (ui.authorUrl) {
-				var author = document.createElement('a');
-				author.href = ui.authorUrl;
-				author.target = '_blank';
-				author.rel = 'noopener noreferrer';
-				author.textContent = ui.creditsLabel || 'OpenConsent CMP by YASA LTD';
-				credits.appendChild(author);
-			} else {
-				credits.appendChild(document.createTextNode(ui.creditsLabel || 'OpenConsent CMP by YASA LTD'));
-			}
-			if (ui.donationUrl) {
-				credits.appendChild(document.createTextNode(' · '));
-				var donation = document.createElement('a');
-				donation.href = ui.donationUrl;
-				donation.target = '_blank';
-				donation.rel = 'noopener noreferrer';
-				donation.textContent = ui.donationLabel || 'Support open source development';
-				credits.appendChild(donation);
-			}
-			panel.appendChild(credits);
-		}
 		root.appendChild(panel);
 		document.body.appendChild(root);
 	}

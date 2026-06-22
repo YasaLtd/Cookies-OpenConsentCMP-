@@ -65,19 +65,6 @@
 	margin-bottom: 12px;
 }
 
-.openconsent__credits {
-	color: inherit;
-	font-size: 12px;
-	line-height: 1.45;
-	margin: 12px 0 0;
-	opacity: 0.78;
-	text-align: right;
-}
-
-.openconsent__credits a {
-	color: var(--openconsent-accent);
-}
-
 .openconsent__region {
 	background: rgba(84, 210, 191, 0.12);
 	border: 1px solid rgba(84, 210, 191, 0.28);
@@ -245,7 +232,4 @@ iframe[data-openconsent-blocked="1"] {
 		grid-template-columns: 1fr;
 	}
 
-	.openconsent__credits {
-		text-align: left;
-	}
 }

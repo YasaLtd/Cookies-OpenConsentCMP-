@@ -182,6 +182,8 @@ final class OpenConsent_CMP {
 	private static function backfill_log_columns( $table ) {
 		global $wpdb;
 
+		$table = esc_sql( $table );
+		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant before this helper is called.
 		$rows = $wpdb->get_results( "SELECT id, consent_json FROM {$table} WHERE (plugin_version = '' OR consent_action = '') AND consent_json <> '' LIMIT 500", ARRAY_A );
 		foreach ( $rows as $row ) {
 			$decoded = json_decode( $row['consent_json'], true );
@@ -550,9 +552,11 @@ final class OpenConsent_CMP {
 		$days    = max( 1, absint( $options['log_retention_days'] ) );
 
 		global $wpdb;
+		$table = esc_sql( $wpdb->prefix . self::LOG_TABLE );
 		$wpdb->query(
 			$wpdb->prepare(
-				"DELETE FROM {$wpdb->prefix}" . self::LOG_TABLE . ' WHERE created_at < %s',
+				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
+				"DELETE FROM {$table} WHERE created_at < %s",
 				gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) )
 			)
 		);

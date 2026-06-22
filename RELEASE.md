@@ -33,9 +33,9 @@ Update all of these together:
 
 ## Current Release
 
-- Current version: `1.0.3`
-- Current tag: `v1.0.3`
-- Current public ZIP filename: `openconsent-cmp-wordpress-plugin-1.0.3.zip`
+- Current version: `1.1`
+- Current tag: `v1.1`
+- Current public ZIP filename: `openconsent-cmp-wordpress-plugin-1.1.zip`
 
 ## Verification
 
