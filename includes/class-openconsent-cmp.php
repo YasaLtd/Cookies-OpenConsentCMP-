@@ -63,8 +63,6 @@ final class OpenConsent_CMP {
 	 * Plugin constructor.
 	 */
 	private function __construct() {
-		load_plugin_textdomain( 'openconsent-cmp', false, dirname( plugin_basename( OPENCONSENT_CMP_FILE ) ) . '/languages' );
-
 		$this->scanner  = new OpenConsent_CMP_Scanner();
 		$this->frontend = new OpenConsent_CMP_Frontend( $this );
 		$this->admin    = new OpenConsent_CMP_Admin( $this );
@@ -183,7 +181,7 @@ final class OpenConsent_CMP {
 		global $wpdb;
 
 		$table = esc_sql( $table );
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant before this helper is called.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom consent log table has no WordPress data API; table name is generated from the WordPress prefix and a plugin constant before this helper is called.
 		$rows = $wpdb->get_results( "SELECT id, consent_json FROM {$table} WHERE (plugin_version = '' OR consent_action = '') AND consent_json <> '' LIMIT 500", ARRAY_A );
 		foreach ( $rows as $row ) {
 			$decoded = json_decode( $row['consent_json'], true );
@@ -191,6 +189,7 @@ final class OpenConsent_CMP {
 				continue;
 			}
 
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 			$wpdb->update(
 				$table,
 				array(
@@ -456,6 +455,7 @@ final class OpenConsent_CMP {
 		$referrer_url = isset( $_POST['referrer_url'] ) ? esc_url_raw( wp_unslash( $_POST['referrer_url'] ) ) : '';
 
 		global $wpdb;
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom consent log table has no WordPress data API.
 		$wpdb->insert(
 			$wpdb->prefix . self::LOG_TABLE,
 			array(
@@ -553,6 +553,7 @@ final class OpenConsent_CMP {
 
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . self::LOG_TABLE );
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		$wpdb->query(
 			$wpdb->prepare(
 				// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.

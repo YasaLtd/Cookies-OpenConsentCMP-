@@ -1,10 +1,11 @@
 === OpenConsent CMP ===
 Contributors: yasa
+Donate link: https://buymeacoffee.com/anteryasa/e/550479
 Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1.1
+Stable tag: 1.1.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +60,14 @@ The plugin sets a first-party browser cookie named `openconsent_cmp` to remember
 
 The optional crawl scanner sends HTTP requests only to the site's own internal pages and stores the resulting local scan report in WordPress options.
 
+YASA LTD links and the optional donation link are shown only inside the WordPress admin settings for site owners. The plugin does not add YASA LTD credit links, donation links, or powered-by links to the public frontend.
+
+= External services =
+
+OpenConsent CMP does not contact YASA LTD servers and does not use a hosted YASA service.
+
+If the site owner configures services such as Google Tag Manager, Google Analytics, Google Consent Mode, embedded media, analytics scripts, or advertising scripts, those third-party services may receive data according to the site owner's configuration and the visitor's consent choices. Site owners are responsible for documenting those services in their privacy policy and service registry.
+
 == Installation ==
 
 1. Upload the `openconsent-cmp` folder to `/wp-content/plugins/`.
@@ -91,7 +100,17 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 2. Frontend consent dialog with expandable category details, theme selector, localized labels, and a site privacy policy link.
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
+== Upgrade Notice ==
+
+= 1.1.2 =
+Improves WordPress.org review readiness with clearer privacy disclosures and reduced static-analysis noise.
+
 == Changelog ==
+
+= 1.1.2 =
+* Removes the manual translation loader that WordPress.org no longer requires for hosted plugins.
+* Clarifies WordPress.org static-analysis annotations for plugin-owned custom log table queries and uninstall cleanup.
+* Expands readme privacy and external-service disclosures for review clarity.
 
 = 1.1.1 =
 * Normalizes frontend script line endings to reduce WordPress.org review noise.

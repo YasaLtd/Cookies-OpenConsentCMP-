@@ -906,6 +906,7 @@ final class OpenConsent_CMP_Admin {
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return array();
 		}
@@ -920,7 +921,7 @@ final class OpenConsent_CMP_Admin {
 
 		$sql = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC LIMIT %d OFFSET %d";
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom consent log table has no WordPress data API; table name and WHERE fragments are built from whitelisted values above.
 		return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ) );
 	}
 
@@ -933,11 +934,12 @@ final class OpenConsent_CMP_Admin {
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return 0;
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom consent log table has no WordPress data API; table name is generated from the WordPress prefix and a plugin constant.
 		return (int) $wpdb->get_var( "SELECT COUNT(*) FROM {$table}" );
 	}
 
@@ -951,6 +953,7 @@ final class OpenConsent_CMP_Admin {
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return 0;
 		}
@@ -960,11 +963,11 @@ final class OpenConsent_CMP_Admin {
 		$sql    = "SELECT COUNT(*) FROM {$table} WHERE {$where}";
 
 		if ( $params ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom consent log table has no WordPress data API; table name and WHERE fragments are built from whitelisted values above.
 			return (int) $wpdb->get_var( $wpdb->prepare( $sql, ...$params ) );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom consent log table has no WordPress data API; table name and WHERE fragments are built from whitelisted values above.
 		return (int) $wpdb->get_var( $sql );
 	}
 
@@ -1159,11 +1162,12 @@ final class OpenConsent_CMP_Admin {
 			'save_choices'   => 0,
 		);
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			return $stats;
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom consent log table has no WordPress data API; table name is generated from the WordPress prefix and a plugin constant.
 		$rows = $wpdb->get_results( "SELECT consent_action, COUNT(*) AS total FROM {$table} GROUP BY consent_action", ARRAY_A );
 		foreach ( $rows as $row ) {
 			$action = isset( $row['consent_action'] ) && '' !== $row['consent_action'] ? $row['consent_action'] : 'save_choices';
@@ -1272,6 +1276,7 @@ final class OpenConsent_CMP_Admin {
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=0' ) );
 			exit;
@@ -1280,7 +1285,7 @@ final class OpenConsent_CMP_Admin {
 		$options = $this->plugin->options();
 		$days    = max( 1, absint( $options['log_retention_days'] ?? 365 ) );
 		$cutoff  = gmdate( 'Y-m-d H:i:s', time() - ( $days * DAY_IN_SECONDS ) );
-		// phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Table name is generated from the WordPress prefix and a plugin constant.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Custom consent log table has no WordPress data API; table name is generated from the WordPress prefix and a plugin constant.
 		$deleted = (int) $wpdb->query( $wpdb->prepare( "DELETE FROM {$table} WHERE created_at < %s", $cutoff ) );
 
 		wp_safe_redirect( admin_url( 'options-general.php?page=openconsent-cmp&openconsent_pruned=' . max( 0, $deleted ) ) );
@@ -1613,6 +1618,7 @@ final class OpenConsent_CMP_Admin {
 		global $wpdb;
 		$table = esc_sql( $wpdb->prefix . OpenConsent_CMP::LOG_TABLE );
 
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom consent log table has no WordPress data API.
 		if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) ) !== $table ) {
 			wp_die( esc_html__( 'Consent log table does not exist yet.', 'openconsent-cmp' ) );
 		}
@@ -1623,11 +1629,11 @@ final class OpenConsent_CMP_Admin {
 		$sql     = "SELECT created_at, consent_id, consent_action, necessary, preferences, statistics, marketing, unclassified, region, region_mode, language, page_url, referrer_url, plugin_version, consent_hash, ip_hash, user_agent_hash, consent_json FROM {$table} WHERE {$where} ORDER BY id DESC";
 
 		if ( $params ) {
-			// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom consent log table has no WordPress data API; table name and WHERE fragments are built from whitelisted values above.
 			return $wpdb->get_results( $wpdb->prepare( $sql, ...$params ), ARRAY_A );
 		}
 
-		// phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name and WHERE fragments are built from whitelisted values above.
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery,WordPress.DB.DirectDatabaseQuery.NoCaching,WordPress.DB.PreparedSQL.NotPrepared,PluginCheck.Security.DirectDB.UnescapedDBParameter -- Custom consent log table has no WordPress data API; table name and WHERE fragments are built from whitelisted values above.
 		return $wpdb->get_results( $sql, ARRAY_A );
 	}
 
