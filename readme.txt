@@ -5,7 +5,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1.6
+Stable tag: 1.1.7
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,9 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 
 == Upgrade Notice ==
 
+= 1.1.7 =
+Fixes the WordPress admin settings form so Save Changes reliably submits and persists changes.
+
 = 1.1.6 =
 Implements the bottom banner layout and makes admin-selected frontend themes control the visitor banner colors reliably.
 
@@ -118,6 +121,10 @@ Uses a slug-stable install package name so WordPress installs the plugin as open
 Improves WordPress.org review readiness with clearer privacy disclosures and reduced static-analysis noise.
 
 == Changelog ==
+
+= 1.1.7 =
+* Moves import forms outside the main WordPress settings form so the Save Changes button remains connected to options.php.
+* Prevents import/export controls from interfering with normal settings saves.
 
 = 1.1.6 =
 * Implements the admin "Bottom banner" setting as a real full-width bottom sheet layout on the frontend.

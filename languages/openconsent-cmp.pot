@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.1.6\n"
+"Project-Id-Version: OpenConsent CMP 1.1.7\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/openconsent-cmp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-23T18:13:37+00:00\n"
+"POT-Creation-Date: 2026-06-23T19:15:28+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: openconsent-cmp\n"
@@ -71,7 +71,7 @@ msgid "Open source software is easier to maintain when users can trace the autho
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:300
-#: includes/class-openconsent-cmp-admin.php:1682
+#: includes/class-openconsent-cmp-admin.php:1683
 msgid "Visit YASA LTD"
 msgstr ""
 
@@ -465,100 +465,100 @@ msgid "Category descriptions"
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:532
-msgid "Configuration import and export"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:533
-msgid "Export settings before major changes, or move a registry between WordPress installations."
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:535
-msgid "Export settings JSON"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:536
-msgid "Export services CSV"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:541
-msgid "Import settings JSON"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:543
-msgid "Import settings"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:545
-msgid "Import replaces plugin settings but keeps existing consent records."
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:549
-msgid "Import services CSV"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:551
-msgid "Replace current service registry"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:552
-msgid "Append to current service registry"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:553
-msgid "Import services"
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:555
-msgid "CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted."
-msgstr ""
-
-#: includes/class-openconsent-cmp-admin.php:559
 msgid "Audit log"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:560
+#: includes/class-openconsent-cmp-admin.php:533
 msgid "Consent choices are stored in a local WordPress database table with anonymized visitor hashes. Use exports for audits, support requests, or compliance reviews."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:563
+#: includes/class-openconsent-cmp-admin.php:536
 msgid "Retention"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:564
+#: includes/class-openconsent-cmp-admin.php:537
 msgid "days"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:567
+#: includes/class-openconsent-cmp-admin.php:540
 msgid "Stored records"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:570
+#: includes/class-openconsent-cmp-admin.php:543
 msgid "records currently stored."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:572
-#: includes/class-openconsent-cmp-admin.php:1678
+#: includes/class-openconsent-cmp-admin.php:545
+#: includes/class-openconsent-cmp-admin.php:1679
 msgid "Download CSV"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:573
+#: includes/class-openconsent-cmp-admin.php:546
 msgid "Download JSON"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:575
+#: includes/class-openconsent-cmp-admin.php:548
 msgid "Exports include consent ID, timestamp, selected categories, action, region, language, page URL, consent hash, IP hash, and user-agent hash."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:579
+#: includes/class-openconsent-cmp-admin.php:552
 msgid "Cleanup"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:581
+#: includes/class-openconsent-cmp-admin.php:554
 msgid "Prune expired records now"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:582
+#: includes/class-openconsent-cmp-admin.php:555
 msgid "Deletes records older than the retention period above. Current filters do not affect cleanup."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:565
+msgid "Configuration import and export"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:566
+msgid "Export settings before major changes, or move a registry between WordPress installations."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:568
+msgid "Export settings JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:569
+msgid "Export services CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:574
+msgid "Import settings JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:576
+msgid "Import settings"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:578
+msgid "Import replaces plugin settings but keeps existing consent records."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:582
+msgid "Import services CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:584
+msgid "Replace current service registry"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:585
+msgid "Append to current service registry"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:586
+msgid "Import services"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:588
+msgid "CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted."
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:592
@@ -956,127 +956,135 @@ msgid "Change log"
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:1393
-msgid "1.1.6"
+msgid "1.1.7"
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:1393
+msgid "Fixes the admin settings form so Save Changes reliably submits and persists settings."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
+msgid "1.1.6"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
 msgid "Implements the bottom banner layout and makes admin-selected frontend themes control visitor banner colors reliably."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1394
+#: includes/class-openconsent-cmp-admin.php:1395
 msgid "1.1.5"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1394
+#: includes/class-openconsent-cmp-admin.php:1395
 msgid "Rebuilds the public release ZIP with WordPress-safe forward-slash archive paths while keeping 1.1.4 behavior unchanged."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1395
+#: includes/class-openconsent-cmp-admin.php:1396
 msgid "1.1.4"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1395
+#: includes/class-openconsent-cmp-admin.php:1396
 msgid "Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1396
+#: includes/class-openconsent-cmp-admin.php:1397
 msgid "1.1.3"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1396
+#: includes/class-openconsent-cmp-admin.php:1397
 msgid "Keeps the public WordPress plugin ZIP slug-stable as openconsent-cmp.zip for reliable installation and review."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1397
+#: includes/class-openconsent-cmp-admin.php:1398
 msgid "1.1.2"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1397
+#: includes/class-openconsent-cmp-admin.php:1398
 msgid "Polishes WordPress.org readiness, Plugin Check compatibility, and release workflow documentation."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1410
-#: includes/class-openconsent-cmp-admin.php:1437
+#: includes/class-openconsent-cmp-admin.php:1411
+#: includes/class-openconsent-cmp-admin.php:1438
 msgid "You do not have permission to export consent logs."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1466
+#: includes/class-openconsent-cmp-admin.php:1467
 msgid "You do not have permission to export settings."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1495
+#: includes/class-openconsent-cmp-admin.php:1496
 msgid "You do not have permission to export services."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1530
+#: includes/class-openconsent-cmp-admin.php:1531
 msgid "You do not have permission to import settings."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1537
+#: includes/class-openconsent-cmp-admin.php:1538
 msgid "No settings file was uploaded."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1542
+#: includes/class-openconsent-cmp-admin.php:1543
 msgid "The uploaded settings file is empty."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1547
+#: includes/class-openconsent-cmp-admin.php:1548
 msgid "The uploaded settings file is not valid JSON."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1564
+#: includes/class-openconsent-cmp-admin.php:1565
 msgid "You do not have permission to import services."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1571
+#: includes/class-openconsent-cmp-admin.php:1572
 msgid "No services CSV file was uploaded."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1576
+#: includes/class-openconsent-cmp-admin.php:1577
 msgid "The services CSV file could not be opened."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1592
+#: includes/class-openconsent-cmp-admin.php:1593
 msgid "The services CSV did not contain valid service rows."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1654
+#: includes/class-openconsent-cmp-admin.php:1655
 msgid "OpenConsent CMP records"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1669
+#: includes/class-openconsent-cmp-admin.php:1670
 msgid "consent records stored locally."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1672
+#: includes/class-openconsent-cmp-admin.php:1673
 msgid "Accepted all:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1673
+#: includes/class-openconsent-cmp-admin.php:1674
 msgid "Necessary only:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1674
+#: includes/class-openconsent-cmp-admin.php:1675
 msgid "Custom choices:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1677
+#: includes/class-openconsent-cmp-admin.php:1678
 msgid "Open records"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1681
+#: includes/class-openconsent-cmp-admin.php:1682
 msgid "OpenConsent CMP is built by YASA LTD."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1683
+#: includes/class-openconsent-cmp-admin.php:1684
 msgid "or"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1684
+#: includes/class-openconsent-cmp-admin.php:1685
 msgid "support open source development"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1701
+#: includes/class-openconsent-cmp-admin.php:1702
 msgid "Consent log table does not exist yet."
 msgstr ""
 

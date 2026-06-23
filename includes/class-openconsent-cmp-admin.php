@@ -529,33 +529,6 @@ final class OpenConsent_CMP_Admin {
 				</div>
 
 				<div class="openconsent-settings-card">
-				<h2><?php esc_html_e( 'Configuration import and export', 'openconsent-cmp' ); ?></h2>
-				<p><?php esc_html_e( 'Export settings before major changes, or move a registry between WordPress installations.', 'openconsent-cmp' ); ?></p>
-				<p class="openconsent-export-actions">
-					<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_settings' ), 'openconsent_export_settings' ) ); ?>"><?php esc_html_e( 'Export settings JSON', 'openconsent-cmp' ); ?></a>
-					<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_services' ), 'openconsent_export_services' ) ); ?>"><?php esc_html_e( 'Export services CSV', 'openconsent-cmp' ); ?></a>
-				</p>
-				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
-					<input type="hidden" name="action" value="openconsent_import_settings">
-					<?php wp_nonce_field( 'openconsent_import_settings' ); ?>
-					<label for="openconsent-import-file"><?php esc_html_e( 'Import settings JSON', 'openconsent-cmp' ); ?></label>
-					<input id="openconsent-import-file" type="file" name="openconsent_settings_file" accept="application/json,.json">
-					<?php submit_button( __( 'Import settings', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
-				</form>
-				<p class="description"><?php esc_html_e( 'Import replaces plugin settings but keeps existing consent records.', 'openconsent-cmp' ); ?></p>
-				<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="openconsent-import-services-form">
-					<input type="hidden" name="action" value="openconsent_import_services">
-					<?php wp_nonce_field( 'openconsent_import_services' ); ?>
-					<label for="openconsent-import-services-file"><?php esc_html_e( 'Import services CSV', 'openconsent-cmp' ); ?></label>
-					<input id="openconsent-import-services-file" type="file" name="openconsent_services_file" accept="text/csv,.csv">
-					<label><input type="radio" name="openconsent_services_mode" value="replace" checked> <?php esc_html_e( 'Replace current service registry', 'openconsent-cmp' ); ?></label>
-					<label><input type="radio" name="openconsent_services_mode" value="append"> <?php esc_html_e( 'Append to current service registry', 'openconsent-cmp' ); ?></label>
-					<?php submit_button( __( 'Import services', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
-				</form>
-				<p class="description"><?php esc_html_e( 'CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted.', 'openconsent-cmp' ); ?></p>
-				</div>
-
-				<div class="openconsent-settings-card">
 				<h2><?php esc_html_e( 'Audit log', 'openconsent-cmp' ); ?></h2>
 				<p><?php esc_html_e( 'Consent choices are stored in a local WordPress database table with anonymized visitor hashes. Use exports for audits, support requests, or compliance reviews.', 'openconsent-cmp' ); ?></p>
 				<table class="form-table" role="presentation">
@@ -587,6 +560,33 @@ final class OpenConsent_CMP_Admin {
 
 				<?php submit_button(); ?>
 			</form>
+
+			<div class="openconsent-settings-card">
+			<h2><?php esc_html_e( 'Configuration import and export', 'openconsent-cmp' ); ?></h2>
+			<p><?php esc_html_e( 'Export settings before major changes, or move a registry between WordPress installations.', 'openconsent-cmp' ); ?></p>
+			<p class="openconsent-export-actions">
+				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_settings' ), 'openconsent_export_settings' ) ); ?>"><?php esc_html_e( 'Export settings JSON', 'openconsent-cmp' ); ?></a>
+				<a class="button button-secondary" href="<?php echo esc_url( wp_nonce_url( admin_url( 'admin-post.php?action=openconsent_export_services' ), 'openconsent_export_services' ) ); ?>"><?php esc_html_e( 'Export services CSV', 'openconsent-cmp' ); ?></a>
+			</p>
+			<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>">
+				<input type="hidden" name="action" value="openconsent_import_settings">
+				<?php wp_nonce_field( 'openconsent_import_settings' ); ?>
+				<label for="openconsent-import-file"><?php esc_html_e( 'Import settings JSON', 'openconsent-cmp' ); ?></label>
+				<input id="openconsent-import-file" type="file" name="openconsent_settings_file" accept="application/json,.json">
+				<?php submit_button( __( 'Import settings', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+			</form>
+			<p class="description"><?php esc_html_e( 'Import replaces plugin settings but keeps existing consent records.', 'openconsent-cmp' ); ?></p>
+			<form method="post" enctype="multipart/form-data" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" class="openconsent-import-services-form">
+				<input type="hidden" name="action" value="openconsent_import_services">
+				<?php wp_nonce_field( 'openconsent_import_services' ); ?>
+				<label for="openconsent-import-services-file"><?php esc_html_e( 'Import services CSV', 'openconsent-cmp' ); ?></label>
+				<input id="openconsent-import-services-file" type="file" name="openconsent_services_file" accept="text/csv,.csv">
+				<label><input type="radio" name="openconsent_services_mode" value="replace" checked> <?php esc_html_e( 'Replace current service registry', 'openconsent-cmp' ); ?></label>
+				<label><input type="radio" name="openconsent_services_mode" value="append"> <?php esc_html_e( 'Append to current service registry', 'openconsent-cmp' ); ?></label>
+				<?php submit_button( __( 'Import services', 'openconsent-cmp' ), 'secondary', 'submit', false ); ?>
+			</form>
+			<p class="description"><?php esc_html_e( 'CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted.', 'openconsent-cmp' ); ?></p>
+			</div>
 
 			<hr>
 			<h2><?php esc_html_e( 'Crawl scan', 'openconsent-cmp' ); ?></h2>
@@ -1390,6 +1390,7 @@ final class OpenConsent_CMP_Admin {
 		<div class="openconsent-settings-card">
 			<h2><?php esc_html_e( 'Change log', 'openconsent-cmp' ); ?></h2>
 			<ul class="openconsent-help-list openconsent-changelog">
+				<li><strong><?php esc_html_e( '1.1.7', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Fixes the admin settings form so Save Changes reliably submits and persists settings.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.6', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Implements the bottom banner layout and makes admin-selected frontend themes control visitor banner colors reliably.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.5', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Rebuilds the public release ZIP with WordPress-safe forward-slash archive paths while keeping 1.1.4 behavior unchanged.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.4', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog.', 'openconsent-cmp' ); ?></li>
