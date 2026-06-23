@@ -2,14 +2,14 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.1.5\n"
+"Project-Id-Version: OpenConsent CMP 1.1.6\n"
 "Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/openconsent-cmp\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-06-23T17:21:31+00:00\n"
+"POT-Creation-Date: 2026-06-23T18:13:37+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: openconsent-cmp\n"
@@ -71,7 +71,7 @@ msgid "Open source software is easier to maintain when users can trace the autho
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:300
-#: includes/class-openconsent-cmp-admin.php:1681
+#: includes/class-openconsent-cmp-admin.php:1682
 msgid "Visit YASA LTD"
 msgstr ""
 
@@ -537,7 +537,7 @@ msgid "records currently stored."
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:572
-#: includes/class-openconsent-cmp-admin.php:1677
+#: includes/class-openconsent-cmp-admin.php:1678
 msgid "Download CSV"
 msgstr ""
 
@@ -956,128 +956,136 @@ msgid "Change log"
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:1393
-msgid "1.1.5"
+msgid "1.1.6"
 msgstr ""
 
 #: includes/class-openconsent-cmp-admin.php:1393
+msgid "Implements the bottom banner layout and makes admin-selected frontend themes control visitor banner colors reliably."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
+msgid "1.1.5"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
 msgid "Rebuilds the public release ZIP with WordPress-safe forward-slash archive paths while keeping 1.1.4 behavior unchanged."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1394
+#: includes/class-openconsent-cmp-admin.php:1395
 msgid "1.1.4"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1394
+#: includes/class-openconsent-cmp-admin.php:1395
 msgid "Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1395
+#: includes/class-openconsent-cmp-admin.php:1396
 msgid "1.1.3"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1395
+#: includes/class-openconsent-cmp-admin.php:1396
 msgid "Keeps the public WordPress plugin ZIP slug-stable as openconsent-cmp.zip for reliable installation and review."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1396
+#: includes/class-openconsent-cmp-admin.php:1397
 msgid "1.1.2"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1396
+#: includes/class-openconsent-cmp-admin.php:1397
 msgid "Polishes WordPress.org readiness, Plugin Check compatibility, and release workflow documentation."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1409
-#: includes/class-openconsent-cmp-admin.php:1436
+#: includes/class-openconsent-cmp-admin.php:1410
+#: includes/class-openconsent-cmp-admin.php:1437
 msgid "You do not have permission to export consent logs."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1465
+#: includes/class-openconsent-cmp-admin.php:1466
 msgid "You do not have permission to export settings."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1494
+#: includes/class-openconsent-cmp-admin.php:1495
 msgid "You do not have permission to export services."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1529
+#: includes/class-openconsent-cmp-admin.php:1530
 msgid "You do not have permission to import settings."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1536
+#: includes/class-openconsent-cmp-admin.php:1537
 msgid "No settings file was uploaded."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1541
+#: includes/class-openconsent-cmp-admin.php:1542
 msgid "The uploaded settings file is empty."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1546
+#: includes/class-openconsent-cmp-admin.php:1547
 msgid "The uploaded settings file is not valid JSON."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1563
+#: includes/class-openconsent-cmp-admin.php:1564
 msgid "You do not have permission to import services."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1570
+#: includes/class-openconsent-cmp-admin.php:1571
 msgid "No services CSV file was uploaded."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1575
+#: includes/class-openconsent-cmp-admin.php:1576
 msgid "The services CSV file could not be opened."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1591
+#: includes/class-openconsent-cmp-admin.php:1592
 msgid "The services CSV did not contain valid service rows."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1653
+#: includes/class-openconsent-cmp-admin.php:1654
 msgid "OpenConsent CMP records"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1668
+#: includes/class-openconsent-cmp-admin.php:1669
 msgid "consent records stored locally."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1671
+#: includes/class-openconsent-cmp-admin.php:1672
 msgid "Accepted all:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1672
+#: includes/class-openconsent-cmp-admin.php:1673
 msgid "Necessary only:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1673
+#: includes/class-openconsent-cmp-admin.php:1674
 msgid "Custom choices:"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1676
+#: includes/class-openconsent-cmp-admin.php:1677
 msgid "Open records"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1680
+#: includes/class-openconsent-cmp-admin.php:1681
 msgid "OpenConsent CMP is built by YASA LTD."
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1682
+#: includes/class-openconsent-cmp-admin.php:1683
 msgid "or"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1683
+#: includes/class-openconsent-cmp-admin.php:1684
 msgid "support open source development"
 msgstr ""
 
-#: includes/class-openconsent-cmp-admin.php:1700
+#: includes/class-openconsent-cmp-admin.php:1701
 msgid "Consent log table does not exist yet."
 msgstr ""
 
-#: includes/class-openconsent-cmp-frontend.php:116
-#: includes/class-openconsent-cmp-frontend.php:132
+#: includes/class-openconsent-cmp-frontend.php:120
+#: includes/class-openconsent-cmp-frontend.php:136
 msgid "Necessary cookies keep the site secure and working. They are always active."
 msgstr ""
 
-#: includes/class-openconsent-cmp-frontend.php:285
+#: includes/class-openconsent-cmp-frontend.php:289
 msgid "This embed is blocked until you allow its cookie category."
 msgstr ""
 

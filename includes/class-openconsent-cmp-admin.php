@@ -1390,6 +1390,7 @@ final class OpenConsent_CMP_Admin {
 		<div class="openconsent-settings-card">
 			<h2><?php esc_html_e( 'Change log', 'openconsent-cmp' ); ?></h2>
 			<ul class="openconsent-help-list openconsent-changelog">
+				<li><strong><?php esc_html_e( '1.1.6', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Implements the bottom banner layout and makes admin-selected frontend themes control visitor banner colors reliably.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.5', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Rebuilds the public release ZIP with WordPress-safe forward-slash archive paths while keeping 1.1.4 behavior unchanged.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.4', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog.', 'openconsent-cmp' ); ?></li>
 				<li><strong><?php esc_html_e( '1.1.3', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Keeps the public WordPress plugin ZIP slug-stable as openconsent-cmp.zip for reliable installation and review.', 'openconsent-cmp' ); ?></li>

@@ -451,9 +451,9 @@
 	function applyTheme(root, ui) {
 		var selected = themeByKey(ui.theme || 'dark-teal');
 		root.dataset.openconsentTheme = selected.key;
-		root.style.setProperty('--openconsent-accent', ui.accent || selected.accent || '#54d2bf');
-		root.style.setProperty('--openconsent-background', ui.background || selected.background || '#111827');
-		root.style.setProperty('--openconsent-text', ui.text || selected.text || '#ffffff');
+		root.style.setProperty('--openconsent-accent', selected.accent || ui.accent || '#54d2bf');
+		root.style.setProperty('--openconsent-background', selected.background || ui.background || '#111827');
+		root.style.setProperty('--openconsent-text', selected.text || ui.text || '#ffffff');
 		return selected;
 	}
 

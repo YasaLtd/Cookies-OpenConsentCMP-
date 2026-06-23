@@ -5,7 +5,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1.5
+Stable tag: 1.1.6
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,6 +102,9 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 
 == Upgrade Notice ==
 
+= 1.1.6 =
+Implements the bottom banner layout and makes admin-selected frontend themes control the visitor banner colors reliably.
+
 = 1.1.5 =
 Fixes the release ZIP packaging so internal archive paths use WordPress-safe forward slashes.
 
@@ -115,6 +118,10 @@ Uses a slug-stable install package name so WordPress installs the plugin as open
 Improves WordPress.org review readiness with clearer privacy disclosures and reduced static-analysis noise.
 
 == Changelog ==
+
+= 1.1.6 =
+* Implements the admin "Bottom banner" setting as a real full-width bottom sheet layout on the frontend.
+* Makes the selected admin theme preset authoritative for frontend banner colors.
 
 = 1.1.5 =
 * Rebuilds the public release ZIP with forward-slash internal paths for reliable activation on Linux WordPress hosts.

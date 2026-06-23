@@ -54,6 +54,10 @@ final class OpenConsent_CMP_Frontend {
 			$detected_locale = $banner_language;
 		}
 
+		$theme_presets = OpenConsent_CMP::theme_presets();
+		$theme         = isset( $theme_presets[ $options['theme'] ] ) ? $options['theme'] : OpenConsent_CMP::defaults()['theme'];
+		$theme_preset  = $theme_presets[ $theme ];
+
 		wp_enqueue_style(
 			'openconsent-cmp',
 			OPENCONSENT_CMP_URL . 'assets/css/openconsent-cmp.css',
@@ -108,10 +112,10 @@ final class OpenConsent_CMP_Frontend {
 					'save'         => $options['button_save'],
 					'revoke'       => $options['button_revoke'],
 					'position'     => $options['position'],
-					'theme'        => $options['theme'],
-					'accent'       => $options['accent_color'],
-					'background'   => $options['background_color'],
-					'text'         => $options['text_color'],
+					'theme'        => $theme,
+					'accent'       => $theme_preset['accent'],
+					'background'   => $theme_preset['background'],
+					'text'         => $theme_preset['text'],
 					'descriptions' => array(
 						'necessary'   => __( 'Necessary cookies keep the site secure and working. They are always active.', 'openconsent-cmp' ),
 						'preferences' => $options['category_preferences'],
