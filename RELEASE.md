@@ -48,6 +48,21 @@ Before publishing, verify:
 5. The exact ZIP installs and activates in a local WordPress test site.
 6. The live website download link returns the same ZIP hash as the local package.
 
+## llms.txt Rule
+
+The canonical LLM guidance file is `cookies-yasa-site/llms.txt`, published as `/llms.txt`.
+
+Keep this file in the simple recommended Markdown shape:
+
+1. One H1 title at the top.
+2. One optional blockquote summary.
+3. Optional plain-text details without links.
+4. One `## Links` section containing all links.
+5. Link rows must use this exact bullet format: `- [Link title](https://link_url): Optional link details`.
+6. Optional notes may go under `## Notes`, without Markdown links.
+
+Do not add `ilms.txt`, `llms-full.txt`, compatibility copies, redirects, `.htaccess` rules, inline paragraph links, bare URLs, or extra LLM metadata files unless the user explicitly asks for them. When the user says FTP is the truth, download `/llms.txt` from FTP and use that exact content as the local source.
+
 ## FTP Sync Rule
 
 When the user says FTP is the latest truth, download from FTP first and sync local/GitHub from that source. Do not upload to FTP during a sync-from-FTP task unless explicitly requested.
