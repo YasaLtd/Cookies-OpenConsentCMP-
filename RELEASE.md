@@ -14,7 +14,7 @@ The WordPress upload ZIP must be root-packed and named `openconsent-cmp.zip`. Th
 
 Do not put those files inside a wrapper folder such as `openconsent-cmp/`. The package layout `openconsent-cmp/openconsent-cmp.php` is incorrect for this project.
 
-Do not put the version number in the installable ZIP filename. A root-packed ZIP installs under the ZIP basename, so a filename such as `openconsent-cmp-wordpress-plugin-1.1.3.zip` creates the wrong plugin slug and makes Plugin Check expect the wrong text domain. Keep the installable filename `openconsent-cmp.zip`; put release versioning in plugin metadata, `readme.txt`, Git tags, website visible labels, and cache-busting query strings such as `openconsent-cmp.zip?v=1.1.3`.
+Do not put the version number in the installable ZIP filename. A root-packed ZIP installs under the ZIP basename, so a filename such as `openconsent-cmp-wordpress-plugin-1.1.4.zip` creates the wrong plugin slug and makes Plugin Check expect the wrong text domain. Keep the installable filename `openconsent-cmp.zip`; put release versioning in plugin metadata, `readme.txt`, Git tags, website visible labels, and cache-busting query strings such as `openconsent-cmp.zip?v=1.1.4`.
 
 ## Version Rule
 
@@ -35,9 +35,20 @@ Update all of these together:
 
 ## Current Release
 
-- Current version: `1.1.3`
-- Current tag: `v1.1.3`
+- Current version: `1.1.4`
+- Current tag: `v1.1.4`
 - Current public ZIP filename: `openconsent-cmp.zip`
+
+## WordPress.org Submission State
+
+- Submitted for WordPress Plugin Directory review on 2026-06-23.
+- Submitted file: `openconsent-cmp.zip`.
+- Submitted version: `1.1.3`.
+- Initial assigned slug: `openconsent-cmp`.
+- Automated scan result: pass.
+- Review status at submission time: awaiting manual review.
+
+While the plugin is awaiting review, do not submit it again. If a submission correction is required, reply to the WordPress.org submission email or contact `plugins@wordpress.org`; a plugin slug cannot be changed after approval.
 
 ## Verification
 
@@ -48,7 +59,8 @@ Before publishing, verify:
 3. ZIP paths use forward slashes.
 4. The plugin header version, `OPENCONSENT_CMP_VERSION`, WordPress readme stable tag, website metadata, download link, embedded package metadata, and GitHub tag all match.
 5. The exact ZIP installs and activates in a local WordPress test site.
-6. The live website download link returns the same ZIP hash as the local package.
+6. The official WordPress Plugin Check plugin reports no errors for the installed release ZIP. Run WP-CLI from the clean WordPress root so it scans `wp-content/plugins/openconsent-cmp`, not this development repository.
+7. The live website download link returns the same ZIP hash as the local package.
 
 ## llms.txt Rule
 

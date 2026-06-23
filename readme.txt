@@ -5,7 +5,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1.3
+Stable tag: 1.1.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -97,10 +97,13 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 == Screenshots ==
 
 1. Admin settings with service inventory, Google Consent Mode mapping, crawl scanner, and import/export tools.
-2. Frontend consent dialog with expandable category details, theme selector, localized labels, and a site privacy policy link.
+2. Frontend consent dialog with expandable category details, admin-configured theme colors, localized labels, and a site privacy policy link.
 3. Local consent records with filters, detail views, retention cleanup, and CSV/JSON exports.
 
 == Upgrade Notice ==
+
+= 1.1.4 =
+Moves frontend color theme selection into the admin settings page and removes visitor-facing color customization from the consent dialog.
 
 = 1.1.3 =
 Uses a slug-stable install package name so WordPress installs the plugin as openconsent-cmp and keeps the text domain valid.
@@ -109,6 +112,11 @@ Uses a slug-stable install package name so WordPress installs the plugin as open
 Improves WordPress.org review readiness with clearer privacy disclosures and reduced static-analysis noise.
 
 == Changelog ==
+
+= 1.1.4 =
+* Moves color theme selection into the WordPress admin settings page.
+* Removes the visitor-facing consent dialog color selector and local theme preference.
+* Adds a settings-page changelog section for recent version changes.
 
 = 1.1.3 =
 * Keeps the installable ZIP filename slug-stable as `openconsent-cmp.zip`.

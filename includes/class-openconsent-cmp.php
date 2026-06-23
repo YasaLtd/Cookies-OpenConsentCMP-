@@ -236,6 +236,7 @@ final class OpenConsent_CMP {
 			'default_region'        => 'eea',
 			'consent_model'         => 'opt_in',
 			'position'              => 'center',
+			'theme'                 => 'dark-teal',
 			'accent_color'          => '#54d2bf',
 			'background_color'      => '#111827',
 			'text_color'            => '#ffffff',
@@ -261,6 +262,40 @@ final class OpenConsent_CMP {
 			'category_unclassified' => 'Unclassified services are blocked until they are reviewed and assigned to a clear category.',
 			'scan_report'           => array(),
 			'scan_report_generated' => '',
+		);
+	}
+
+	/**
+	 * Return frontend banner theme presets.
+	 *
+	 * @return array
+	 */
+	public static function theme_presets() {
+		return array(
+			'dark-teal' => array(
+				'label'      => __( 'Teal', 'openconsent-cmp' ),
+				'accent'     => '#54d2bf',
+				'background' => '#111827',
+				'text'       => '#ffffff',
+			),
+			'dark-blue' => array(
+				'label'      => __( 'Blue', 'openconsent-cmp' ),
+				'accent'     => '#73a7ff',
+				'background' => '#101828',
+				'text'       => '#ffffff',
+			),
+			'dark-gold' => array(
+				'label'      => __( 'Gold', 'openconsent-cmp' ),
+				'accent'     => '#f0b84f',
+				'background' => '#1f2937',
+				'text'       => '#ffffff',
+			),
+			'dark-rose' => array(
+				'label'      => __( 'Rose', 'openconsent-cmp' ),
+				'accent'     => '#fb7185',
+				'background' => '#18111f',
+				'text'       => '#ffffff',
+			),
 		);
 	}
 

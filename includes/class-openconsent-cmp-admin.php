@@ -125,6 +125,8 @@ final class OpenConsent_CMP_Admin {
 	public function sanitize_options( $input ) {
 		$current = $this->plugin->options();
 		$input   = is_array( $input ) ? $input : array();
+		$theme   = $this->sanitize_theme( $input['theme'] ?? ( $current['theme'] ?? '' ), $current );
+		$preset  = OpenConsent_CMP::theme_presets()[ $theme ];
 
 		$options = array(
 			'enabled'             => empty( $input['enabled'] ) ? 0 : 1,
@@ -137,7 +139,7 @@ final class OpenConsent_CMP_Admin {
 			'button_accept'       => sanitize_text_field( $input['button_accept'] ?? '' ),
 			'button_reject'       => sanitize_text_field( $input['button_reject'] ?? '' ),
 			'button_save'         => sanitize_text_field( $input['button_save'] ?? '' ),
-			'button_customize'    => sanitize_text_field( $input['button_customize'] ?? '' ),
+			'button_customize'    => sanitize_text_field( $current['button_customize'] ?? OpenConsent_CMP::defaults()['button_customize'] ),
 			'button_revoke'       => sanitize_text_field( $input['button_revoke'] ?? '' ),
 			'auto_detect_language' => empty( $input['auto_detect_language'] ) ? 0 : 1,
 			'banner_language'     => in_array( $input['banner_language'] ?? '', array( 'auto', 'site', 'en', 'fi', 'de', 'es', 'fr', 'it', 'nl', 'sv' ), true ) ? $input['banner_language'] : 'auto',
@@ -145,9 +147,10 @@ final class OpenConsent_CMP_Admin {
 			'default_region'      => in_array( $input['default_region'] ?? '', array( 'eea', 'us', 'other' ), true ) ? $input['default_region'] : 'eea',
 			'consent_model'       => in_array( $input['consent_model'] ?? '', array( 'opt_in', 'opt_out' ), true ) ? $input['consent_model'] : 'opt_in',
 			'position'            => isset( $input['position'] ) && 'bottom' === $input['position'] ? 'bottom' : 'center',
-			'accent_color'        => sanitize_hex_color( $input['accent_color'] ?? '' ) ?: '#54d2bf',
-			'background_color'    => sanitize_hex_color( $input['background_color'] ?? '' ) ?: '#111827',
-			'text_color'          => sanitize_hex_color( $input['text_color'] ?? '' ) ?: '#ffffff',
+			'theme'               => $theme,
+			'accent_color'        => $preset['accent'],
+			'background_color'    => $preset['background'],
+			'text_color'          => $preset['text'],
 			'google_consent_mode' => empty( $input['google_consent_mode'] ) ? 0 : 1,
 			'google_consent_behavior' => isset( $input['google_consent_behavior'] ) && 'basic' === $input['google_consent_behavior'] ? 'basic' : 'advanced',
 			'google_signal_map_ad_storage' => $this->sanitize_signal_map( $input['google_signal_map_ad_storage'] ?? 'marketing' ),
@@ -174,6 +177,35 @@ final class OpenConsent_CMP_Admin {
 		}
 
 		return wp_parse_args( $options, OpenConsent_CMP::defaults() );
+	}
+
+	/**
+	 * Sanitize the selected frontend theme.
+	 *
+	 * @param string $theme   Submitted theme key.
+	 * @param array  $current Current saved options.
+	 * @return string
+	 */
+	private function sanitize_theme( $theme, $current ) {
+		$theme   = sanitize_key( $theme );
+		$presets = OpenConsent_CMP::theme_presets();
+
+		if ( isset( $presets[ $theme ] ) ) {
+			return $theme;
+		}
+
+		foreach ( $presets as $key => $preset ) {
+			if (
+				isset( $current['accent_color'], $current['background_color'], $current['text_color'] ) &&
+				strtolower( (string) $current['accent_color'] ) === strtolower( $preset['accent'] ) &&
+				strtolower( (string) $current['background_color'] ) === strtolower( $preset['background'] ) &&
+				strtolower( (string) $current['text_color'] ) === strtolower( $preset['text'] )
+			) {
+				return $key;
+			}
+		}
+
+		return OpenConsent_CMP::defaults()['theme'];
 	}
 
 	/**
@@ -311,6 +343,8 @@ final class OpenConsent_CMP_Admin {
 				</ul>
 			</div>
 
+			<?php $this->render_changelog(); ?>
+
 			<form method="post" action="options.php">
 				<?php settings_fields( 'openconsent_cmp' ); ?>
 
@@ -347,7 +381,6 @@ final class OpenConsent_CMP_Admin {
 								<label><?php esc_html_e( 'Accept all', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_accept]" value="<?php echo esc_attr( $options['button_accept'] ); ?>"></label>
 								<label><?php esc_html_e( 'Necessary only', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_reject]" value="<?php echo esc_attr( $options['button_reject'] ); ?>"></label>
 								<label><?php esc_html_e( 'Save choices', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_save]" value="<?php echo esc_attr( $options['button_save'] ); ?>"></label>
-								<label><?php esc_html_e( 'Theme selector', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_customize]" value="<?php echo esc_attr( $options['button_customize'] ); ?>"></label>
 								<label><?php esc_html_e( 'Reopen control', 'openconsent-cmp' ); ?><input type="text" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[button_revoke]" value="<?php echo esc_attr( $options['button_revoke'] ); ?>"></label>
 							</div>
 						</td>
@@ -402,9 +435,8 @@ final class OpenConsent_CMP_Admin {
 								<option value="bottom" <?php selected( $options['position'], 'bottom' ); ?>><?php esc_html_e( 'Bottom banner', 'openconsent-cmp' ); ?></option>
 								<option value="center" <?php selected( $options['position'], 'center' ); ?>><?php esc_html_e( 'Centered dialog', 'openconsent-cmp' ); ?></option>
 							</select>
-							<input type="color" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[accent_color]" value="<?php echo esc_attr( $options['accent_color'] ); ?>">
-							<input type="color" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[background_color]" value="<?php echo esc_attr( $options['background_color'] ); ?>">
-							<input type="color" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[text_color]" value="<?php echo esc_attr( $options['text_color'] ); ?>">
+							<?php $this->render_theme_picker( $options ); ?>
+							<p class="description"><?php esc_html_e( 'The selected theme controls the frontend banner colors for every visitor. Visitors no longer see a color selector in the consent dialog.', 'openconsent-cmp' ); ?></p>
 						</td>
 					</tr>
 				</table>
@@ -1319,6 +1351,50 @@ final class OpenConsent_CMP_Admin {
 			</select>
 			<span class="description"><?php echo esc_html( $description ); ?></span>
 		</label>
+		<?php
+	}
+
+	/**
+	 * Render frontend banner theme preset controls.
+	 *
+	 * @param array $options Plugin options.
+	 * @return void
+	 */
+	private function render_theme_picker( $options ) {
+		$current = $this->sanitize_theme( $options['theme'] ?? '', $options );
+		?>
+		<fieldset class="openconsent-theme-options">
+			<legend class="screen-reader-text"><?php esc_html_e( 'Frontend banner theme', 'openconsent-cmp' ); ?></legend>
+			<?php foreach ( OpenConsent_CMP::theme_presets() as $key => $theme ) : ?>
+				<label class="openconsent-theme-option">
+					<input type="radio" name="<?php echo esc_attr( OpenConsent_CMP::OPTION ); ?>[theme]" value="<?php echo esc_attr( $key ); ?>" <?php checked( $current, $key ); ?>>
+					<span class="openconsent-theme-option__preview" style="<?php echo esc_attr( '--openconsent-admin-theme-bg:' . $theme['background'] . ';--openconsent-admin-theme-accent:' . $theme['accent'] . ';--openconsent-admin-theme-text:' . $theme['text'] . ';' ); ?>" aria-hidden="true">
+						<span></span>
+						<span></span>
+						<span></span>
+					</span>
+					<span class="openconsent-theme-option__label"><?php echo esc_html( $theme['label'] ); ?></span>
+				</label>
+			<?php endforeach; ?>
+		</fieldset>
+		<?php
+	}
+
+	/**
+	 * Render recent plugin changes in settings.
+	 *
+	 * @return void
+	 */
+	private function render_changelog() {
+		?>
+		<div class="openconsent-settings-card">
+			<h2><?php esc_html_e( 'Change log', 'openconsent-cmp' ); ?></h2>
+			<ul class="openconsent-help-list openconsent-changelog">
+				<li><strong><?php esc_html_e( '1.1.4', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog.', 'openconsent-cmp' ); ?></li>
+				<li><strong><?php esc_html_e( '1.1.3', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Keeps the public WordPress plugin ZIP slug-stable as openconsent-cmp.zip for reliable installation and review.', 'openconsent-cmp' ); ?></li>
+				<li><strong><?php esc_html_e( '1.1.2', 'openconsent-cmp' ); ?></strong> <?php esc_html_e( 'Polishes WordPress.org readiness, Plugin Check compatibility, and release workflow documentation.', 'openconsent-cmp' ); ?></li>
+			</ul>
+		</div>
 		<?php
 	}
 

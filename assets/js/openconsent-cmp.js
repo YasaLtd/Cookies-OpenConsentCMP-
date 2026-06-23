@@ -4,7 +4,6 @@
 	var config = window.OpenConsentCMP || {};
 	var services = config.services || window.OpenConsentServices || [];
 	var cookieName = 'openconsent_cmp';
-	var themeStorageKey = 'openconsent_cmp_theme';
 	var categories = ['preferences', 'statistics', 'marketing', 'unclassified'];
 	window.OpenConsentDebug = window.OpenConsentDebug || { blocked: [] };
 	var themePresets = [
@@ -440,22 +439,6 @@
 		return resolved;
 	}
 
-	function readStoredTheme() {
-		try {
-			return window.localStorage ? window.localStorage.getItem(themeStorageKey) : '';
-		} catch (error) {
-			return '';
-		}
-	}
-
-	function writeStoredTheme(themeKey) {
-		try {
-			if (window.localStorage) {
-				window.localStorage.setItem(themeStorageKey, themeKey);
-			}
-		} catch (error) {}
-	}
-
 	function themeByKey(themeKey) {
 		for (var i = 0; i < themePresets.length; i += 1) {
 			if (themePresets[i].key === themeKey) {
@@ -465,17 +448,13 @@
 		return themePresets[0];
 	}
 
-	function applyTheme(root, theme, ui) {
-		var selected = theme || themeByKey(readStoredTheme() || ui.theme || 'dark-teal');
+	function applyTheme(root, ui) {
+		var selected = themeByKey(ui.theme || 'dark-teal');
 		root.dataset.openconsentTheme = selected.key;
-		root.style.setProperty('--openconsent-accent', selected.accent || ui.accent || '#54d2bf');
-		root.style.setProperty('--openconsent-background', selected.background || ui.background || '#111827');
-		root.style.setProperty('--openconsent-text', selected.text || ui.text || '#ffffff');
+		root.style.setProperty('--openconsent-accent', ui.accent || selected.accent || '#54d2bf');
+		root.style.setProperty('--openconsent-background', ui.background || selected.background || '#111827');
+		root.style.setProperty('--openconsent-text', ui.text || selected.text || '#ffffff');
 		return selected;
-	}
-
-	function localizedThemeLabel(theme, ui) {
-		return (ui.themeLabels && ui.themeLabels[theme.key]) || theme.label || theme.key;
 	}
 
 	function writeConsent(consent) {
@@ -901,7 +880,7 @@
 		root.setAttribute('role', 'dialog');
 		root.setAttribute('aria-modal', 'true');
 		root.setAttribute('aria-labelledby', 'openconsent-title');
-		var selectedTheme = applyTheme(root, null, ui);
+		applyTheme(root, ui);
 
 		var panel = document.createElement('div');
 		panel.className = 'openconsent__panel';
@@ -1026,21 +1005,6 @@
 			saveConsent({}, 'necessary_only');
 			root.remove();
 		});
-		var customize = makeButton(ui.customize || 'Customize', 'openconsent__button openconsent__button--ghost', function () {
-			var nextIndex = 0;
-			for (var i = 0; i < themePresets.length; i += 1) {
-				if (themePresets[i].key === selectedTheme.key) {
-					nextIndex = (i + 1) % themePresets.length;
-					break;
-				}
-			}
-			selectedTheme = applyTheme(root, themePresets[nextIndex], ui);
-			writeStoredTheme(selectedTheme.key);
-			customize.textContent = (ui.customize || 'Customize') + ': ' + localizedThemeLabel(selectedTheme, ui);
-		});
-		customize.textContent = (ui.customize || 'Customize') + ': ' + localizedThemeLabel(selectedTheme, ui);
-		customize.setAttribute('aria-label', ui.changeThemeAria || 'Change consent dialog theme color');
-		customize.title = ui.changeThemeTitle || 'Change theme color';
 		var save = makeButton(ui.save || 'Save choices', 'openconsent__button openconsent__button--secondary', function () {
 			saveConsent({
 				preferences: inputs.preferences.checked,
@@ -1056,7 +1020,6 @@
 		});
 
 		actions.appendChild(reject);
-		actions.appendChild(customize);
 		actions.appendChild(save);
 		actions.appendChild(accept);
 

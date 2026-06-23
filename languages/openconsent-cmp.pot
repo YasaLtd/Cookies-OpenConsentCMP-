@@ -2,242 +2,1138 @@
 # This file is distributed under the GPL-2.0-or-later.
 msgid ""
 msgstr ""
-"Project-Id-Version: OpenConsent CMP 1.1.3\n"
-"Report-Msgid-Bugs-To: https://cookies.yasa.fi/\n"
-"POT-Creation-Date: 2026-06-22 00:00+0000\n"
+"Project-Id-Version: OpenConsent CMP 1.1.4\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/openconsent-cmp\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: OpenConsent CMP\n"
+"POT-Creation-Date: 2026-06-23T14:20:25+00:00\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: openconsent-cmp\n"
 
+#. Plugin Name of the plugin
+#: openconsent-cmp.php
+#: includes/class-openconsent-cmp-admin.php:53
+#: includes/class-openconsent-cmp-admin.php:54
+#: includes/class-openconsent-cmp-admin.php:292
 msgid "OpenConsent CMP"
 msgstr ""
 
-msgid "Show consent banner on the frontend"
+#. Plugin URI of the plugin
+#: openconsent-cmp.php
+msgid "https://cookies.yasa.fi/"
 msgstr ""
 
-msgid "Title"
+#. Description of the plugin
+#: openconsent-cmp.php
+msgid "Open source cookie consent management for WordPress with consent categories, prior blocking, consent logs, cookie declaration, and Google Consent Mode v2 signals."
 msgstr ""
 
-msgid "Message"
+#. Author of the plugin
+#: openconsent-cmp.php
+msgid "YASA LTD"
 msgstr ""
 
-msgid "Party disclosure"
+#. Author URI of the plugin
+#: openconsent-cmp.php
+msgid "https://yasa.fi/"
 msgstr ""
 
-msgid "Use this to identify parties that may collect, receive, or use personal data when Google products or other services are enabled."
+#: includes/class-openconsent-cmp-admin.php:111
+msgid "OpenConsent CMP is active."
 msgstr ""
 
-msgid "Privacy policy URL"
+#: includes/class-openconsent-cmp-admin.php:112
+msgid "Review the consent banner, service registry, and Google Consent Mode settings before relying on it in production."
 msgstr ""
 
-msgid "Button labels"
+#: includes/class-openconsent-cmp-admin.php:113
+msgid "Open settings"
 msgstr ""
 
-msgid "Language"
+#: includes/class-openconsent-cmp-admin.php:247
+msgid "You do not have permission to scan this site."
 msgstr ""
 
-msgid "Detect the visitor browser language for built-in banner labels"
+#: includes/class-openconsent-cmp-admin.php:293
+msgid "A self-hosted consent manager for WordPress: present clear choices, categorize services, block optional scripts, publish a declaration, record consent choices, and send Google Consent Mode signals."
 msgstr ""
 
-msgid "Custom text stays editable and is rendered as normal page text, so browser translation tools can translate it."
-msgstr ""
-
-msgid "Layout and colors"
-msgstr ""
-
-msgid "Bottom banner"
-msgstr ""
-
-msgid "Centered dialog"
-msgstr ""
-
-msgid "Blocking and signals"
-msgstr ""
-
-msgid "Blocking mode"
-msgstr ""
-
-msgid "Automatic client-side blocking by URL pattern"
-msgstr ""
-
-msgid "Manual markup only"
-msgstr ""
-
-msgid "Google Consent Mode v2"
-msgstr ""
-
-msgid "Emit default denied state and update on consent"
-msgstr ""
-
-msgid "Advanced: allow Google consent-aware tags to load with denied defaults"
-msgstr ""
-
-msgid "Basic: block Google tags until consent is granted"
-msgstr ""
-
-msgid "Enable ads data redaction"
-msgstr ""
-
-msgid "Enable URL passthrough"
-msgstr ""
-
-msgid "Service registry"
-msgstr ""
-
-msgid "One service per line: URL pattern | category | display name. Categories: preferences, statistics, marketing."
-msgstr ""
-
-msgid "Category descriptions"
-msgstr ""
-
-msgid "Audit log"
-msgstr ""
-
-msgid "Retention"
-msgstr ""
-
-msgid "Local scan"
-msgstr ""
-
-msgid "Scan homepage"
-msgstr ""
-
-msgid "Recent consent logs"
-msgstr ""
-
-msgid "Cookie declaration"
-msgstr ""
-
-msgid "Service inventory"
-msgstr ""
-
-msgid "Review configured services in a structured table. Edit the textarea above when you need to change the registry."
-msgstr ""
-
-msgid "Configuration import and export"
-msgstr ""
-
-msgid "Export settings JSON"
-msgstr ""
-
-msgid "Export services CSV"
-msgstr ""
-
-msgid "Import services CSV"
-msgstr ""
-
-msgid "Replace current service registry"
-msgstr ""
-
-msgid "Append to current service registry"
-msgstr ""
-
-msgid "Import services"
-msgstr ""
-
-msgid "CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted."
-msgstr ""
-
-msgid "Import settings JSON"
-msgstr ""
-
-msgid "Crawl scan"
-msgstr ""
-
-msgid "Run crawl scan"
-msgstr ""
-
-msgid "Pages scanned"
-msgstr ""
-
-msgid "External resources"
-msgstr ""
-
-msgid "Suggested service rows"
-msgstr ""
-
-msgid "Enable debug mode for blocked scripts and embeds"
-msgstr ""
-
-msgid "Documented"
-msgstr ""
-
-msgid "Needs details"
-msgstr ""
-
-msgid "Necessary cookies keep the site secure and working. They are always active."
-msgstr ""
-
-msgid "OpenConsent CMP stores visitor consent choices in a first-party browser cookie and records anonymized consent logs in the local WordPress database. These logs include a consent ID, selected categories, timestamp, consent hash, and salted hashes of the visitor IP address and user agent. The plugin can block or enable optional scripts according to the visitor choices and the configured service registry."
-msgstr ""
-
-msgid "Site owners should list the third-party services they use, describe each category clearly, provide a way to change or revoke consent, and choose a suitable log retention period."
-msgstr ""
-
-msgid "What this controls"
-msgstr ""
-
-msgid "URL rules: no services configured in this category."
-msgstr ""
-
-msgid "Blocked on this page: no matching scripts or embeds right now."
-msgstr ""
-
-msgid "Google signals controlled here"
-msgstr ""
-
-msgid "Current state: allowed after saving."
-msgstr ""
-
-msgid "Current state: blocked or denied until allowed."
-msgstr ""
-
-msgid "Selected optional categories"
-msgstr ""
-
-msgid "Only necessary cookies are selected."
-msgstr ""
-
-msgid "Change consent dialog theme color"
-msgstr ""
-
-msgid "Change theme color"
-msgstr ""
-
-msgid "Configured service"
-msgstr ""
-
-msgid "Blocked embed"
-msgstr ""
-
-msgid "Configured script"
-msgstr ""
-
-msgid "Inline script"
-msgstr ""
-
-msgid "This embed is blocked until you allow its cookie category."
-msgstr ""
-
+#: includes/class-openconsent-cmp-admin.php:296
 msgid "OpenConsent CMP by YASA LTD"
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:297
 msgid "Open source software is easier to maintain when users can trace the author and support ongoing work."
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:300
+#: includes/class-openconsent-cmp-admin.php:1680
 msgid "Visit YASA LTD"
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:301
 msgid "Support open source development"
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:305
+msgid "Publisher ads note:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:305
+msgid "Google requires a Google-certified CMP integrated with the IAB TCF when serving personalized AdSense, Ad Manager, or AdMob ads to users in the EEA, UK, or Switzerland. OpenConsent CMP is self-hosted and is not a Google-certified TCF CMP. Use it for publisher ads only after reviewing your ad mode, regions, and legal requirements."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:309
+msgid "Homepage scan completed."
+msgstr ""
+
+#. translators: %s: Number of expired consent records removed.
+#: includes/class-openconsent-cmp-admin.php:314
+#, php-format
+msgid "Removed %s expired consent records."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:319
+msgid "OpenConsent settings imported."
+msgstr ""
+
+#. translators: %s: Number of imported service registry rows.
+#: includes/class-openconsent-cmp-admin.php:324
+#, php-format
+msgid "Imported %s service registry rows."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:329
+msgid "OpenConsent CMP status"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:330
+msgid "On"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:330
+msgid "Off"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:330
+msgid "Frontend banner"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:331
+msgid "Configured services"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:332
+msgid "Stored consent records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:333
+msgid "Auto"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:333
+msgid "Site"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:333
+msgid "Language mode"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:337
+msgid "Setup checklist"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:339
+msgid "Add every analytics, advertising, embed, and preference service to the service registry."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:340
+msgid "Place the shortcode on your cookie policy page:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:341
+msgid "Link your privacy policy and describe parties that may receive personal data."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:342
+msgid "Test the banner in an incognito window before relying on it in production."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:352
+msgid "Banner"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:355
+msgid "Enable banner"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:356
+msgid "Show consent banner on the frontend"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:359
+msgid "Title"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:360
+msgid "Your privacy choices"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:363
+msgid "Message"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:367
+msgid "Party disclosure"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:370
+msgid "Use this to identify parties that may collect, receive, or use personal data when Google products or other services are enabled."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:374
+msgid "Privacy policy URL"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:378
+msgid "Button labels"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:381
+#: includes/class-openconsent-cmp-admin.php:620
+#: includes/class-openconsent-cmp-admin.php:1222
+msgid "Accept all"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:382
+#: includes/class-openconsent-cmp-admin.php:621
+#: includes/class-openconsent-cmp-admin.php:1223
+msgid "Necessary only"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:383
+msgid "Save choices"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:384
+msgid "Reopen control"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:389
+#: includes/class-openconsent-cmp-admin.php:666
+msgid "Language"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:391
+msgid "Allow browser-language detection when language mode is Auto"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:393
+msgid "Auto: visitor browser language"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:394
+msgid "WordPress site language"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:404
+msgid "Custom text stays editable and is rendered as normal page text, so browser translation tools can translate it."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:408
+msgid "Region behavior"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:411
+msgid "Strict opt-in for all visitors"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:412
+msgid "Auto-detect region, strict for EEA/UK/CH"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:413
+msgid "Notice-only mode for non-regulated traffic"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:416
+msgid "Default: EEA / UK / Switzerland"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:417
+msgid "Default: United States"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:418
+msgid "Default: Other region"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:420
+msgid "Auto-detection uses browser language and time zone hints. It is not legal geolocation and should be reviewed for your audience."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:424
+msgid "Consent model"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:426
+msgid "Opt-in: block optional categories until consent"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:427
+msgid "Opt-out: preselect optional categories for non-strict regions"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:428
+msgid "Strict regions always start with optional categories denied. Choose opt-out only after legal review."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:432
+msgid "Layout and colors"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:435
+msgid "Bottom banner"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:436
+msgid "Centered dialog"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:439
+msgid "The selected theme controls the frontend banner colors for every visitor. Visitors no longer see a color selector in the consent dialog."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:446
+msgid "Blocking and signals"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:449
+msgid "Blocking mode"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:451
+msgid "Automatic client-side blocking by URL pattern"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:452
+msgid "Manual markup only"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:453
+msgid "Block matching iframe embeds in post content until consent"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:457
+msgid "Google Consent Mode v2"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:459
+msgid "Emit default denied state and update on consent"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:460
+msgid "Advanced: allow Google consent-aware tags to load with denied defaults"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:461
+msgid "Basic: block Google tags until consent is granted"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:462
+msgid "AdSense and other Google publisher ad tags are kept in the marketing category by default. Personalized publisher ads for EEA, UK, and Switzerland traffic require a certified TCF CMP."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:464
+msgid "Google consent signals"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:465
+msgid "Advertising cookies and ad measurement."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:466
+msgid "User data sent to Google for advertising."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:467
+msgid "Personalized ads and remarketing."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:468
+msgid "Analytics cookies and measurement."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:469
+msgid "Functional storage for site features."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:470
+msgid "Personalization storage for saved preferences."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:472
+msgid "Each signal is granted only when its mapped category is granted. Choose Always denied to keep a signal denied regardless of visitor choices. OpenConsent always sends security_storage as granted."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:473
+msgid "Google Consent Mode setup guide"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:473
+msgid "Google EU user consent policy"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:474
+msgid "Enable ads data redaction"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:475
+msgid "Enable URL passthrough"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:479
+msgid "Debug mode"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:481
+msgid "Expose blocked resource diagnostics in the browser console and window.OpenConsentDebug"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:482
+msgid "Use only while configuring a site. Debug mode lists blocked scripts and embeds, matched category, provider, purpose, and source URL."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:486
+msgid "WordPress Consent API"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:488
+msgid "Publish consent choices to the WP Consent API when it is installed"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:489
+msgid "OpenConsent declares compatibility to WP Consent API and maps Necessary to functional, Preferences to preferences, Statistics to statistics and statistics-anonymous, and Marketing to marketing. Unclassified services remain blocked until reviewed."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:490
+msgid "This helps compatible plugins, such as analytics or ecommerce integrations, read the same consent state as the banner instead of using separate settings."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:494
+msgid "Service registry"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:497
+msgid "One service per line: URL pattern | category | display name | provider | purpose | provider privacy URL. Categories: preferences, statistics, marketing, unclassified."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:498
+msgid "Older three-field lines still work and are normalized when settings are saved."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:499
+msgid "Examples:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:503
+msgid "WordPress script handles"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:506
+msgid "Optional. One registered script per line: WordPress handle | category | display name. This is useful when a plugin registers a script from a local URL or a URL pattern is not enough."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:507
+msgid "Example:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:514
+msgid "Service inventory"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:515
+msgid "Review configured services in a structured table. Edit the textarea above when you need to change the registry."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:520
+msgid "Category descriptions"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:532
+msgid "Configuration import and export"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:533
+msgid "Export settings before major changes, or move a registry between WordPress installations."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:535
+msgid "Export settings JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:536
+msgid "Export services CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:541
+msgid "Import settings JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:543
+msgid "Import settings"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:545
+msgid "Import replaces plugin settings but keeps existing consent records."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:549
+msgid "Import services CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:551
+msgid "Replace current service registry"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:552
+msgid "Append to current service registry"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:553
+msgid "Import services"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:555
+msgid "CSV columns: pattern, category, name, provider, purpose, privacy_url. Header rows are accepted."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:559
+msgid "Audit log"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:560
+msgid "Consent choices are stored in a local WordPress database table with anonymized visitor hashes. Use exports for audits, support requests, or compliance reviews."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:563
+msgid "Retention"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:564
+msgid "days"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:567
+msgid "Stored records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:570
+msgid "records currently stored."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:572
+#: includes/class-openconsent-cmp-admin.php:1676
+msgid "Download CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:573
+msgid "Download JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:575
+msgid "Exports include consent ID, timestamp, selected categories, action, region, language, page URL, consent hash, IP hash, and user-agent hash."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:579
+msgid "Cleanup"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:581
+msgid "Prune expired records now"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:582
+msgid "Deletes records older than the retention period above. Current filters do not affect cleanup."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:592
+msgid "Crawl scan"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:593
+msgid "The scanner crawls internal pages, records Set-Cookie headers, finds static external script/embed/media hosts, and suggests unreviewed service registry entries. It does not execute JavaScript like a full browser crawler."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:597
+msgid "Pages to scan"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:599
+msgid "Run crawl scan"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:603
+msgid "Consent records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:604
+msgid "Consent record summary"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:605
+msgid "total"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:606
+msgid "accepted all"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:607
+msgid "necessary only"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:608
+msgid "custom choices"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:611
+msgid "Download current view as CSV"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:612
+msgid "Download current view as JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:617
+#: includes/class-openconsent-cmp-admin.php:663
+msgid "Action"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:619
+msgid "All actions"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:622
+#: includes/class-openconsent-cmp-admin.php:1224
+#: includes/class-openconsent-cmp-admin.php:1227
+msgid "Saved choices"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:626
+msgid "Granted category"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:628
+msgid "Any category"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:629
+#: includes/class-openconsent-cmp-admin.php:1239
+msgid "Preferences"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:630
+#: includes/class-openconsent-cmp-admin.php:1240
+msgid "Statistics"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:631
+#: includes/class-openconsent-cmp-admin.php:1241
+msgid "Marketing"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:632
+#: includes/class-openconsent-cmp-admin.php:1242
+msgid "Unclassified"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:636
+msgid "From"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:640
+msgid "To"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:644
+msgid "Search"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:645
+msgid "Consent ID or URL"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:648
+msgid "Per page"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:655
+msgid "Filter records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:656
+msgid "Reset"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:661
+msgid "Time"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:662
+msgid "Consent ID"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:664
+msgid "Categories"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:665
+msgid "Region"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:667
+#: includes/class-openconsent-cmp-admin.php:857
+msgid "Page"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:668
+msgid "Hash"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:669
+msgid "Details"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:674
+msgid "No consent records match the current filters."
+msgstr ""
+
+#. translators: 1: Number of records shown, 2: Total number of matching records.
+#: includes/class-openconsent-cmp-admin.php:695
+#, php-format
+msgid "Showing %1$s of %2$s matching records."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:700
+msgid "Previous"
+msgstr ""
+
+#. translators: 1: Current page number, 2: Total number of pages.
+#: includes/class-openconsent-cmp-admin.php:704
+#, php-format
+msgid "Page %1$s of %2$s"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:709
+msgid "Next"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:713
+msgid "Use shortcode [openconsent_declaration] on a Cookie Policy page to publish the declaration."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:727
+msgid "No services are configured yet. Add one service rule per line in the service registry."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:735
+#: includes/class-openconsent-cmp.php:540
+msgid "Service"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:736
+#: includes/class-openconsent-cmp.php:541
+msgid "Category"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:737
+#: includes/class-openconsent-cmp.php:542
+msgid "Provider"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:738
+#: includes/class-openconsent-cmp.php:543
+msgid "Purpose"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:739
+msgid "URL rule"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:740
+msgid "Privacy policy"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:741
+msgid "Review status"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:757
+msgid "Open"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:764
+msgid "Documented"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:764
+msgid "Needs details"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:785
+msgid "No crawl report has been generated yet."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:811
+msgid "Crawl report summary"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:812
+msgid "Pages scanned"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:813
+msgid "Set-Cookie headers"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:814
+#: includes/class-openconsent-cmp-admin.php:836
+msgid "External resources"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:815
+msgid "Registry suggestions"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:818
+msgid "Scanned pages"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:820
+#: includes/class-openconsent-cmp-admin.php:884
+msgid "URL"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:820
+msgid "Status"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:820
+msgid "Cookies"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:820
+msgid "Resources"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:833
+msgid "Cookies found"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:839
+msgid "Suggested service rows"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:852
+msgid "No Set-Cookie headers were found in the scanned responses."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:857
+msgid "Cookie name"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:857
+msgid "Expiry hint"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:879
+msgid "No external static resources were found in scanned markup."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:884
+msgid "Host"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:884
+msgid "Type"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:884
+msgid "Suggested category"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:884
+msgid "Registry match"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:891
+msgid "Configured"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:891
+msgid "Needs review"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:908
+msgid "No unconfigured external resources were found."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:926
+msgid "Review these rows before adding them to the service registry. The category is a heuristic suggestion, not a legal classification."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1166
+msgid "View"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1168
+msgid "Referrer"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1170
+msgid "Plugin version"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1172
+msgid "IP hash"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1174
+msgid "User-agent hash"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1176
+msgid "Raw consent JSON"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1238
+msgid "Necessary"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1252
+msgid "yes"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1252
+msgid "no"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1303
+msgid "You do not have permission to prune consent logs."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1338
+msgid "Marketing grants this signal"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1339
+msgid "Statistics grants this signal"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1340
+msgid "Preferences grants this signal"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1341
+msgid "Unclassified grants this signal"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1342
+msgid "Always denied"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1367
+msgid "Frontend banner theme"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1391
+msgid "Change log"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1393
+msgid "1.1.4"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1393
+msgid "Moves frontend color theme selection into this admin settings page and removes visitor-facing color customization from the consent dialog."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
+msgid "1.1.3"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1394
+msgid "Keeps the public WordPress plugin ZIP slug-stable as openconsent-cmp.zip for reliable installation and review."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1395
+msgid "1.1.2"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1395
+msgid "Polishes WordPress.org readiness, Plugin Check compatibility, and release workflow documentation."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1408
+#: includes/class-openconsent-cmp-admin.php:1435
+msgid "You do not have permission to export consent logs."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1464
+msgid "You do not have permission to export settings."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1493
+msgid "You do not have permission to export services."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1528
+msgid "You do not have permission to import settings."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1535
+msgid "No settings file was uploaded."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1540
+msgid "The uploaded settings file is empty."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1545
+msgid "The uploaded settings file is not valid JSON."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1562
+msgid "You do not have permission to import services."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1569
+msgid "No services CSV file was uploaded."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1574
+msgid "The services CSV file could not be opened."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1590
+msgid "The services CSV did not contain valid service rows."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1652
+msgid "OpenConsent CMP records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1667
+msgid "consent records stored locally."
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1670
+msgid "Accepted all:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1671
+msgid "Necessary only:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1672
+msgid "Custom choices:"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1675
+msgid "Open records"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1679
 msgid "OpenConsent CMP is built by YASA LTD."
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:1681
 msgid "or"
 msgstr ""
 
+#: includes/class-openconsent-cmp-admin.php:1682
 msgid "support open source development"
+msgstr ""
+
+#: includes/class-openconsent-cmp-admin.php:1699
+msgid "Consent log table does not exist yet."
+msgstr ""
+
+#: includes/class-openconsent-cmp-frontend.php:116
+#: includes/class-openconsent-cmp-frontend.php:132
+msgid "Necessary cookies keep the site secure and working. They are always active."
+msgstr ""
+
+#: includes/class-openconsent-cmp-frontend.php:285
+msgid "This embed is blocked until you allow its cookie category."
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:276
+msgid "Teal"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:282
+msgid "Blue"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:288
+msgid "Gold"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:294
+msgid "Rose"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:438
+msgid "Stores the visitor consent choice so the banner can remember and apply selected categories."
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:454
+msgid "Settings"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:535
+msgid "Cookie declaration"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:536
+msgid "This declaration is generated from the configured service registry and the latest local scan report."
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:544
+msgid "Match pattern"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:545
+msgid "Provider policy"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:553
+#: includes/class-openconsent-cmp.php:560
+msgid "Not specified"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:554
+msgid "Review needed"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:558
+msgid "Open policy"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:568
+msgid "Latest scan findings"
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:611
+msgid "OpenConsent CMP stores visitor consent choices in a first-party browser cookie and records anonymized consent logs in the local WordPress database. These logs include a consent ID, selected categories, timestamp, consent hash, and salted hashes of the visitor IP address and user agent. The plugin can block or enable optional scripts according to the visitor choices and the configured service registry."
+msgstr ""
+
+#: includes/class-openconsent-cmp.php:612
+msgid "Site owners should list the third-party services they use, describe each category clearly, provide a way to change or revoke consent, and choose a suitable log retention period."
 msgstr ""

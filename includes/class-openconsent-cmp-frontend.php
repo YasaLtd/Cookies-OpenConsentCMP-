@@ -106,9 +106,9 @@ final class OpenConsent_CMP_Frontend {
 					'accept'       => $options['button_accept'],
 					'reject'       => $options['button_reject'],
 					'save'         => $options['button_save'],
-					'customize'    => $options['button_customize'],
 					'revoke'       => $options['button_revoke'],
 					'position'     => $options['position'],
+					'theme'        => $options['theme'],
 					'accent'       => $options['accent_color'],
 					'background'   => $options['background_color'],
 					'text'         => $options['text_color'],
@@ -127,7 +127,6 @@ final class OpenConsent_CMP_Frontend {
 					'accept'       => OpenConsent_CMP::defaults()['button_accept'],
 					'reject'       => OpenConsent_CMP::defaults()['button_reject'],
 					'save'         => OpenConsent_CMP::defaults()['button_save'],
-					'customize'    => OpenConsent_CMP::defaults()['button_customize'],
 					'revoke'       => OpenConsent_CMP::defaults()['button_revoke'],
 					'descriptions' => array(
 						'necessary'   => __( 'Necessary cookies keep the site secure and working. They are always active.', 'openconsent-cmp' ),
