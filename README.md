@@ -12,7 +12,7 @@ GitHub repository: https://github.com/Yasaltd/cookies-openconsentcmp-
 
 Logo asset: `assets/openconsent-cmp-logo.svg`.
 
-Current release: `1.1.4`.
+Current release: `1.1.5`.
 
 OpenConsent CMP is built by YASA LTD: https://yasa.fi/
 
