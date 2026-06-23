@@ -2,7 +2,7 @@
 
 ## Packaging Rule
 
-The WordPress upload ZIP must be root-packed. The ZIP root contains the plugin files directly:
+The WordPress upload ZIP must be root-packed and named `openconsent-cmp.zip`. The ZIP root contains the plugin files directly:
 
 - `openconsent-cmp.php`
 - `readme.txt`
@@ -13,6 +13,8 @@ The WordPress upload ZIP must be root-packed. The ZIP root contains the plugin f
 - `languages/`
 
 Do not put those files inside a wrapper folder such as `openconsent-cmp/`. The package layout `openconsent-cmp/openconsent-cmp.php` is incorrect for this project.
+
+Do not put the version number in the installable ZIP filename. A root-packed ZIP installs under the ZIP basename, so a filename such as `openconsent-cmp-wordpress-plugin-1.1.3.zip` creates the wrong plugin slug and makes Plugin Check expect the wrong text domain. Keep the installable filename `openconsent-cmp.zip`; put release versioning in plugin metadata, `readme.txt`, Git tags, website visible labels, and cache-busting query strings such as `openconsent-cmp.zip?v=1.1.3`.
 
 ## Version Rule
 
@@ -33,9 +35,9 @@ Update all of these together:
 
 ## Current Release
 
-- Current version: `1.1.2`
-- Current tag: `v1.1.2`
-- Current public ZIP filename: `openconsent-cmp-wordpress-plugin-1.1.2.zip`
+- Current version: `1.1.3`
+- Current tag: `v1.1.3`
+- Current public ZIP filename: `openconsent-cmp.zip`
 
 ## Verification
 

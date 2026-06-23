@@ -5,7 +5,7 @@ Tags: cookies, consent, gdpr, google consent mode, privacy
 Requires at least: 6.0
 Requires PHP: 7.4
 Tested up to: 7.0
-Stable tag: 1.1.2
+Stable tag: 1.1.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -102,10 +102,18 @@ Yes. After consent, the frontend shows a Privacy choices control that reopens th
 
 == Upgrade Notice ==
 
+= 1.1.3 =
+Uses a slug-stable install package name so WordPress installs the plugin as openconsent-cmp and keeps the text domain valid.
+
 = 1.1.2 =
 Improves WordPress.org review readiness with clearer privacy disclosures and reduced static-analysis noise.
 
 == Changelog ==
+
+= 1.1.3 =
+* Keeps the installable ZIP filename slug-stable as `openconsent-cmp.zip`.
+* Moves release versioning to plugin metadata, readme stable tag, cache-busting query strings, and Git tags.
+* Prevents versioned ZIP filenames from changing the installed WordPress plugin slug and causing text-domain mismatch reports.
 
 = 1.1.2 =
 * Removes the manual translation loader that WordPress.org no longer requires for hosted plugins.
